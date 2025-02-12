@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // Remplace par "mysql" ou "sqlite" si nécessaire
+  url      = env("DATABASE_URL")
+}
+
+
+// Table des types de familles
+model TypeFamille {
+  id       String    @id @default(uuid()) // Identifiant unique
+  nom      String    @unique // Nom du type de famille ("isolé", "regroupé")
+  familles Famille[]
+}
+
+// Table des membres
+model Membre {
+  id             String   @id @default(uuid()) // Identifiant unique
+  nom            String // Nom du membre
+  prenom         String // Prénom du membre
+  dateNaissance  DateTime // Date de naissance
+  familleId      String? // Clé étrangère vers la famille
+  famille        Famille? @relation(name: "FamilleMembres", fields: [familleId], references: [id])
+  representantDe Famille? @relation(name: "FamilleRepresentant") // Relation pour représenter une famille
+}
+
+// Table des familles
+model Famille {
+  id             String      @id @default(uuid()) // Identifiant unique
+  typeFamilleId  String // Clé étrangère vers le type de famille
+  type           TypeFamille @relation(fields: [typeFamilleId], references: [id])
+  representantId String      @unique // Identifiant du représentant
+  representant   Membre      @relation(name: "FamilleRepresentant", fields: [representantId], references: [id])
+  membres        Membre[]    @relation(name: "FamilleMembres") // Liste des membres de la famille
+  cotisation     Cotisation? // Cotisation associée à la famille
+  adresse        String      @default("") //adresse postale du domicile principal
+  adresseEmail   String      @default("") //adresse email du représentant
+}
+
+// Table des cotisations
+model Cotisation {
+  id        String   @id @default(uuid()) // Identifiant unique
+  familleId String   @unique // Clé étrangère vers la famille
+  famille   Famille  @relation(fields: [familleId], references: [id])
+  montant   Float // Montant de la cotisation
+  facture   Facture? // Facture associée
+}
+
+// Table des factures
+model Facture {
+  id             String     @id @default(uuid()) // Identifiant unique
+  cotisationId   String     @unique // Clé étrangère vers la cotisation
+  cotisation     Cotisation @relation(fields: [cotisationId], references: [id])
+  typePaiement   String? // Type de paiement ("cheque", "virement", "espece")
+  statutPaiement String? // Statut du paiement ("en attente", "payé")
+  datePaiement   DateTime? // Date de paiement
+}
