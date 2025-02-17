@@ -6,6 +6,7 @@ import { InvoicePaiement } from "@/app/component/invoices/invoicePaiement";
 import Loader from "@/app/component/loader";
 import Wrapper from "@/app/component/Wrapper";
 import { IFamille } from "@/models/interfaceFamilles";
+import confetti from "canvas-confetti";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -30,13 +31,41 @@ export default function FamillePage() {
       }
       const data = await res.json();
       setFamille(data);
-      setLoading(false);
+      setTimeout(() => { setLoading(false); }, 2000)
+
       setFamilleIsUpdated(false)
     } catch (error) {
       console.error("Erreur lors du chargement des factures", error);
     } finally {
       setFamilleIsUpdated(false)
       setLoading(false);
+    }
+  }
+
+  const deleteFamille = async (id) => {
+    try {
+      const payload = {
+        id
+      };
+
+      const res = await fetch(`/api/familles/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        throw new Error("Famille non supprimée");
+      }
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        zIndex: 9999,
+      });
+      const data = await res.json();
+      fetchFamille()
+    } catch (error) {
+      console.error("Erreur lors du chargement des factures", error);
     }
   }
 
@@ -68,7 +97,7 @@ export default function FamillePage() {
           <div className="flex flex-col space-y-4 basis-1/3">
 
             <h1 className="text-lg font-bold">Tableau de bord</h1 >
-            <DetailFamilleCart famille={famille} setFamilleIsUpdated={setFamilleIsUpdated} />
+            <DetailFamilleCart famille={famille} setFamilleIsUpdated={setFamilleIsUpdated} deleteFamille={deleteFamille} />
             <AttestationPaiement handleNewInvoice={handleNewInvoice} />
           </div>
           {newInvoice

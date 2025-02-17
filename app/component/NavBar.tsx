@@ -36,9 +36,11 @@ const Navbar = () => {
     <div className='border-b border-base-300 px-5 md:px-[10%] py-4'>
       <div className='flex justify-between items-center'>
         <div className='flex items-center'>
-          <span className='ml-3 font-bold text-2xl italic'>
+          <Link href="/" className='ml-3 font-bold text-2xl italic'>
+
             <span className='text-accent'>Association Solidarité Seddouk</span>
-          </span>
+          </Link>
+
         </div>
 
         <div className='flex space-x-4 items-center'>

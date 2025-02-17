@@ -7,8 +7,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
 import confetti from "canvas-confetti";
+import Loader from "./component/loader";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   const [familles, setFamilles] = useState<any>([])
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -35,8 +38,7 @@ export default function Home() {
         zIndex: 9999,
       });
       const data = await res.json();
-      console.log(data);
-      fetchFamille()
+      router.push('/')
     } catch (error) {
       console.error("Erreur lors du chargement des factures", error);
     }
@@ -50,7 +52,7 @@ export default function Home() {
       }
       const data = await res.json();
       setFamilles(data);
-      setLoading(false);
+      setTimeout(() => { setLoading(false); }, 2000)
     } catch (error) {
       console.error("Erreur lors du chargement des factures", error);
     } finally {
@@ -65,45 +67,48 @@ export default function Home() {
 
   return (
     <Wrapper>
-      <div className='grid grid-cols-4 gap-4'>
-        {familles?.map((famille) => (
-          <div className="card bg-base-100 max-w-96 shadow-xl" key={famille.id}>
-            <div className="card-body">
-              <div className='flex justify-between'>
+      {loading ?
+        <Loader loading={loading} />
+        :
+        <div className='grid grid-cols-4 gap-4'>
+          {familles?.map((famille) => (
+            <div className="card bg-base-100 max-w-96 shadow-xl" key={famille.id}>
+              <div className="card-body">
+                <div className='flex justify-between'>
 
-                <h2 className="card-title">{famille.representant.nom} {famille.representant.prenom} </h2>
-                <button onClick={() => deleteFamille(famille.id)}>
+                  <h2 className="card-title">{famille.representant.nom} {famille.representant.prenom} </h2>
+                  <button onClick={() => deleteFamille(famille.id)}>
 
-                  <Trash2 />
-                </button>
+                    <Trash2 />
+                  </button>
+                </div>
+                <ul >
+                  <li >Type de famille : {famille.type.nom}</li>
+                  <li >Montant du paiement : {famille.cotisation?.montant}</li>
+                  <li >Statut du paiement : {famille.cotisation?.facture?.statutPaiement}</li>
+                  <li key={famille.id}>Membres :
+                    <div>
+                      {famille.membres.map((membre, index) => (
+                        <ul key={index}>
+                          <li>
+                            {membre.nom} {membre.prenom}
+                          </li>
+                        </ul>
+                      ))}
+                    </div>
+
+                  </li>
+
+                </ul>
               </div>
-              <ul >
-                <li >Type de famille : {famille.type.nom}</li>
-                <li >Montant du paiement : {famille.cotisation?.montant}</li>
-                <li >Statut du paiement : {famille.cotisation?.facture?.statutPaiement}</li>
-                <li key={famille.id}>Membres :
-                  <div>
-                    {famille.membres.map((membre, index) => (
-                      <ul key={index}>
-                        <li>
-                          {membre.nom} {membre.prenom}
-                        </li>
-                      </ul>
-                    ))}
-                  </div>
-
-                </li>
-
-              </ul>
+              <Link className="btn" href={`/famille/${famille.id}`}>
+                CONSULTER
+              </Link>
             </div>
-            <Link className="btn" href={`/famille/${famille.id}`}>
-              CONSULTER
-            </Link>
-          </div>
-        ))}
+          ))}
 
-
-      </div>
+        </div>
+      }
     </Wrapper>
   );
 }

@@ -1,11 +1,14 @@
 import { IFamille } from '@/models/interfaceFamilles'
-import { Pencil } from 'lucide-react'
+import { Pencil, Trash } from 'lucide-react'
 import React, { useState } from 'react'
 import UpdateFamilleModal, { formatDateToYYYYMMDD } from './updateFamille'
+import DeleteFamilleModal from './deleteFamilleModal'
+
 
 interface IProps {
   famille: IFamille
   setFamilleIsUpdated: any
+  deleteFamille: any
 }
 
 export function formatDateToDDMMYYYY(date) {
@@ -16,9 +19,23 @@ export function formatDateToDDMMYYYY(date) {
   const day = String(d.getDate()).padStart(2, '0');
   return `${day}-${month}-${year}`;
 }
-const DetailFamilleCart = ({ famille, setFamilleIsUpdated }: IProps) => {
+const DetailFamilleCart = ({ famille, setFamilleIsUpdated, deleteFamille }: IProps) => {
   const [currentFamille, setCurrentFamille] = useState<IFamille>();
+  const [openModalDelete, setOpenModalDelete] = useState<boolean>(false);
 
+  const onDeleteModal = () => {
+    setOpenModalDelete(true)
+  }
+
+  const cancelDeleteFamille = () => {
+    setOpenModalDelete(false)
+  }
+
+  const confirmDeleteFamille = (id) => {
+    deleteFamille(id)
+    setOpenModalDelete(false)
+
+  }
   return (
     <div className="border-base-300 border mb-6 max-w-lg rounded-lg">
       <div>
@@ -28,11 +45,17 @@ const DetailFamilleCart = ({ famille, setFamilleIsUpdated }: IProps) => {
 
               <span className="text-gray-500 text-xs">Type de famille : {famille.type.nom}</span>
 
-              <UpdateFamilleModal
-                famille={famille}
-                onUpdate={setCurrentFamille}
-                setFamilleIsUpdated={setFamilleIsUpdated}
-              />
+              <div className='flex gap-2'>
+                <UpdateFamilleModal
+                  famille={famille}
+                  onUpdate={setCurrentFamille}
+                  setFamilleIsUpdated={setFamilleIsUpdated}
+                />
+                <button onClick={onDeleteModal}>
+                  <Trash className="h-4 w-4" />
+                </button>
+                {openModalDelete && <DeleteFamilleModal confirmDeleteFamille={confirmDeleteFamille} cancelDeleteFamille={cancelDeleteFamille} id={currentFamille?.id} />}
+              </div>
 
             </div>
             <div className="flex justify-between">
