@@ -263,7 +263,7 @@ export default function NouvelleFamille() {
       {loading ?
         <Loader loading={loading} />
         :
-        <div className="max-w-2xl mx-auto p-4">
+        <div className="max-w-2xl mx-auto ">
           <h1 className="text-2xl font-bold mb-4">Créer une nouvelle famille  <div className="tooltip  tooltip-rigt" data-tip="Pour pouvoir ajouter un membre, il faut sélectionner le type de famille : regroupé">
             <Info size={20} />
           </div></h1>
@@ -518,12 +518,12 @@ export default function NouvelleFamille() {
             </fieldset>
             <div className='flex justify-end'>
 
-              <button type="submit" className="bg-accent text-white px-4 py-2 rounded">
+              <button type="submit" className="btn btn-m bg-[#00B074] text-white">
                 Créer la famille
               </button>
             </div>
           </form>
-        </div>
+        </div >
       }
     </Wrapper >
   );

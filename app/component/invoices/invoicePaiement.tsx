@@ -97,10 +97,10 @@ export const InvoicePaiement = ({ famille }) => {
               ATTESTATION D'ADHÉSION
             </p>
             <p className="mb-2">
-              Nous, Association SOLIDARITE SEDDOUK, située à [Adresse de l'association], attestons que <strong>
+              Nous, Association SOLIDARITE SEDDOUK, située à [Adresse de l'association], attestons que <strong className='uppercase'>
                 {famille?.representant?.nom} {famille?.representant?.prenom}
               </strong>, représentant légal de la famille
-              <strong>{' ' + famille?.representant?.nom}</strong>, est adhérent de notre association pour l'année en cours.
+              <strong className='uppercase'>{' ' + famille?.representant?.nom}</strong>, est adhérent de notre association pour l'année en cours.
             </p>
             <p className="mb-2">
               L'adhésion a été enregistrée en date du <strong>
@@ -118,7 +118,7 @@ export const InvoicePaiement = ({ famille }) => {
 
             {famille?.membres?.map((membre, index) => (
               <div key={index}>
-                <p  >{membre.nom} {membre.prenom}</p>
+                <p className='uppercase'>{membre.nom} {membre.prenom}</p>
               </div>
 
             ))}
