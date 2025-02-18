@@ -101,7 +101,7 @@ const UpdateFamilleModal: React.FC<UpdateFamilleProps> = ({ famille, onUpdate, s
   return (
     <>
       <button onClick={() => setIsModalOpen(true)} className="text-gray-500 hover:text-gray-700">
-        <Pencil className="h-4 w-4" />
+        <Pencil size={20} />
       </button>
 
       {isModalOpen && (

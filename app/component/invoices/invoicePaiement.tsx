@@ -56,16 +56,9 @@ export const InvoicePaiement = ({ famille }) => {
     }
   };
   return (
-    <div className="mt-4">
-      <div className="border-2 border-dashed rounded-xl p-5">
-        <button
-          onClick={handleDownloadPdf}
-          disabled={isGenerating}
-          className="btn btn-sm btn-accent m-4"
-        >
-          {isGenerating ? 'Génération...' : 'Télécharger PDF'}
-          <ArrowDownFromLine className="w-4" />
-        </button>
+    <div className="">
+      <div className="border-2 border-dashed rounded-xl">
+
 
         <div
           className="p-12 bg-white rounded-lg shadow-md"

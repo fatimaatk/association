@@ -1,48 +1,18 @@
 
 "use client";
 
-import { getFamilies } from "@/services/familles";
+
 import Wrapper from "./component/Wrapper"
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Trash2 } from "lucide-react";
-import confetti from "canvas-confetti";
+import { ChartNoAxesCombined, File, HomeIcon, UserRoundPlus } from "lucide-react";
 import Loader from "./component/loader";
 import { useRouter } from "next/navigation";
+import { IFamille } from "@/models/interfaceFamilles";
 
 export default function Home() {
-  const router = useRouter();
-  const [familles, setFamilles] = useState<any>([])
+  const [familles, setFamilles] = useState<IFamille[]>([])
 
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const deleteFamille = async (id) => {
-    try {
-      const payload = {
-        id
-      };
-
-      const res = await fetch(`/api/familles/${id}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        throw new Error("Famille non supprimée");
-      }
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-        zIndex: 9999,
-      });
-      const data = await res.json();
-      router.push('/')
-    } catch (error) {
-      console.error("Erreur lors du chargement des factures", error);
-    }
-  }
 
   const fetchFamille = async () => {
     try {
@@ -70,46 +40,77 @@ export default function Home() {
       {loading ?
         <Loader loading={loading} />
         :
-        <div className='grid grid-cols-4 gap-4'>
-          {familles?.map((famille) => (
-            <div className="card bg-base-100 max-w-96 shadow-xl" key={famille.id}>
-              <div className="card-body">
-                <div className='flex justify-between'>
+        <div className=" flex-1">
 
-                  <h2 className="card-title">{famille.representant.nom} {famille.representant.prenom} </h2>
-                  <button onClick={() => deleteFamille(famille.id)}>
+          <h1 className="text-2xl font-semibold mb-4">Accueil</h1>
+          <p className="text-gray-600 mb-6">Bienvenue dans votre tableau de bord</p>
 
-                    <Trash2 />
-                  </button>
-                </div>
-                <ul >
-                  <li >Type de famille : {famille.type.nom}</li>
-                  <li >Montant du paiement : {famille.cotisation?.montant}</li>
-                  <li >Statut du paiement : {famille.cotisation?.facture?.statutPaiement}</li>
-                  <li key={famille.id}>Membres :
-                    <div>
-                      {famille.membres.map((membre, index) => (
-                        <ul key={index}>
-                          <li>
-                            {membre.nom} {membre.prenom}
-                          </li>
-                        </ul>
-                      ))}
-                    </div>
-
-                  </li>
-
-                </ul>
-              </div>
-              <Link className="btn" href={`/famille/${famille.id}`}>
-                CONSULTER
-              </Link>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="bg-white p-5 shadow-md rounded-lg text-center">
+              <HomeIcon size={40} className="text-[#00B074] mx-auto" />
+              <h2 className="text-2xl font-bold">{familles.length}</h2>
+              <p className="text-gray-500">Nombre de familles</p>
             </div>
-          ))}
-
+            <div className="bg-white p-5 shadow-md rounded-lg text-center">
+              <UserRoundPlus size={40} className="text-[#00B074] mx-auto" />
+              <h2 className="text-2xl font-bold">357</h2>
+              <p className="text-gray-500">Nombre de membres</p>
+            </div>
+            <div className="bg-white p-5 shadow-md rounded-lg text-center">
+              <File size={40} className="text-[#00B074] mx-auto" />
+              <h2 className="text-2xl font-bold">65</h2>
+              <p className="text-gray-500">Paiement en attente</p>
+            </div>
+            <div className="bg-white p-5 shadow-md rounded-lg text-center">
+              <ChartNoAxesCombined size={40} className="text-[#00B074] mx-auto" />
+              <h2 className="text-2xl font-bold">320€</h2>
+              <p className="text-gray-500">Trésorerie en cours</p>
+            </div>
+          </div>
         </div>
+
       }
     </Wrapper>
   );
 }
 
+
+
+{/* <div className='grid grid-cols-4 gap-4'>
+  {familles?.map((famille) => (
+    <div className="card bg-base-100 max-w-96 shadow-xl" key={famille.id}>
+      <div className="card-body">
+        <div className='flex justify-between'>
+
+          <h2 className="card-title">{famille.representant.nom} {famille.representant.prenom} </h2>
+          <button onClick={() => deleteFamille(famille.id)}>
+
+            <Trash2 />
+          </button>
+        </div>
+        <ul >
+          <li >Type de famille : {famille.type.nom}</li>
+          <li >Montant du paiement : {famille.cotisation?.montant}</li>
+          <li >Statut du paiement : {famille.cotisation?.facture?.statutPaiement}</li>
+          <li key={famille.id}>Membres :
+            <div>
+              {famille.membres.map((membre, index) => (
+                <ul key={index}>
+                  <li>
+                    {membre.nom} {membre.prenom}
+                  </li>
+                </ul>
+              ))}
+            </div>
+
+          </li>
+
+        </ul>
+      </div>
+      <Link className="btn" href={`/famille/${famille.id}`}>
+        CONSULTER
+      </Link>
+    </div>
+  ))}
+
+</div> */}

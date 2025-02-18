@@ -7,8 +7,9 @@ import Loader from "@/app/component/loader";
 import Wrapper from "@/app/component/Wrapper";
 import { IFamille } from "@/models/interfaceFamilles";
 import confetti from "canvas-confetti";
+import { ArrowDownFromLine, File, FileUser } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 
 
@@ -31,8 +32,6 @@ export default function FamillePage() {
       }
       const data = await res.json();
       setFamille(data);
-      setTimeout(() => { setLoading(false); }, 2000)
-
       setFamilleIsUpdated(false)
     } catch (error) {
       console.error("Erreur lors du chargement des factures", error);
@@ -85,28 +84,75 @@ export default function FamillePage() {
     return <h1>Famille non trouvée</h1>;
   }
 
-  const handleNewInvoice = () => {
-    setNewInvoice(true)
-  }
+  const factureRef = useRef<HTMLDivElement>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleDownloadPdf = async () => {
+    const element = factureRef.current;
+    if (element) {
+      setIsGenerating(true);
+      try {
+        const canvas = await html2canvas(element, { scale: 3, useCORS: true });
+        const imgData = canvas.toDataURL('image/png');
+
+        const pdf = new jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'A4',
+        });
+
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`facture-${famille.representant.nom}.pdf`);
+
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          zIndex: 9999,
+        });
+      } catch (error) {
+        console.error('Erreur lors de la génération du PDF :', error);
+      } finally {
+        setIsGenerating(false);
+      }
+    }
+  };
+
   return (
     <Wrapper>
       {loading ?
         <Loader loading={loading} />
         :
-        <div className="flex flex-row gap-12">
-          <div className="flex flex-col space-y-4 basis-1/3">
+        <div className=" flex-1    rounded-lg">
+          <div className="relative mb-6">
+            <div className="flex justify-between items-center">
 
-            <h1 className="text-lg font-bold">Tableau de bord</h1 >
-            <DetailFamilleCart famille={famille} setFamilleIsUpdated={setFamilleIsUpdated} deleteFamille={deleteFamille} />
-            <AttestationPaiement handleNewInvoice={handleNewInvoice} />
-          </div>
-          {newInvoice
-            &&
-            <div className="basis-2/3 mt-6">
+              <h1 className="text-2xl font-semibold uppercase flex items-center gap-2"> <FileUser size={30} color='#00B074' />{famille?.representant?.nom} {famille?.representant?.prenom}</h1 >
 
-              <InvoicePaiement famille={famille} />
+              <button
+                onClick={handleDownloadPdf}
+                disabled={isGenerating}
+                className="btn btn-m bg-[#00B074] text-white  "
+              >
+                {isGenerating ? 'Génération...' : 'Télécharger PDF'}
+                <ArrowDownFromLine className="w-4" />
+              </button>
             </div>
-          }
+            <div className="flex flex-row gap-12 mt-5">
+
+
+              <DetailFamilleCart famille={famille} setFamilleIsUpdated={setFamilleIsUpdated} deleteFamille={deleteFamille} />
+
+              <div className="basis-2/3 ">
+
+                <InvoicePaiement famille={famille} factureRef={factureRef} />
+              </div>
+
+            </div>
+          </div>
         </div>
       }
     </Wrapper>

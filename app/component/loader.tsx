@@ -8,7 +8,7 @@ interface IProps {
 const Loader = ({ loading }: IProps) => {
   return (
     <div>  {loading &&
-      <div className="flex items-center justify-center h-screen bg-opacity-70 bg-white">
+      <div className="flex items-center justify-center h-screen ">
         <SyncLoader color="#f16b1f" />
       </div>}</div>
   )
