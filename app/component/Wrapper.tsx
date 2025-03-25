@@ -8,13 +8,13 @@ type WrapperProps = {
 
 const Wrapper = ({ children }: WrapperProps) => {
   return (
-    <div className="flex bg-[#f3f2f7] h-screen">
-
+    <div className="bg-[#f3f2f7] min-h-screen">
       <Sidebar />
-
-      <div className="flex-1 px-5 md:px-[10%] mt-8 mb-10 ml-64">
+      <div className="flex-1 px-4 md:px-8 lg:px-[10%] pt-20 md:pt-8 pb-10 md:ml-64 bg-[#f3f2f7]">
         <SearchBar />
-        {children}
+        <main className="mt-4">
+          {children}
+        </main>
       </div>
     </div>
   )

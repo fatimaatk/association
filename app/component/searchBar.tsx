@@ -1,16 +1,15 @@
-
 "use client";
 
 import Link from "next/link";
-import { Search, } from "lucide-react";
+import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { IFamille } from "@/models/interfaceFamilles";
-
 
 const SearchBar = () => {
   const [familles, setFamilles] = useState<IFamille[]>([])
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [searchResults, setSearchResults] = useState<IFamille[]>([]);
+  const [isFocused, setIsFocused] = useState(false);
 
   const fetchFamille = async () => {
     try {
@@ -29,40 +28,54 @@ const SearchBar = () => {
     fetchFamille()
   }, [])
 
-
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value.toLowerCase();
     setSearchTerm(value);
 
     if (value.length > 0) {
       setSearchResults(familles.filter(family =>
-        family.representant.nom.toLowerCase().includes(value) || // Rechercher dans le nom du représentant
-        family.adresse.toLowerCase().includes(value) || // Rechercher dans l'adresse
-        family.adresseEmail.toLowerCase().includes(value) // Rechercher dans l'email
+        family.chefFamille.nom.toLowerCase().includes(value) ||
+        family.chefFamille.prenom.toLowerCase().includes(value) ||
+        family.adresse.toLowerCase().includes(value) ||
+        family.adresseEmail.toLowerCase().includes(value)
       ));
     } else {
       setSearchResults([]);
     }
   };
+
   return (
-    <div className="relative mb-12 mt-6">
-      <input
-        type="text"
-        placeholder="Rechercher une famille"
-        value={searchTerm}
-        onChange={handleSearch}
-        className="w-full p-3 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00B074]"
-      />
-      <Search className="absolute left-3 top-3 text-gray-500" size={20} />
-      {searchResults.length > 0 && (
-        <div className="absolute w-full bg-white shadow-md mt-1 rounded-md max-h-40 overflow-auto">
-          {searchResults.map((result, index) => (
+    <div className="relative mb-6 md:mb-12 mt-4 md:mt-6">
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="Rechercher une famille..."
+          value={searchTerm}
+          onChange={handleSearch}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setTimeout(() => setIsFocused(false), 200)}
+          className="w-full p-3 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00B074] text-sm md:text-base"
+        />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
+      </div>
+
+      {searchResults.length > 0 && isFocused && (
+        <div className="z-50 absolute w-full bg-white shadow-lg mt-1 rounded-md max-h-[60vh] md:max-h-96 overflow-auto border border-gray-200">
+          <div className="p-2 text-sm text-gray-500 border-b border-gray-200">
+            {searchResults.length} résultat{searchResults.length > 1 ? 's' : ''}
+          </div>
+          {searchResults.map((result) => (
             <Link
-              key={index}
+              key={result.id}
               href={`/famille/${result.id}`}
-              className="block p-2 hover:bg-gray-100"
+              className="block p-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
             >
-              {result.representant.nom} {result.representant.prenom}
+              <div className="font-medium text-gray-900">
+                {result.chefFamille.nom} {result.chefFamille.prenom}
+              </div>
+              <div className="text-sm text-gray-500 mt-1">
+                {result.adresse}
+              </div>
             </Link>
           ))}
         </div>

@@ -1,6 +1,6 @@
 // Types d'énumération
-export enum StatutPaiement { ACQUITTE, EN_ATTENTE }
-export enum TypePaiement { ESPECE, VIREMENT, CHEQUE };
+export type StatutPaiement = 'ACQUITTE' | 'EN_ATTENTE';
+export type TypePaiement = 'ESPECE' | 'VIREMENT' | 'CHEQUE';
 
 // Interface pour un membre de la famille
 export interface IMembre {

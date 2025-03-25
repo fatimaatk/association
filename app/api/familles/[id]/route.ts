@@ -1,13 +1,13 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { IMembres } from "@/models/interfaceFamilles";
 
-import { prisma } from '@/lib/prisma';
-import { NextResponse } from 'next/server'
-
-
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
   try {
-    if (!params.id) return;
+    const { id } = await context.params;
+    if (!id) return new Response("Missing ID", { status: 400 });
     const famille = await prisma.famille.findUnique({
-      where: { id: params.id },
+      where: { id: id },
       include: {
         type: {
           select: {
@@ -15,12 +15,11 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
             nom: true,
           }
         },
-        representant: {
+        chefFamille: {
           select: {
             id: true,
             nom: true,
             prenom: true,
-
           }
         },
         membres: {
@@ -52,8 +51,10 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       return NextResponse.json({ error: "Famille non trouvée" }, { status: 404 })
     }
 
+    // On envoie les valeurs d'énumération directement sans conversion
     return NextResponse.json(famille)
   } catch (error) {
+    console.error('Erreur lors de la récupération de la famille :', error);
     return NextResponse.json({ error: "Erreur lors du chargement des données", }, { status: 500 })
   }
 }
@@ -66,7 +67,7 @@ export async function DELETE(req: Request) {
     const existingFamille = await prisma.famille.findUnique({
       where: { id: body.id },
       include: {
-        representant: {
+        chefFamille: {
           select: {
             nom: true,
             prenom: true
@@ -83,11 +84,11 @@ export async function DELETE(req: Request) {
     }
 
     // Mise à jour de la famille si elle existe
-    const deletedFamille = await prisma.famille.delete({
+    await prisma.famille.delete({
       where: { id: body.id },
     });
 
-    return NextResponse.json(`La famille de ${existingFamille.representant.nom} ${existingFamille.representant.prenom} a bien été supprimée.`, { status: 200 });
+    return NextResponse.json(`La famille de ${existingFamille.chefFamille.nom} ${existingFamille.chefFamille.prenom} a bien été supprimée.`, { status: 200 });
   } catch (error) {
     console.error('Famille update error:', error);
     return NextResponse.json({
@@ -100,9 +101,13 @@ export async function DELETE(req: Request) {
 
 export async function PUT(req: Request) {
   const body = await req.json();
-  const statutPaiementValue = body.cotisation.facture?.statutPaiement ?? "non payé";
-  const typePaiementValue = body.cotisation.facture?.typePaiement ?? null;
 
+  // Conversion des valeurs en énumérations
+  const statutPaiementValue = body.cotisation?.facture?.statutPaiement;
+  const typePaiementValue = body.cotisation?.facture?.typePaiement
+    ;
+
+  console.log(body.cotisation?.facture?.statutPaiement)
   try {
     // Vérifiez si la famille existe déjà
     const existingFamille = await prisma.famille.findUnique({
@@ -122,9 +127,9 @@ export async function PUT(req: Request) {
         typeFamilleId: body.typeFamilleId,
         adresse: body.adresse,
         adresseEmail: body.adresseEmail,
-        representantId: body.representant.id,
+        chefFamilleId: body.chefFamille.id,
         membres: {
-          update: body.membres.map((membre: any) => ({
+          update: body.membres.map((membre: IMembres) => ({
             where: { id: membre.id },
             data: {
               nom: membre.nom,
@@ -167,7 +172,7 @@ export async function PUT(req: Request) {
       },
       include: {
         type: true,
-        representant: true,
+        chefFamille: true,
         membres: true,
         cotisation: {
           include: {

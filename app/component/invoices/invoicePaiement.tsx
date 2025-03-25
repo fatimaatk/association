@@ -1,10 +1,14 @@
-import html2canvas from 'html2canvas-pro';
-import React, { useRef, useState } from 'react';
-import jsPDF from 'jspdf';
-import confetti from 'canvas-confetti';
-import { ArrowDownFromLine } from 'lucide-react';
+import { IFamille } from "@/models/interfaceFamilles";
+import { useState, ChangeEvent } from "react";
+import { Textarea } from "../ui/textarea";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { Button } from "../ui/button";
+import { Pencil } from "lucide-react";
 
-function formatDate(dateString: string): string {
+function formatDate(dateString: Date | null | undefined | string): string {
+  if (!dateString) return "";
   const date = new Date(dateString);
   const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'long', year: 'numeric' };
   return date.toLocaleDateString('fr-FR', options);
@@ -18,64 +22,150 @@ function getFormattedDate(): string {
     year: 'numeric',
   });
 }
-export const InvoicePaiement = ({ famille }) => {
-  const factureRef = useRef<HTMLDivElement>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
 
-  const handleDownloadPdf = async () => {
-    const element = factureRef.current;
-    if (element) {
-      setIsGenerating(true);
-      try {
-        const canvas = await html2canvas(element, { scale: 3, useCORS: true });
-        const imgData = canvas.toDataURL('image/png');
+interface IProps {
+  famille: IFamille;
+  factureRef: React.RefObject<HTMLDivElement | null>;
+}
 
-        const pdf = new jsPDF({
-          orientation: 'portrait',
-          unit: 'mm',
-          format: 'A4',
-        });
+interface CustomContent {
+  associationName: string;
+  associationAddress: string;
+  associationCity: string;
+  associationSiret: string;
+  associationPhone: string;
+  attestationTitle: string;
+  attestationContent: string;
+  signatureTitle: string;
+}
 
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+export const InvoicePaiement = ({ famille, factureRef }: IProps) => {
+  const [customContent, setCustomContent] = useState<CustomContent>({
+    associationName: "Association SOLIDARITE SEDDOUK",
+    associationAddress: "14 rue Félix Martigny",
+    associationCity: "02880 CUFFIES",
+    associationSiret: "800 000 000 000 00",
+    associationPhone: "06 00 00 00 00",
+    attestationTitle: "ATTESTATION D'ADHÉSION",
+    attestationContent: `Nous, Association SOLIDARITE SEDDOUK, située à [Adresse de l'association], attestons que ${famille?.chefFamille?.nom} ${famille?.chefFamille?.prenom}, représentant légal de la famille ${famille?.chefFamille?.nom}, est adhérent de notre association pour l&apos;année en cours.
 
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`facture-${famille.representant.nom}.pdf`);
+L&apos;adhésion a été enregistrée en date du ${formatDate(famille?.cotisation?.facture?.datePaiement)} accompagnée du paiement de la cotisation d&apos;un montant de ${famille?.cotisation?.montant} euros, réglé par ${famille?.cotisation?.facture?.typePaiement}.`,
+    signatureTitle: "Signature du représentant"
+  });
 
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
-          zIndex: 9999,
-        });
-      } catch (error) {
-        console.error('Erreur lors de la génération du PDF :', error);
-      } finally {
-        setIsGenerating(false);
-      }
-    }
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: keyof CustomContent) => {
+    setCustomContent(prev => ({ ...prev, [field]: e.target.value }));
   };
+
   return (
-    <div className="">
+    <div className="w-full space-y-6">
+      {/* Bouton d'édition et Modal */}
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline" className="w-full sm:w-auto">
+            <Pencil className="w-4 h-4 mr-2" />
+            Éditer le PDF
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white">
+          <DialogHeader className="border-b pb-4">
+            <DialogTitle className="text-2xl font-bold text-gray-900">Personnaliser le contenu du PDF</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">Nom de l&apos;association</Label>
+                <Input
+                  value={customContent.associationName}
+                  onChange={(e) => handleInputChange(e, 'associationName')}
+                  className="mt-1 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">Adresse de l&apos;association</Label>
+                <Input
+                  value={customContent.associationAddress}
+                  onChange={(e) => handleInputChange(e, 'associationAddress')}
+                  className="mt-1 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">Ville</Label>
+                <Input
+                  value={customContent.associationCity}
+                  onChange={(e) => handleInputChange(e, 'associationCity')}
+                  className="mt-1 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">SIRET</Label>
+                <Input
+                  value={customContent.associationSiret}
+                  onChange={(e) => handleInputChange(e, 'associationSiret')}
+                  className="mt-1 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">Téléphone</Label>
+                <Input
+                  value={customContent.associationPhone}
+                  onChange={(e) => handleInputChange(e, 'associationPhone')}
+                  className="mt-1 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">Titre de l&apos;attestation</Label>
+                <Input
+                  value={customContent.attestationTitle}
+                  onChange={(e) => handleInputChange(e, 'attestationTitle')}
+                  className="mt-1 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700">Contenu de l&apos;attestation</Label>
+              <Textarea
+                value={customContent.attestationContent}
+                onChange={(e) => handleInputChange(e, 'attestationContent')}
+                className="mt-1 h-32 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700">Titre de la signature</Label>
+              <Input
+                value={customContent.signatureTitle}
+                onChange={(e) => handleInputChange(e, 'signatureTitle')}
+                className="mt-1 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Aperçu du PDF */}
       <div className="border-2 border-dashed rounded-xl">
-
-
         <div
-          className="p-12 bg-white rounded-lg shadow-md"
+          className="p-4 sm:p-8 md:p-12 bg-white rounded-lg shadow-md"
           ref={factureRef}
           data-pdf-content
-        // style={{ maxWidth: '210mm', margin: '0 auto' }}
         >
           {/* En-tête */}
-          <div className="flex justify-between items-center ">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
             <div className="flex flex-col">
               <div className="flex items-center">
                 <div>
-                  <p className="text-sm font-bold italic">Association SOLIDARITE SEDDOUK</p>
-                  <p className="text-sm text-gray-500">14 rue Félix Martigny</p>
-                  <p className="text-sm text-gray-500">02880 CUFFIES</p>
-                  <p className="text-sm text-gray-500">SIRET : </p>
-                  <p className="text-sm text-gray-500">Téléphone : </p>
+                  <p className="text-sm font-bold italic">{customContent.associationName}</p>
+                  <p className="text-sm text-gray-500">{customContent.associationAddress}</p>
+                  <p className="text-sm text-gray-500">{customContent.associationCity}</p>
+                  <p className="text-sm text-gray-500">SIRET : {customContent.associationSiret}</p>
+                  <p className="text-sm text-gray-500">Téléphone : {customContent.associationPhone}</p>
                 </div>
               </div>
             </div>
@@ -85,52 +175,41 @@ export const InvoicePaiement = ({ famille }) => {
           <div className="flex justify-end mb-6">
             <div className="text-left">
               <p className="text-sm font-bold italic">
-                {famille?.representant?.nom} {famille?.representant?.prenom}
+                {famille?.chefFamille?.nom} {famille?.chefFamille?.prenom}
               </p>
               <p className="text-sm text-gray-500">{famille?.adresse}</p>
             </div>
           </div>
 
           {/* Détails du paiement */}
-          <div className=" border-gray-300">
-            <p className="text-xl font-bold mb-2">
-              ATTESTATION D'ADHÉSION
+          <div className="border-gray-300">
+            <p className="text-lg sm:text-xl font-bold mb-4">
+              {customContent.attestationTitle}
             </p>
-            <p className="mb-2">
-              Nous, Association SOLIDARITE SEDDOUK, située à [Adresse de l'association], attestons que <strong className='uppercase'>
-                {famille?.representant?.nom} {famille?.representant?.prenom}
-              </strong>, représentant légal de la famille
-              <strong className='uppercase'>{' ' + famille?.representant?.nom}</strong>, est adhérent de notre association pour l'année en cours.
-            </p>
-            <p className="mb-2">
-              L'adhésion a été enregistrée en date du <strong>
-                {formatDate(famille?.cotisation?.facture?.datePaiement) + ' '}
-              </strong>
-              accompagnée du paiement de la cotisation d'un montant de <strong>
-                {famille?.cotisation?.montant} euros
-              </strong>, réglé par {famille?.cotisation?.facture?.typePaiement}.
-            </p>
+            <div className="space-y-4 text-sm sm:text-base whitespace-pre-line">
+              {customContent.attestationContent}
+            </div>
           </div>
 
           {/* Membres de la famille */}
-          <div className="mb-4 mt-10">
-            <p className="font-bold ">Membres de la famille : </p>
-
-            {famille?.membres?.map((membre, index) => (
-              <div key={index}>
-                <p className='uppercase'>{membre.nom} {membre.prenom}</p>
-              </div>
-
-            ))}
+          <div className="mt-8 sm:mt-10">
+            <p className="font-bold mb-2">Membres de la famille :</p>
+            <div className="space-y-1">
+              {famille?.membres?.map((membre, index) => (
+                <p key={index} className="uppercase text-sm sm:text-base">
+                  {membre.nom} {membre.prenom}
+                </p>
+              ))}
+            </div>
           </div>
 
           {/* Signature */}
-          <div className="text-right mt-12">
+          <div className="text-right mt-8 sm:mt-12">
             <p className="text-sm italic mb-4">Fait à Cuffies, le {getFormattedDate()}</p>
-            <p className="font-bold">Signature du représentant</p>
+            <p className="font-bold">{customContent.signatureTitle}</p>
           </div>
         </div>
-      </div >
-    </div >
+      </div>
+    </div>
   );
 };

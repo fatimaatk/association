@@ -1,7 +1,12 @@
-import { TriangleAlert } from 'lucide-react'
+
 import React from 'react'
 
-const DeleteFamilleModal = ({ confirmDeleteFamille, cancelDeleteFamille, id }) => {
+interface IProps {
+  confirmDeleteFamille: (id: string) => void;
+  cancelDeleteFamille: () => void;
+  id: string;
+}
+const DeleteFamilleModal = ({ confirmDeleteFamille, cancelDeleteFamille, id }: IProps) => {
   return (
 
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ">

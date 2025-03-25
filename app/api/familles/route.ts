@@ -13,7 +13,7 @@ export async function GET() {
             nom: true,
           }
         },
-        representant: {
+        chefFamille: {
           select: {
             id: true,
             nom: true,
@@ -50,6 +50,7 @@ export async function GET() {
 
     return NextResponse.json(familles)
   } catch (error) {
+    console.error('Erreur lors dans la récupération de la famille :', error);
     return NextResponse.json({ error: "Erreur lors du chargement des données", }, { status: 500 })
   }
 }

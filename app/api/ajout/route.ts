@@ -1,16 +1,15 @@
+import { IMembres } from '@/models/interfaceFamilles';
 import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
-export async function POST(req, res) {
+export async function POST(req: Request) {
   const body = await req.json();
-  console.log(body.type)
   try {
     const {
-      type,
       typeFamilleId,
-      representant,
+      chefFamille,
       membres,
       adresse,
       adresseEmail,
@@ -30,18 +29,18 @@ export async function POST(req, res) {
         adresseEmail,
         // Créer tous les membres, y compris le représentant
         membres: {
-          create: membres.map(membre => ({
+          create: membres.map((membre: IMembres) => ({
             nom: membre.nom,
             prenom: membre.prenom,
             dateNaissance: new Date(membre.dateNaissance),
           })),
         },
         // La première entrée est le représentant, on crée la relation
-        representant: {
+        chefFamille: {
           create: {
-            nom: representant.nom,
-            prenom: representant.prenom,
-            dateNaissance: new Date(representant.dateNaissance),
+            nom: chefFamille.nom,
+            prenom: chefFamille.prenom,
+            dateNaissance: new Date(chefFamille.dateNaissance),
           }
         },
         // Créer la cotisation et la facture si présentes
@@ -52,8 +51,8 @@ export async function POST(req, res) {
               ...(cotisation.facture && {
                 facture: {
                   create: {
-                    typePaiement: cotisation.facture.typePaiement,
-                    statutPaiement: cotisation.facture.statutPaiement,
+                    typePaiement: cotisation.facture.typePaiement || null,
+                    statutPaiement: cotisation.facture.statutPaiement || null,
                     datePaiement: cotisation.facture.datePaiement
                       ? new Date(cotisation.facture.datePaiement)
                       : null,
@@ -65,7 +64,7 @@ export async function POST(req, res) {
         }),
       },
       include: {
-        representant: true,
+        chefFamille: true,
         membres: true,
         cotisation: {
           include: {
@@ -78,6 +77,6 @@ export async function POST(req, res) {
     return NextResponse.json(nouvelleFamille, { status: 201 });
   } catch (error) {
     console.error('Erreur lors de la création de la famille :', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }

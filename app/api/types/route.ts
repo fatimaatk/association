@@ -18,6 +18,7 @@ export async function GET() {
 
     return NextResponse.json(types)
   } catch (error) {
+    console.error('Erreur lors du chargement des données :', error);
     return NextResponse.json({ error: "Erreur lors du chargement des données", }, { status: 500 })
   }
 }
