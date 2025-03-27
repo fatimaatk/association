@@ -1,4 +1,4 @@
-import { IFamilleImport, IMembreImport } from "@/models/interfaceFamilles";
+import { IFamilleImport, IMembreImport, StatutPaiement, TypePaiement, } from "@/models/interfaceFamilles";
 import { PrismaClient } from "@prisma/client";
 import * as XLSX from "xlsx";
 
@@ -8,7 +8,21 @@ function generateCustomId(nom: string, prenom: string, dateNaissance: Date): str
   return `${nom}_${prenom}_${dateNaissance}`.toLowerCase().replace(/\s+/g, '');
 }
 
+export function getTypePaiement(value: string | null | undefined): TypePaiement | null {
+  if (!value) return null;
+  const upper = value.toUpperCase();
+  return Object.values(TypePaiement).includes(upper as TypePaiement)
+    ? upper as TypePaiement
+    : null;
+}
 
+export function getStatutPaiement(value: string | null | undefined): StatutPaiement | null {
+  if (!value) return null;
+  const upper = value.toUpperCase();
+  return Object.values(StatutPaiement).includes(upper as StatutPaiement)
+    ? upper as StatutPaiement
+    : null;
+}
 
 export async function importExcel(fileBuffer: Buffer) {
   try {
@@ -85,8 +99,8 @@ export async function importExcel(fileBuffer: Buffer) {
                 montant: parseFloat((famille.montant_cotisation ?? 0).toString()) || 0,
                 facture: {
                   create: {
-                    typePaiement: famille.typePaiement || null,
-                    statutPaiement: famille.statutPaiement || null,
+                    typePaiement: getTypePaiement(famille.typePaiement),
+                    statutPaiement: getStatutPaiement(famille.statutPaiement),
                     datePaiement: famille.datePaiement ? new Date(famille.datePaiement) : null
                   }
                 }

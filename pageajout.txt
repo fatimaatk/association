@@ -1,0 +1,557 @@
+'use client';
+import { useEffect, useState } from 'react';
+import Wrapper from '../component/Wrapper';
+import { Info, Trash2 } from 'lucide-react';
+import confetti from 'canvas-confetti';
+import Loader from "@/app/component/loader";
+import { useRouter } from 'next/navigation';
+import { ITypeFamille } from '@/models/interfaceFamilles';
+
+// Types pour les données du formulaire
+interface MembreFormData {
+  nom: string;
+  prenom: string;
+  dateNaissance: string;
+}
+
+interface CotisationFormData {
+  montant: string;
+  facture: {
+    typePaiement?: string;
+    statutPaiement?: string;
+    datePaiement: string;
+  };
+}
+
+// Interface pour les erreurs
+interface FormErrors {
+  typeFamille?: string;
+  chefFamille?: {
+    nom?: string;
+    prenom?: string;
+    dateNaissance?: string;
+  };
+  adresse?: string;
+  adresseEmail?: string;
+  membres?: { [key: number]: { [key: string]: string } };
+  cotisation?: {
+    montant?: string;
+    facture?: {
+      typePaiement?: string;
+      statutPaiement?: string;
+    };
+  };
+  submit?: string;
+}
+
+export default function NouvelleFamille() {
+  const router = useRouter();
+  const [typeFamilleId, setTypeFamilleId] = useState('');
+  const [chefFamille, setRepresentant] = useState<MembreFormData>({
+    nom: '',
+    prenom: '',
+    dateNaissance: '',
+  });
+  const [membres, setMembres] = useState<MembreFormData[]>([]);
+  const [adresse, setAdresse] = useState('');
+  const [adresseEmail, setAdresseEmail] = useState('');
+  const [cotisation, setCotisation] = useState<CotisationFormData>({
+    montant: '',
+    facture: {
+      datePaiement: '',
+    },
+  });
+
+  const [types, setTypes] = useState([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [errors, setErrors] = useState<FormErrors>({});
+
+  const validateForm = () => {
+    const newErrors: FormErrors = {};
+
+    // ✅ Type de famille
+    if (!typeFamilleId) {
+      newErrors.typeFamille = 'Le type de famille est requis';
+    }
+
+    // ✅ Chef de famille
+    if (!chefFamille.nom) {
+      newErrors.chefFamille = { ...newErrors.chefFamille, nom: 'Le nom est requis' };
+    }
+    if (!chefFamille.prenom) {
+      newErrors.chefFamille = { ...newErrors.chefFamille, prenom: 'Le prénom est requis' };
+    }
+    if (!chefFamille.dateNaissance) {
+      newErrors.chefFamille = { ...newErrors.chefFamille, dateNaissance: 'La date de naissance est requise' };
+    }
+
+    // ✅ Adresse
+    if (!adresse) {
+      newErrors.adresse = "L'adresse est requise";
+    }
+
+    // ✅ Email
+    if (!adresseEmail) {
+      newErrors.adresseEmail = "L'adresse email est requise";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adresseEmail)) {
+      newErrors.adresseEmail = "L'adresse email n'est pas valide";
+    }
+
+    // ✅ Membres additionnels
+    if (membres.length > 0) {
+      const membresErrors: { [key: number]: { [key: string]: string } } = {};
+      membres.forEach((membre, index) => {
+        if (membre.nom || membre.prenom || membre.dateNaissance) {
+          const membreErrors: { [key: string]: string } = {};
+          if (!membre.nom) membreErrors.nom = 'Le nom est requis';
+          if (!membre.prenom) membreErrors.prenom = 'Le prénom est requis';
+          if (!membre.dateNaissance) membreErrors.dateNaissance = 'La date de naissance est requise';
+          if (Object.keys(membreErrors).length > 0) {
+            membresErrors[index] = membreErrors;
+          }
+        }
+      });
+      if (Object.keys(membresErrors).length > 0) {
+        newErrors.membres = membresErrors;
+      }
+    }
+
+    // ✅ Cotisation
+    const statut = cotisation.facture.statutPaiement;
+    const type = cotisation.facture.typePaiement;
+    const date = cotisation.facture.datePaiement;
+
+    if (cotisation.montant || type || statut) {
+      if (!cotisation.montant || isNaN(Number(cotisation.montant))) {
+        newErrors.cotisation = {
+          ...newErrors.cotisation,
+          montant: 'Un montant valide est requis',
+        };
+      }
+
+      if (!statut) {
+        newErrors.cotisation = {
+          ...newErrors.cotisation,
+          facture: {
+            ...newErrors.cotisation?.facture,
+            statutPaiement: 'Le statut de paiement est requis',
+          }
+        };
+      } else if (statut === "ACQUITTE") {
+        const factureErrors: { [key: string]: string } = {};
+
+        if (!type) {
+          factureErrors.typePaiement = 'Le type de paiement est requis';
+        }
+
+        if (!date) {
+          factureErrors.datePaiement = 'La date de paiement est requise';
+        }
+
+        if (Object.keys(factureErrors).length > 0) {
+          newErrors.cotisation = {
+            ...newErrors.cotisation,
+            facture: {
+              ...newErrors.cotisation?.facture,
+              ...factureErrors
+            }
+          };
+        }
+      }
+    }
+
+    setErrors(newErrors);
+    console.log('❌ erreurs formulaire :', newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+
+  // Function pour réinitialiser une erreur spécifique
+  const clearError = (path: string[]) => {
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      let current: Record<string, unknown> = newErrors;
+      for (let i = 0; i < path.length - 1; i++) {
+        if (!current[path[i]]) break;
+        current = current[path[i]] as Record<string, unknown>;
+      }
+      delete current[path[path.length - 1]];
+      return newErrors;
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    const membresComplets = [
+      {
+        nom: chefFamille.nom,
+        prenom: chefFamille.prenom,
+        dateNaissance: chefFamille.dateNaissance,
+        isRepresentant: true,
+      },
+      ...membres.filter(membre => membre.nom && membre.prenom && membre.dateNaissance)
+    ];
+
+    const type = types.filter((i: ITypeFamille) => i.id == typeFamilleId)[0];
+    const payload = {
+      type,
+      typeFamilleId,
+      chefFamille,
+      membres: membresComplets,
+      adresse,
+      adresseEmail,
+      cotisation: cotisation.montant ? {
+        montant: Number(cotisation.montant),
+        facture: {
+          typePaiement: cotisation.facture.typePaiement || undefined,
+          statutPaiement: cotisation.facture.statutPaiement || undefined,
+          datePaiement: cotisation.facture.datePaiement || undefined
+        }
+      } : null,
+    };
+
+    try {
+      const res = await fetch('/api/ajout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        throw new Error('Erreur lors de la création de la famille');
+      }
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        zIndex: 9999,
+      });
+      setTimeout(() => {
+        router.push('/')
+      }, 2500);
+    } catch (error) {
+      console.error(error);
+      setErrors({
+        ...errors,
+        submit: "Une erreur est survenue lors de la création de la famille"
+      });
+    }
+  };
+
+  // Autres fonctions existantes...
+  const fetchType = async () => {
+    try {
+      const res = await fetch(`/api/types`);
+      if (!res.ok) {
+        throw new Error("Type de familles non trouvée");
+      }
+      const data = await res.json();
+      setTypes(data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Erreur lors du chargement des types de familles", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchType();
+  }, []);
+
+  const ajouterMembre = () => {
+    setMembres([
+      ...membres,
+      {
+        nom: '',
+        prenom: '',
+        dateNaissance: '',
+      },
+    ]);
+  };
+
+  const supprimerMembre = (index: number) => {
+    setMembres(membres.filter((_, i) => i !== index));
+    clearError(['membres', index.toString()]);
+  };
+
+  const updateMembre = (index: number, field: keyof MembreFormData, value: string) => {
+    const nouveauxMembres = [...membres];
+    nouveauxMembres[index] = {
+      ...nouveauxMembres[index],
+      [field]: value,
+    };
+    setMembres(nouveauxMembres);
+    clearError(['membres', index.toString(), field]);
+  };
+
+  useEffect(() => {
+    if (!cotisation.facture.statutPaiement) {
+      setCotisation(prev => ({
+        ...prev,
+        facture: {
+          ...prev.facture,
+          statutPaiement: 'EN_ATTENTE'
+        }
+      }));
+    }
+  }, []);
+
+  const isEnAttente = cotisation.facture.statutPaiement === 'EN_ATTENTE';
+
+  return (
+    <Wrapper>
+      {loading ? (
+        <Loader loading={loading} />
+      ) : (
+        <div className="max-w-3xl mx-auto bg-white p-6 shadow-md rounded-xl">
+          <h1 className="text-2xl font-semibold mb-2 text-[#00B074] flex items-center gap-2">
+            Créer une nouvelle famille
+            <div className="tooltip tooltip-right" data-tip="Pour pouvoir ajouter un membre, il faut sélectionner le type de famille : regroupé">
+              <Info size={20} className="text-gray-500" />
+            </div>
+          </h1>
+          <p className="text-gray-600 mb-4">Veuillez remplir le formulaire ci-dessous.</p>
+
+          {errors.submit && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+              {errors.submit}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Type de Famille */}
+            <div className="border p-4 rounded-xl bg-gray-50">
+              <h2 className="font-semibold mb-2">Type de famille</h2>
+              <div className="flex flex-wrap gap-4">
+                {types.map((type: ITypeFamille, index: number) => (
+                  <label key={type.id} className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="typeFamilleId"
+                      value={type.id}
+                      defaultChecked={index === 0}
+                      className="radio border-gray-300"
+                      onChange={(e) => {
+                        setTypeFamilleId(e.target.value);
+                        clearError(['typeFamille']);
+                      }}
+                    />
+                    {type.nom}
+                  </label>
+                ))}
+              </div>
+              {errors.typeFamille && <p className="text-sm text-red-500 mt-2">{errors.typeFamille}</p>}
+            </div>
+
+            {/* Coordonnées Chef Famille */}
+            <div className="border p-4 rounded-xl bg-gray-50">
+              <h2 className="font-semibold mb-4">Représentant</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block mb-1">Nom*</label>
+                  <input
+                    type="text"
+                    value={chefFamille.nom}
+                    onChange={(e) => {
+                      setRepresentant({ ...chefFamille, nom: e.target.value });
+                      clearError(['chefFamille', 'nom']);
+                    }}
+                    className={`input input-bordered w-full ${errors.chefFamille?.nom ? 'border-red-500' : ''}`}
+                  />
+                  {errors.chefFamille?.nom && <p className="text-sm text-red-500">{errors.chefFamille.nom}</p>}
+                </div>
+                <div>
+                  <label className="block mb-1">Prénom*</label>
+                  <input
+                    type="text"
+                    value={chefFamille.prenom}
+                    onChange={(e) => {
+                      setRepresentant({ ...chefFamille, prenom: e.target.value });
+                      clearError(['chefFamille', 'prenom']);
+                    }}
+                    className={`input input-bordered w-full ${errors.chefFamille?.prenom ? 'border-red-500' : ''}`}
+                  />
+                  {errors.chefFamille?.prenom && <p className="text-sm text-red-500">{errors.chefFamille.prenom}</p>}
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block mb-1">Date de naissance*</label>
+                  <input
+                    type="date"
+                    value={chefFamille.dateNaissance}
+                    onChange={(e) => {
+                      setRepresentant({ ...chefFamille, dateNaissance: e.target.value });
+                      clearError(['chefFamille', 'dateNaissance']);
+                    }}
+                    className={`input input-bordered w-full ${errors.chefFamille?.dateNaissance ? 'border-red-500' : ''}`}
+                  />
+                  {errors.chefFamille?.dateNaissance && <p className="text-sm text-red-500">{errors.chefFamille.dateNaissance}</p>}
+                </div>
+              </div>
+            </div>
+
+            {/* Coordonnées */}
+            <div className="border p-4 rounded-xl bg-gray-50">
+              <h2 className="font-semibold mb-4">Coordonnées de contact</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block mb-1">Adresse*</label>
+                  <input
+                    type="text"
+                    value={adresse}
+                    onChange={(e) => {
+                      setAdresse(e.target.value);
+                      clearError(['adresse']);
+                    }}
+                    className={`input input-bordered w-full ${errors.adresse ? 'border-red-500' : ''}`}
+                  />
+                  {errors.adresse && <p className="text-sm text-red-500">{errors.adresse}</p>}
+                </div>
+                <div>
+                  <label className="block mb-1">Adresse Email*</label>
+                  <input
+                    type="email"
+                    value={adresseEmail}
+                    onChange={(e) => {
+                      setAdresseEmail(e.target.value);
+                      clearError(['adresseEmail']);
+                    }}
+                    className={`input input-bordered w-full ${errors.adresseEmail ? 'border-red-500' : ''}`}
+                  />
+                  {errors.adresseEmail && <p className="text-sm text-red-500">{errors.adresseEmail}</p>}
+                </div>
+              </div>
+            </div>
+
+            {/* Membres additionnels */}
+            {typeFamilleId === "famille" && (
+              <div className="border p-4 rounded-xl bg-gray-50">
+                <h2 className="font-semibold mb-4">Membres additionnels</h2>
+                <button
+                  type="button"
+                  onClick={ajouterMembre}
+                  className="btn bg-success text-white mb-4"
+                >
+                  Ajouter un membre
+                </button>
+                {membres.map((membre, index) => (
+                  <div key={index} className="border p-4 rounded mb-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-bold">Membre {index + 2}</h3>
+                      <button
+                        type="button"
+                        onClick={() => supprimerMembre(index)}
+                        className="btn bg-error text-white flex gap-2"
+                      >
+                        Supprimer
+                        <Trash2 />
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <input
+                        type="text"
+                        placeholder="Nom"
+                        value={membre.nom}
+                        onChange={(e) => updateMembre(index, 'nom', e.target.value)}
+                        className="input input-bordered w-full"
+                        required
+                      />
+                      <input
+                        type="text"
+                        placeholder="Prénom"
+                        value={membre.prenom}
+                        onChange={(e) => updateMembre(index, 'prenom', e.target.value)}
+                        className="input input-bordered w-full"
+                        required
+                      />
+                      <input
+                        type="date"
+                        value={membre.dateNaissance}
+                        onChange={(e) => updateMembre(index, 'dateNaissance', e.target.value)}
+                        className="input input-bordered w-full"
+                        required
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Cotisation */}
+            <div className="border p-4 rounded-xl bg-gray-50">
+              <h2 className="font-semibold mb-4">Cotisation</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block mb-1">Montant (€)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={cotisation.montant}
+                    onChange={(e) => setCotisation({ ...cotisation, montant: e.target.value })}
+                    className="input input-bordered w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block mb-1">Type de paiement</label>
+                  <select
+                    value={cotisation.facture.typePaiement ?? ''}
+                    onChange={(e) => setCotisation({
+                      ...cotisation,
+                      facture: { ...cotisation.facture, typePaiement: e.target.value || undefined },
+                    })}
+                    className="select select-bordered w-full"
+                    disabled={isEnAttente}
+                  >
+                    <option value="">Sélectionner</option>
+                    <option value="ESPECE">Espèce</option>
+                    <option value="VIREMENT">Virement</option>
+                    <option value="CHEQUE">Chèque</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block mb-1">Statut du paiement</label>
+                  <select
+                    value={cotisation.facture.statutPaiement ?? ''}
+                    onChange={(e) => setCotisation({
+                      ...cotisation,
+                      facture: { ...cotisation.facture, statutPaiement: e.target.value || undefined },
+                    })}
+                    className="select select-bordered w-full"
+                  >
+                    <option value="">Sélectionner</option>
+                    <option value="ACQUITTE">Acquitté</option>
+                    <option value="EN_ATTENTE">En attente</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block mb-1">Date de paiement</label>
+                  <input
+                    type="date"
+                    value={cotisation.facture.datePaiement || ''}
+                    onChange={(e) => setCotisation({
+                      ...cotisation,
+                      facture: { ...cotisation.facture, datePaiement: e.target.value },
+                    })}
+                    className="input input-bordered w-full"
+                    disabled={isEnAttente}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <button type="submit" className="btn bg-[#00B074] text-white px-6 py-2 rounded-lg">
+                Créer la famille
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+    </Wrapper>
+  );
+}

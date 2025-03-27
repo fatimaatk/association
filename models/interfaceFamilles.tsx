@@ -1,6 +1,14 @@
 // Types d'énumération
-export enum StatutPaiement { ACQUITTE, EN_ATTENTE }
-export enum TypePaiement { ESPECE, VIREMENT, CHEQUE };
+export enum TypePaiement {
+  ESPECE = "ESPECE",
+  VIREMENT = "VIREMENT",
+  CHEQUE = "CHEQUE"
+}
+
+export enum StatutPaiement {
+  ACQUITTE = "ACQUITTE",
+  EN_ATTENTE = "EN_ATTENTE"
+}
 
 // Interface pour un membre de la famille
 export interface IMembre {
@@ -22,8 +30,8 @@ export interface ICotisation {
   montant?: number;
   facture: {
     id?: string;
-    typePaiement?: TypePaiement | null;
-    statutPaiement?: StatutPaiement | null;
+    typePaiement?: string | null;
+    statutPaiement?: string | null;
     datePaiement?: Date | null;
   } | null;
 }
@@ -63,9 +71,32 @@ export interface IFamilleImport {
   adresseEmail?: string; // Optionnel
   telephone?: string; // Optionnel
   montant_cotisation?: number; // Optionnel
-  typePaiement?: TypePaiement; // Optionnel
-  statutPaiement?: StatutPaiement; // Optionnel
+  typePaiement?: string | null;
+  statutPaiement?: string | null;
   datePaiement?: Date; // Optionnel 
 }
 
-export interface IMembreImport { familleChefNom: string; familleChefPrenom: string; nom: string; prenom: string; dateNaissance: Date } 
+export interface IMembreImport { familleChefNom: string; familleChefPrenom: string; nom: string; prenom: string; dateNaissance: Date }
+
+export function convertToEnum<T>(value: string | null): T | null {
+  if (!value) return null;
+  return value as unknown as T;
+}
+
+export function getTypePaiement(value: string | null | undefined): TypePaiement | null {
+  if (!value) return null;
+  const upperValue = value.toUpperCase();
+  if (upperValue in TypePaiement) {
+    return TypePaiement[upperValue as keyof typeof TypePaiement];
+  }
+  return null;
+}
+
+export function getStatutPaiement(value: string | null | undefined): StatutPaiement | null {
+  if (!value) return null;
+  const upperValue = value.toUpperCase();
+  if (upperValue in StatutPaiement) {
+    return StatutPaiement[upperValue as keyof typeof StatutPaiement];
+  }
+  return null;
+}

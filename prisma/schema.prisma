@@ -27,7 +27,7 @@ model TypeFamille {
 
 // Table des familles
 model Famille {
-  id            String      @id  // Enlever @default(uuid())
+  id    String @id @default(uuid())
   typeFamilleId String      
   type          TypeFamille @relation(fields: [typeFamilleId], references: [id])
   
@@ -42,7 +42,7 @@ model Famille {
 }
 
 model Membre {
-  id             String   @id  // Enlever @default(uuid())
+  id             String   @id @default(uuid())
   nom            String
   prenom         String
   dateNaissance String

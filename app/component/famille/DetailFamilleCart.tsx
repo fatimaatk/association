@@ -36,7 +36,6 @@ const DetailFamilleCart = ({ famille, setFamilleIsUpdated, deleteFamille }: IPro
     setOpenModalDelete(false)
   }
 
-  console.log(famille)
 
   return (
     <div className="mb-6 shadow bg-white rounded-lg space-y-4 border">

@@ -1,9 +1,9 @@
-import { IFamille } from "@/models/interfaceFamilles";
+import { IFamille, TypePaiement, StatutPaiement, convertToEnum } from "@/models/interfaceFamilles";
 import { prisma } from "./prisma";
 
 export async function getFamilles() {
   try {
-    const familles: IFamille[] = await prisma.famille.findMany({
+    const familles = await prisma.famille.findMany({
       include: {
         type: {
           select: {
@@ -47,38 +47,16 @@ export async function getFamilles() {
     if (!familles) return null;
 
     return familles.map((famille) => ({
-      id: famille.id,
-      typeFamilleId: famille.typeFamilleId,
-      type: {
-        id: famille.type.id,
-        nom: famille.type.nom,
-      },
-      chefFamille: {
-        id: famille.chefFamille.id,
-        nom: famille.chefFamille.nom,
-        prenom: famille.chefFamille.prenom,
-        dateNaissance: famille.chefFamille.dateNaissance,
-      },
-      membres: famille.membres.map((membre) => ({
-        id: membre.id,
-        nom: membre.nom,
-        prenom: membre.prenom,
-        dateNaissance: membre.dateNaissance,
-      })),
+      ...famille,
       cotisation: famille.cotisation ? {
-        id: famille.cotisation.id,
-        montant: famille.cotisation.montant,
+        ...famille.cotisation,
         facture: famille.cotisation.facture ? {
-          id: famille.cotisation.facture.id,
-          statutPaiement: famille.cotisation.facture.statutPaiement ?? undefined,
-          typePaiement: famille.cotisation.facture.typePaiement ?? undefined,
-          datePaiement: famille.cotisation.facture.datePaiement ?? undefined,
+          ...famille.cotisation.facture,
+          typePaiement: convertToEnum<TypePaiement>(famille.cotisation.facture.typePaiement),
+          statutPaiement: convertToEnum<StatutPaiement>(famille.cotisation.facture.statutPaiement),
         } : null,
       } : null,
-      adresse: famille.adresse,
-      adresseEmail: famille.adresseEmail,
-      telephone: famille.telephone,
-    }));
+    })) as IFamille[];
   } catch (error) {
     console.error("Erreur lors du fetch de la famille :", error);
     return null;
@@ -90,7 +68,7 @@ export async function getFamilleById(id: string): Promise<IFamille | null> {
   if (!id) return null;
 
   try {
-    const famille: IFamille | null = await prisma.famille.findUnique({
+    const famille = await prisma.famille.findUnique({
       where: { id },
       include: {
         type: {
@@ -135,38 +113,16 @@ export async function getFamilleById(id: string): Promise<IFamille | null> {
     if (!famille) return null;
 
     return {
-      id: famille.id,
-      typeFamilleId: famille.typeFamilleId,
-      type: {
-        id: famille.type.id,
-        nom: famille.type.nom,
-      },
-      chefFamille: {
-        id: famille.chefFamille.id,
-        nom: famille.chefFamille.nom,
-        prenom: famille.chefFamille.prenom,
-        dateNaissance: famille.chefFamille.dateNaissance,
-      },
-      membres: famille.membres.map((membre) => ({
-        id: membre.id,
-        nom: membre.nom,
-        prenom: membre.prenom,
-        dateNaissance: membre.dateNaissance,
-      })),
+      ...famille,
       cotisation: famille.cotisation ? {
-        id: famille.cotisation.id,
-        montant: famille.cotisation.montant,
+        ...famille.cotisation,
         facture: famille.cotisation.facture ? {
-          id: famille.cotisation.facture.id,
-          statutPaiement: famille.cotisation.facture.statutPaiement ?? undefined,
-          typePaiement: famille.cotisation.facture.typePaiement ?? undefined,
-          datePaiement: famille.cotisation.facture.datePaiement ?? undefined,
+          ...famille.cotisation.facture,
+          typePaiement: famille.cotisation.facture.typePaiement as TypePaiement | null,
+          statutPaiement: famille.cotisation.facture.statutPaiement as StatutPaiement | null,
         } : null,
       } : null,
-      adresse: famille.adresse,
-      adresseEmail: famille.adresseEmail,
-      telephone: famille.telephone,
-    };
+    } as IFamille;
   } catch (error) {
     console.error("Erreur lors du fetch de la famille :", error);
     return null;

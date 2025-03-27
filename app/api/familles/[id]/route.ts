@@ -107,7 +107,6 @@ export async function PUT(req: Request) {
   const typePaiementValue = body.cotisation?.facture?.typePaiement
     ;
 
-  console.log(body.cotisation?.facture?.statutPaiement)
   try {
     // Vérifiez si la famille existe déjà
     const existingFamille = await prisma.famille.findUnique({
