@@ -24,6 +24,28 @@ export function getStatutPaiement(value: string | null | undefined): StatutPaiem
     : null;
 }
 
+function convertirDateExcel(dateExcel: unknown): string {
+  if (dateExcel instanceof Date) {
+    return dateExcel.toISOString().split('T')[0];
+  }
+
+  // Si c’est un nombre Excel (genre 25121)
+  if (typeof dateExcel === 'number') {
+    const date = XLSX.SSF.parse_date_code(dateExcel);
+    if (date) {
+      const jsDate = new Date(date.y, date.m - 1, date.d);
+      return jsDate.toISOString().split('T')[0];
+    }
+  }
+
+  // Si c’est déjà une chaîne au bon format
+  if (typeof dateExcel === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateExcel)) {
+    return dateExcel;
+  }
+
+  throw new Error(`Date invalide : ${dateExcel}`);
+}
+
 export async function importExcel(fileBuffer: Buffer) {
   try {
     const workbook = XLSX.read(fileBuffer, { type: "buffer" });
@@ -53,17 +75,13 @@ export async function importExcel(fileBuffer: Buffer) {
           update: {
             nom: famille.chefFamille_nom,
             prenom: famille.chefFamille_prenom,
-            dateNaissance: famille.chefFamille_dateNaissance instanceof Date
-              ? famille.chefFamille_dateNaissance.toISOString()
-              : famille.chefFamille_dateNaissance
+            dateNaissance: convertirDateExcel(famille.chefFamille_dateNaissance)
           },
           create: {
             id: familleId,
             nom: famille.chefFamille_nom,
             prenom: famille.chefFamille_prenom,
-            dateNaissance: famille.chefFamille_dateNaissance instanceof Date
-              ? famille.chefFamille_dateNaissance.toISOString()
-              : famille.chefFamille_dateNaissance
+            dateNaissance: convertirDateExcel(famille.chefFamille_dateNaissance)
             // La référence familleId sera ajoutée après la création de la famille
           }
         });
@@ -119,12 +137,13 @@ export async function importExcel(fileBuffer: Buffer) {
         console.log(`✅ Famille traitée : ${famille.chefFamille_nom} ${famille.chefFamille_prenom}`);
       } catch (error) {
         console.error(`❌ Erreur traitement famille ${famille.chefFamille_nom}:`, error);
+        throw new Error(`❌ Erreur traitement famille ${famille.chefFamille_nom} : ${error}`);
       }
     }
 
     for (const membre of membresData) {
       try {
-        const familleId = famillesMap.get(membre.familleChefNom + '_' + membre.familleChefPrenom);
+        const familleId = famillesMap.get(membre.familleChefNom + '_' + membre.familleChefPrenom + '_' + membre.dateNaissance);
 
         if (!familleId) {
           console.warn(`⚠️ Famille non trouvée pour le membre ${membre.nom} ${membre.prenom}`);
@@ -144,18 +163,14 @@ export async function importExcel(fileBuffer: Buffer) {
           update: {
             nom: membre.nom,
             prenom: membre.prenom,
-            dateNaissance: membre.dateNaissance instanceof Date
-              ? membre.dateNaissance.toISOString()
-              : membre.dateNaissance,
+            dateNaissance: convertirDateExcel(membre.dateNaissance),
             familleId: familleId
           },
           create: {
             id: membreId,
             nom: membre.nom,
             prenom: membre.prenom,
-            dateNaissance: membre.dateNaissance instanceof Date
-              ? membre.dateNaissance.toISOString()
-              : membre.dateNaissance,
+            dateNaissance: convertirDateExcel(membre.dateNaissance),
             familleId: familleId
           }
         });

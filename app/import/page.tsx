@@ -44,8 +44,14 @@ export default function ImportPage() {
         method: 'POST',
         body: formData,
       });
+      const result = await response.json();
 
-      if (!response.ok) throw new Error('Erreur lors de l&apos;importation');
+      if (!response.ok || result.error) {
+        const errorMessage = typeof result.error === 'string'
+          ? result.error
+          : JSON.stringify(result.error);
+        throw new Error(errorMessage || 'Erreur inconnue');
+      }
 
       setProgress(20);
       setCurrentStep('Lecture du fichier');
@@ -66,7 +72,7 @@ export default function ImportPage() {
         setMessage(step.step);
       }
 
-      const result = await response.json();
+
       setProgress(100);
       setCurrentStep('Terminé');
       setMessage(result.message);
@@ -80,16 +86,18 @@ export default function ImportPage() {
         membres: membresMatch ? parseInt(membresMatch[1]) : 0
       });
 
-      setShowSuccessDialog(true);
 
+      setShowSuccessDialog(true);
+      console.log(response)
       // Redirection après 5 secondes
       setTimeout(() => {
         router.push('/familles');
       }, 5000);
     } catch (error) {
-      console.error('Erreur lors de l&apos;importation:', error);
+      console.error("Erreur lors de l'importation:", error);
+      setShowSuccessDialog(false);
       setProgress(0);
-      setMessage('Échec de l&apos;importation. Veuillez réessayer.');
+      setMessage(`Échec de l'importation. Détails techniques : ${error}. Veuillez vérifier le format du fichier.`);
     } finally {
       setIsLoading(false);
     }
@@ -97,7 +105,7 @@ export default function ImportPage() {
 
   return (
     <Wrapper>
-      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] p-6">
+      <div className="flex flex-col items-center justify-center p-6">
         <div className="w-full max-w-2xl bg-white rounded-lg shadow-lg p-8">
           <div className="flex flex-col items-center mb-8">
             <FileUp className="w-16 h-16 text-[#00B074] mb-4" />
