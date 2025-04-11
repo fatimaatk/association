@@ -156,7 +156,6 @@ export default function ImportPage() {
                     style={{ width: `${progress}%` }}
                   ></div>
                 </div>
-                <p className="text-sm text-gray-600 text-center">{message}</p>
               </div>
             )}
 

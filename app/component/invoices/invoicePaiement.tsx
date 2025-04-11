@@ -41,18 +41,17 @@ interface CustomContent {
 
 export const InvoicePaiement = ({ famille, factureRef }: IProps) => {
   const [customContent, setCustomContent] = useState<CustomContent>({
-    associationName: "Association SOLIDARITE SEDDOUK",
-    associationAddress: "14 rue Félix Martigny",
-    associationCity: "02880 CUFFIES",
-    associationSiret: "800 000 000 000 00",
-    associationPhone: "06 00 00 00 00",
-    attestationTitle: "ATTESTATION D'ADHÉSION",
-    attestationContent: `Nous, Association SOLIDARITE SEDDOUK, située à [Adresse de l'association], attestons que ${famille?.chefFamille?.nom} ${famille?.chefFamille?.prenom}, représentant légal de la famille ${famille?.chefFamille?.nom}, est adhérent de notre association pour l&apos;année en cours.
+    associationName: "Association",
+    associationAddress: "Adresse",
+    associationCity: "Ville",
+    associationSiret: "Siret",
+    associationPhone: "0606060606",
+    attestationTitle: "ATTESTATION D’ADHÉSION",
+    attestationContent: `Je soussigné, représentant de l’association atteste que ${famille?.chefFamille?.nom} ${famille?.chefFamille?.prenom}, représentant légal de la famille ${famille?.chefFamille?.nom}, est adhérent pour l’année en cours.
 
-L&apos;adhésion a été enregistrée en date du ${formatDate(famille?.cotisation?.facture?.datePaiement)} accompagnée du paiement de la cotisation d&apos;un montant de ${famille?.cotisation?.montant} euros, réglé par ${famille?.cotisation?.facture?.typePaiement}.`,
-    signatureTitle: "Signature du représentant"
+L’adhésion a été enregistrée en date du ${formatDate(famille?.cotisation?.facture?.datePaiement)}, accompagnée du paiement de la cotisation d’un montant de ${famille?.cotisation?.montant} euros, réglé par ${famille?.cotisation?.facture?.typePaiement}.`,
+    signatureTitle: "Signature du représentant",
   });
-
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: keyof CustomContent) => {
     setCustomContent(prev => ({ ...prev, [field]: e.target.value }));
   };
@@ -158,17 +157,15 @@ L&apos;adhésion a été enregistrée en date du ${formatDate(famille?.cotisatio
         >
           {/* En-tête */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-            <div className="flex flex-col">
-              <div className="flex items-center">
-                <div>
-                  <p className="text-sm font-bold italic">{customContent.associationName}</p>
-                  <p className="text-sm text-gray-500">{customContent.associationAddress}</p>
-                  <p className="text-sm text-gray-500">{customContent.associationCity}</p>
-                  <p className="text-sm text-gray-500">SIRET : {customContent.associationSiret}</p>
-                  <p className="text-sm text-gray-500">Téléphone : {customContent.associationPhone}</p>
-                </div>
+            {customContent.associationName && (
+              <div className="flex flex-col">
+                <p className="text-sm font-bold italic">{customContent.associationName}</p>
+                <p className="text-sm text-gray-500">{customContent.associationAddress}</p>
+                <p className="text-sm text-gray-500">{customContent.associationCity}</p>
+                <p className="text-sm text-gray-500">SIRET : {customContent.associationSiret}</p>
+                <p className="text-sm text-gray-500">Téléphone : {customContent.associationPhone}</p>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Informations destinataire */}
@@ -205,7 +202,7 @@ L&apos;adhésion a été enregistrée en date du ${formatDate(famille?.cotisatio
 
           {/* Signature */}
           <div className="text-right mt-8 sm:mt-12">
-            <p className="text-sm italic mb-4">Fait à Cuffies, le {getFormattedDate()}</p>
+            <p className="text-sm italic mb-4">Fait le {getFormattedDate()}</p>
             <p className="font-bold">{customContent.signatureTitle}</p>
           </div>
         </div>

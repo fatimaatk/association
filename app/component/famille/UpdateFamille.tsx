@@ -179,6 +179,14 @@ const UpdateFamilleModal: React.FC<UpdateFamilleProps> = ({ famille, onUpdate, s
                   className="w-full border p-2 rounded"
                 />
               </div>
+              <div>
+                <label>Téléphone</label>
+                <input
+                  value={editedFamille.telephone || ''}
+                  onChange={(e) => handleInputChange('telephone', e.target.value)}
+                  className="w-full border p-2 rounded"
+                />
+              </div>
 
               <div>
                 <label>Membres de la famille</label>

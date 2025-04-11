@@ -35,6 +35,7 @@ interface FormErrors {
   };
   adresse?: string;
   adresseEmail?: string;
+  telephone?: string;
   membres?: { [key: number]: { [key: string]: string } };
   cotisation?: {
     montant?: string;
@@ -55,10 +56,13 @@ export default function FormAjoutFamille({ types }: Props) {
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [typeFamilleId, setTypeFamilleId] = useState('');
+  const [typeFamilleNom, setTypeFamilleNom] = useState('');
   const [chefFamille, setChefFamille] = useState<MembreFormData>({ nom: '', prenom: '', dateNaissance: '' });
   const [membres, setMembres] = useState<MembreFormData[]>([]);
   const [adresse, setAdresse] = useState('');
   const [adresseEmail, setAdresseEmail] = useState('');
+  const [telephone, setTelephone] = useState('');
+
   const [cotisation, setCotisation] = useState<CotisationFormData>({ montant: '50', facture: { datePaiement: '' } });
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -208,6 +212,7 @@ export default function FormAjoutFamille({ types }: Props) {
       membres: membresComplets,
       adresse,
       adresseEmail,
+      telephone,
       cotisation: cotisation.montant ? {
         montant: Number(cotisation.montant),
         facture: {
@@ -242,6 +247,8 @@ export default function FormAjoutFamille({ types }: Props) {
     }
   };
 
+  console.log(typeFamilleId)
+
   return (
     <div className="max-w-3xl mx-auto bg-white p-6 shadow-md rounded-xl">
       <h1 className="text-2xl font-semibold mb-2 text-[#00B074] flex items-center gap-2">
@@ -267,6 +274,7 @@ export default function FormAjoutFamille({ types }: Props) {
                   value={type.id}
                   className="radio border-gray-300"
                   onChange={(e) => {
+                    setTypeFamilleNom(type.nom);
                     setTypeFamilleId(e.target.value);
                     clearError(['typeFamille']);
                   }}
@@ -355,61 +363,76 @@ export default function FormAjoutFamille({ types }: Props) {
               {errors.adresseEmail && <p className="text-sm text-red-500">{errors.adresseEmail}</p>}
             </div>
           </div>
+          <div>
+            <label className="block mb-1">Téléphone</label>
+            <input
+              type="telephone"
+              value={telephone}
+              onChange={(e) => {
+                setTelephone(e.target.value);
+                clearError(['telephone']);
+              }}
+              className={`input input-bordered w-full ${errors.telephone ? 'border-red-500' : ''}`}
+            />
+            {errors.telephone && <p className="text-sm text-red-500">{errors.telephone}</p>}
+          </div>
         </div>
 
         {/* Membres additionnels */}
-        {typeFamilleId === "0c8e72d1-45b7-44f7-97f9-fcb7d5c6ad38" && (
-          <div className="border p-4 rounded-xl bg-gray-50">
-            <h2 className="font-semibold mb-4">Membres additionnels</h2>
-            <button
-              type="button"
-              onClick={ajouterMembre}
-              className="btn bg-success text-white mb-4"
-            >
-              Ajouter un membre
-            </button>
-            {membres.map((membre, index) => (
-              <div key={index} className="border p-4 rounded mb-4">
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="font-bold">Membre {index + 2}</h3>
-                  <button
-                    type="button"
-                    onClick={() => supprimerMembre(index)}
-                    className="btn bg-error text-white flex gap-2"
-                  >
-                    Supprimer
-                    <Trash2 />
-                  </button>
+        {
+          typeFamilleNom === "Famille" && (
+            <div className="border p-4 rounded-xl bg-gray-50">
+              <h2 className="font-semibold mb-4">Membres additionnels</h2>
+              <button
+                type="button"
+                onClick={ajouterMembre}
+                className="btn bg-success text-white mb-4"
+              >
+                Ajouter un membre
+              </button>
+              {membres.map((membre, index) => (
+                <div key={index} className="border p-4 rounded mb-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-bold">Membre {index + 2}</h3>
+                    <button
+                      type="button"
+                      onClick={() => supprimerMembre(index)}
+                      className="btn bg-error text-white flex gap-2"
+                    >
+                      Supprimer
+                      <Trash2 />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input
+                      type="text"
+                      placeholder="Nom"
+                      value={membre.nom}
+                      onChange={(e) => updateMembre(index, 'nom', e.target.value)}
+                      className="input input-bordered w-full"
+                      required
+                    />
+                    <input
+                      type="text"
+                      placeholder="Prénom"
+                      value={membre.prenom}
+                      onChange={(e) => updateMembre(index, 'prenom', e.target.value)}
+                      className="input input-bordered w-full"
+                      required
+                    />
+                    <input
+                      type="date"
+                      value={membre.dateNaissance}
+                      onChange={(e) => updateMembre(index, 'dateNaissance', e.target.value)}
+                      className="input input-bordered w-full"
+                      required
+                    />
+                  </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <input
-                    type="text"
-                    placeholder="Nom"
-                    value={membre.nom}
-                    onChange={(e) => updateMembre(index, 'nom', e.target.value)}
-                    className="input input-bordered w-full"
-                    required
-                  />
-                  <input
-                    type="text"
-                    placeholder="Prénom"
-                    value={membre.prenom}
-                    onChange={(e) => updateMembre(index, 'prenom', e.target.value)}
-                    className="input input-bordered w-full"
-                    required
-                  />
-                  <input
-                    type="date"
-                    value={membre.dateNaissance}
-                    onChange={(e) => updateMembre(index, 'dateNaissance', e.target.value)}
-                    className="input input-bordered w-full"
-                    required
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )
+        }
 
         {/* Cotisation */}
         <div className="border p-4 rounded-xl bg-gray-50">
@@ -495,7 +518,7 @@ export default function FormAjoutFamille({ types }: Props) {
 
           </button>
         </div>
-      </form>
+      </form >
       <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
         <DialogContent className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
@@ -529,6 +552,6 @@ export default function FormAjoutFamille({ types }: Props) {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </div >
   );
 }

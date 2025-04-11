@@ -29,6 +29,7 @@ export async function POST(req: Request) {
       membres,
       adresse,
       adresseEmail,
+      telephone,
       cotisation
     } = body;
 
@@ -61,6 +62,7 @@ export async function POST(req: Request) {
           },
           adresse,
           adresseEmail,
+          telephone,
           chefFamille: {
             connect: { id: chefId }
           },

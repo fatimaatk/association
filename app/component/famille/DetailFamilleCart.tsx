@@ -20,13 +20,14 @@ export function formatDateToDDMMYYYY(date: Date | null | undefined): string {
 }
 
 const DetailFamilleCart = ({ famille, setFamilleIsUpdated, deleteFamille }: IProps) => {
-  const [currentFamille, setCurrentFamille] = useState<IFamille>();
+  const [, setCurrentFamille] = useState<IFamille>();
   const [openModalDelete, setOpenModalDelete] = useState<boolean>(false);
 
   const onDeleteModal = () => {
     setOpenModalDelete(true)
   }
 
+  console.log(openModalDelete, famille)
   const cancelDeleteFamille = () => {
     setOpenModalDelete(false)
   }
@@ -59,6 +60,10 @@ const DetailFamilleCart = ({ famille, setFamilleIsUpdated, deleteFamille }: IPro
               <p className="text-gray-700">
                 <span className='font-semibold'>Adresse Email :</span>
                 <span className="ml-2">{famille.adresseEmail}</span>
+              </p>
+              <p className="text-gray-700">
+                <span className='font-semibold'>Téléphone :</span>
+                <span className="ml-2">{famille.telephone}</span>
               </p>
               <p className="text-gray-700">
                 <span className='font-semibold'>Type de famille :</span>
@@ -114,16 +119,16 @@ const DetailFamilleCart = ({ famille, setFamilleIsUpdated, deleteFamille }: IPro
           setFamilleIsUpdated={setFamilleIsUpdated}
         />
         <button
-          onClick={onDeleteModal}
+          onClick={() => onDeleteModal()}
           className="p-2 hover:bg-gray-100 rounded-full transition-colors"
         >
           <Trash className="text-gray-500 hover:text-gray-700" size={20} />
         </button>
-        {openModalDelete && currentFamille?.id && (
+        {openModalDelete && (
           <DeleteFamilleModal
             confirmDeleteFamille={confirmDeleteFamille}
             cancelDeleteFamille={cancelDeleteFamille}
-            id={currentFamille.id}
+            id={famille.id}
           />
         )}
       </div>

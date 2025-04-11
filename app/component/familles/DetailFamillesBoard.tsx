@@ -18,18 +18,58 @@ const DetailFamillesBoard = ({ familles }: IProps) => {
   const [itemsPerPage, setItemsPerPage] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedRows, setSelectedRows] = useState<IFamille[]>([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [feedbackPopup, setFeedbackPopup] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+
 
   const handleRowClick = (familleId: string) => {
     router.push(`/famille/${familleId}`);
   };
 
+  const handleDeleteSelected = async () => {
+    try {
+      for (const famille of selectedRows) {
+        const res = await fetch(`/api/familles/${famille.id}`, { method: 'DELETE' });
+        if (!res.ok) {
+          throw new Error(`Échec pour ${famille.chefFamille.nom} ${famille.chefFamille.prenom}`);
+        }
+      }
+
+      setSelectedRows([]);
+      setShowDeleteModal(false);
+      setFeedbackPopup({
+        type: 'success',
+        message: `Famille${selectedRows.length > 1 ? 's' : ''} supprimée${selectedRows.length > 1 ? 's' : ''} avec succès.`,
+      });
+
+      setTimeout(() => {
+        setFeedbackPopup(null);
+        window.location.reload();
+      }, 2000);
+    } catch (error) {
+      setShowDeleteModal(false);
+      setFeedbackPopup({
+        type: 'error',
+        message: error as string || "Une erreur est survenue lors de la suppression.",
+      });
+
+      setTimeout(() => {
+        setFeedbackPopup(null);
+      }, 3000);
+    }
+  };
+
+
+  console.log(familles)
+
   const exportToExcel = () => {
-    if (!familles) return;
+    const dataToExport = selectedRows.length > 0 ? selectedRows : familles;
+    if (!dataToExport) return;
 
     const workbook = XLSX.utils.book_new();
 
-    // Préparation des données pour l'onglet Famille
-    const familleData = familles.map(famille => ({
+    const familleData = dataToExport.map(famille => ({
       'ID': famille.id,
       'Type de famille': famille.type.nom,
       'Nom représentant': famille.chefFamille.nom,
@@ -43,8 +83,7 @@ const DetailFamillesBoard = ({ familles }: IProps) => {
       'Date paiement': famille.cotisation?.facture?.datePaiement ? formatDateToDDMMYYYY(new Date(famille.cotisation.facture.datePaiement)) : ''
     }));
 
-    // Préparation des données pour l'onglet Membre
-    const membreData = familles.flatMap(famille =>
+    const membreData = dataToExport.flatMap(famille =>
       famille.membres.map(membre => ({
         'ID': membre.id,
         'ID Famille': famille.id,
@@ -55,43 +94,27 @@ const DetailFamillesBoard = ({ familles }: IProps) => {
       }))
     );
 
-    // Création des feuilles
     const familleSheet = XLSX.utils.json_to_sheet(familleData);
     const membreSheet = XLSX.utils.json_to_sheet(membreData);
 
-    // Ajout des feuilles au classeur
-    XLSX.utils.book_append_sheet(workbook, familleSheet, 'Famille');
-    XLSX.utils.book_append_sheet(workbook, membreSheet, 'Membre');
+    XLSX.utils.book_append_sheet(workbook, familleSheet, 'Familles');
+    XLSX.utils.book_append_sheet(workbook, membreSheet, 'Membres');
 
-    // Ajustement des largeurs de colonnes pour l'onglet Famille
-    const familleColWidths = [
-      { wch: 36 }, // ID
-      { wch: 15 }, // Type de famille
-      { wch: 20 }, // Nom représentant
-      { wch: 20 }, // Prénom représentant
-      { wch: 40 }, // Adresse
-      { wch: 30 }, // Email
-      { wch: 15 }, // Téléphone
-      { wch: 15 }, // Montant cotisation
-      { wch: 15 }, // Statut paiement
-      { wch: 15 }, // Type paiement
-      { wch: 15 }  // Date paiement
+    familleSheet['!cols'] = [
+      { wch: 36 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 40 },
+      { wch: 30 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }
     ];
-    familleSheet['!cols'] = familleColWidths;
 
-    // Ajustement des largeurs de colonnes pour l'onglet Membre
-    const membreColWidths = [
-      { wch: 36 }, // ID
-      { wch: 36 }, // ID Famille
-      { wch: 20 }, // Nom
-      { wch: 20 }, // Prénom
-      { wch: 15 }, // Date de naissance
-      { wch: 15 }  // Est représentant
+    membreSheet['!cols'] = [
+      { wch: 36 }, { wch: 36 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 15 }
     ];
-    membreSheet['!cols'] = membreColWidths;
 
-    // Sauvegarde du fichier
-    XLSX.writeFile(workbook, 'export_familles.xlsx');
+    const today = new Date().toISOString().split("T")[0]; // format : YYYY-MM-DD
+    const fileName = selectedRows.length > 0
+      ? `export_selection_${today}.xlsx`
+      : `export_familles_${today}.xlsx`;
+
+    XLSX.writeFile(workbook, fileName);
   };
 
   // Fonction pour gérer la sélection/dé-sélection des lignes
@@ -155,23 +178,33 @@ const DetailFamillesBoard = ({ familles }: IProps) => {
 
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8">
-      <div className='flex flex-col sm:flex-row justify-between items-center mb-4 gap-4'>
-        <div className="relative w-full sm:w-auto">
-          <input
-            type="text"
-            placeholder="Rechercher par nom ou prénom..."
-            className="p-2 pl-10 border rounded w-full sm:w-96"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <Search className="absolute left-3 top-3 text-gray-500" size={20} />
-        </div>
-        <div className="w-full sm:w-auto">
-          <button className='btn p-2 border rounded w-full sm:w-32 bg-white' onClick={exportToExcel}>Exporter en Excel</button>
-        </div>
-      </div>
-      <div className="mb-4 flex flex-col sm:flex-row gap-4 justify-between items-center w-full">
-        <div className='flex flex-col sm:flex-row gap-4 w-full sm:w-auto'>
+      <div className='flex flex-col sm:flex-row w-full  items-center mb-4 gap-4'>
+
+        {feedbackPopup && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-30">
+            <div
+              className={`bg-white rounded-lg shadow-lg p-6 text-center max-w-sm w-full
+        ${feedbackPopup.type === 'success' ? 'border-green-500' : 'border-red-500'} border-t-4`}
+            >
+              <h2 className={`text-lg font-semibold mb-2 ${feedbackPopup.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+                {feedbackPopup.type === 'success' ? 'Succès 🎉' : 'Erreur ❌'}
+              </h2>
+              <p className="text-sm text-gray-700">{feedbackPopup.message}</p>
+            </div>
+          </div>
+        )}
+
+        <div className='flex gap-4 w-full sm:w-auto'>
+          <div className="relative w-full  sm:w-auto">
+            <input
+              type="text"
+              placeholder="Rechercher par nom ou prénom..."
+              className="p-2 pl-10 border rounded w-full h-full rounded sm:w-96"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <Search className="absolute left-3 top-3 text-gray-500" size={20} />
+          </div>
           <select
             className="select select-bordered w-full sm:w-64"
             value={sortOrder}
@@ -195,7 +228,22 @@ const DetailFamillesBoard = ({ familles }: IProps) => {
           >
             Réinitialiser
           </button>
+          <button
+            className="btn p-2 border rounded w-full sm:w-32 bg-white"
+            onClick={exportToExcel}
+          >
+            {selectedRows.length > 0 ? 'Exporter la sélection' : 'Exporter tout'}
+          </button>
+          {selectedRows.length > 0 && (
+            <button
+              className="btn p-2 border rounded w-full sm:w-48 bg-red-500 text-white hover:bg-red-600"
+              onClick={() => setShowDeleteModal(true)}
+            >
+              Supprimer la sélection ({selectedRows.length})
+            </button>
+          )}
         </div>
+
       </div>
 
       <div className="overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
@@ -220,7 +268,7 @@ const DetailFamillesBoard = ({ familles }: IProps) => {
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Montant</th>
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Statut</th>
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">Mode</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">Date</th>
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">Date de paiement</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -305,6 +353,31 @@ const DetailFamillesBoard = ({ familles }: IProps) => {
           Suivant
         </button>
       </div>
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md">
+            <h2 className="text-lg font-semibold mb-4">Confirmer la suppression</h2>
+            <p className="mb-6 text-sm text-gray-700">
+              Êtes-vous sûr de vouloir supprimer {selectedRows.length} famille{selectedRows.length > 1 ? "s" : ""} ?
+              Cette action est irréversible.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleDeleteSelected}
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+              >
+                Confirmer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

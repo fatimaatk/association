@@ -46,7 +46,7 @@ const Sidebar = () => {
         <div className="mt-10 mb-10">
           <Link href="/" className="flex flex-col">
             <Image alt="logo" src={"/FamEase.svg"} width={150} height={50} />
-            <h1 className="text-gray-500 text-sm mt-2">Association Solidarité Seddouk</h1>
+            <h1 className="text-gray-500 text-sm mt-2">Gérer. Suivre. Simplifier.</h1>
           </Link>
         </div>
 

@@ -1,0 +1,23 @@
+const { PrismaClient } = require('@prisma/client');
+
+const prisma = new PrismaClient();
+
+async function main() {
+  await prisma.typeFamille.createMany({
+    data: [
+      { nom: 'Individuel' },
+      { nom: 'Famille' }
+    ],
+    skipDuplicates: true,
+  });
+  console.log('✅ Types de familles insérés');
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
