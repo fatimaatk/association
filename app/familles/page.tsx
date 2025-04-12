@@ -1,6 +1,6 @@
 import { getFamilles } from "@/lib/famille";
 import DetailFamillesBoard from "../component/familles/DetailFamillesBoard";
-import Wrapper from "../component/Wrapper";
+import Wrapper from "@/app/component/layout/Wrapper";
 import { notFound } from "next/navigation";
 
 interface SearchParams {

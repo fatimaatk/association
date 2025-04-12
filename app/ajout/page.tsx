@@ -1,6 +1,6 @@
 'use server';
 
-import Wrapper from '../component/Wrapper';
+import Wrapper from '../component/layout/Wrapper';
 import { getTypesFamilles } from '@/lib/type';
 import FormAjoutFamille from '../component/ajout/FormAjoutFamille';
 

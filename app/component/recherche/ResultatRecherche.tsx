@@ -3,8 +3,7 @@
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Wrapper from '@/app/component/Wrapper';
-import Loader from '@/app/component/loader';
+import Loader from '@/app/component/ui/loader';
 import { IFamille } from '@/models/interfaceFamilles';
 import { Search } from 'lucide-react';
 

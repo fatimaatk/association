@@ -1,5 +1,5 @@
 "use client";
-import { AlignLeft, ChartNoAxesCombined, HomeIcon, Menu, UserRoundPlus, X } from "lucide-react";
+import { AlignLeft, AxeIcon, ChartNoAxesCombined, Download, FolderInput, HomeIcon, Menu, UserRoundPlus, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -13,7 +13,8 @@ const Sidebar = () => {
     { logo: <HomeIcon />, href: "/", label: "Accueil" },
     { logo: <AlignLeft />, href: "/familles", label: "Liste des familles" },
     { logo: <UserRoundPlus />, href: "/ajout", label: "Ajouter une famille" },
-    { logo: <ChartNoAxesCombined />, href: "/import", label: "Import excel" },
+    { logo: <Download />, href: "/import", label: "Import excel" },
+    { logo: <FolderInput />, href: "/export", label: "Exporter des attestations" },
   ];
 
   const isActiveLink = (href: string) =>

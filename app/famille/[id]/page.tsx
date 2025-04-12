@@ -1,5 +1,5 @@
 import ClientFamilleDetails from "@/app/component/famille/ClientFamilleDetails";
-import Wrapper from "@/app/component/Wrapper";
+import Wrapper from "@/app/component/layout/Wrapper";
 import { getFamilleById } from "@/lib/famille";
 import { Metadata } from "next";
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Wrapper from '../component/Wrapper';
+import Wrapper from '../component/layout/Wrapper';
 import { FileUp, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../component/ui/dialog';

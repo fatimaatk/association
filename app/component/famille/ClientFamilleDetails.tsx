@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import DetailFamilleCart from "@/app/component/famille/DetailFamilleCart";
 import { InvoicePaiement } from "@/app/component/invoices/invoicePaiement";
-import Loader from "@/app/component/loader";
+import Loader from "@/app/component/ui/loader";
 import { IFamille } from "@/models/interfaceFamilles";
 import confetti from "canvas-confetti";
 import html2canvas from "html2canvas-pro";

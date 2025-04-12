@@ -128,3 +128,18 @@ export async function getFamilleById(id: string): Promise<IFamille | null> {
     return null;
   }
 }
+
+
+export const getAdherentsByIds = async (ids: string[]) => {
+  return prisma.famille.findMany({
+    where: { id: { in: ids } },
+    include: {
+      chefFamille: true, cotisation: {
+        include: {
+          facture: true,
+        }
+
+      }
+    } // ou selon ta structure
+  });
+};

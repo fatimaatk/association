@@ -1,4 +1,4 @@
-import Wrapper from "./component/Wrapper"
+import Wrapper from "./component/layout/Wrapper";
 import { ChartNoAxesCombined, User, Users, } from "lucide-react";
 import Link from "next/link";
 import { getFamilles } from "@/lib/famille";
