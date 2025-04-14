@@ -61,8 +61,6 @@ const DetailFamillesBoard = ({ familles }: IProps) => {
   };
 
 
-  console.log(familles)
-
   const exportToExcel = () => {
     const dataToExport = selectedRows.length > 0 ? selectedRows : familles;
     if (!dataToExport) return;

@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-   previewFeatures = ["clientExtensions"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["clientExtensions"]
 }
 
 datasource db {
@@ -19,55 +19,94 @@ enum TypePaiement {
   CHEQUE
 }
 
-// Table des types de familles
-model TypeFamille {
-  id       String    @id @default(uuid())
-  nom      String    @unique
-  familles Famille[]
+model Association {
+  id        String   @id @default(uuid())
+  nom       String
+  adresse   String
+  siret     String
+  type      String
+  email     String
+  telephone String
+  createdAt DateTime @default(now())
+
+  comptes      Compte[]
+  familles     Famille[]
+  membres      Membre[]
+  cotisations  Cotisation[]
+  factures     Facture[]
+  typeFamilles TypeFamille[]
 }
 
-// Table des familles
+model Compte {
+  id            String      @id @default(uuid())
+  email         String      @unique
+  motDePasse    String
+  nom           String
+  prenom        String
+  associationId String
+  association   Association @relation(fields: [associationId], references: [id])
+}
+
+model TypeFamille {
+  id            String      @id @default(uuid())
+  nom           String
+  familles      Famille[]
+  associationId String
+  association   Association @relation(fields: [associationId], references: [id])
+
+  @@unique([nom, associationId])
+}
+
 model Famille {
-  id    String @id @default(uuid())
-  typeFamilleId String      
+  id            String      @id @default(uuid())
+  typeFamilleId String
   type          TypeFamille @relation(fields: [typeFamilleId], references: [id])
-  
-  chefFamilleId String     @unique
-  chefFamille   Membre     @relation(name: "FamilleRepresentant", fields: [chefFamilleId], references: [id])
-  
-  membres       Membre[]   @relation(name: "FamilleMembres")
-  cotisation    Cotisation?
-  adresse       String      @default("")
-  adresseEmail  String      @default("")
-  telephone     String      @default("")
+
+  chefFamilleId String @unique
+  chefFamille   Membre @relation(name: "FamilleRepresentant", fields: [chefFamilleId], references: [id])
+
+  membres      Membre[]    @relation(name: "FamilleMembres")
+  cotisation   Cotisation?
+  adresse      String      @default("")
+  adresseEmail String      @default("")
+  telephone    String      @default("")
+
+  associationId String
+  association   Association @relation(fields: [associationId], references: [id])
 }
 
 model Membre {
   id             String   @id @default(uuid())
   nom            String
   prenom         String
-  dateNaissance String
-  familleId      String?  
+  dateNaissance  String
+  familleId      String?
   famille        Famille? @relation(name: "FamilleMembres", fields: [familleId], references: [id])
   representantDe Famille? @relation(name: "FamilleRepresentant")
+
+  associationId String
+  association   Association @relation(fields: [associationId], references: [id])
 }
 
-// Table des cotisations
 model Cotisation {
   id        String   @id @default(uuid())
   familleId String   @unique
   famille   Famille  @relation(fields: [familleId], references: [id])
   montant   Float
   facture   Facture?
+
+  associationId String
+  association   Association @relation(fields: [associationId], references: [id])
 }
 
-// Table des factures
 model Facture {
-  id             String         @id @default(uuid())
-  cotisationId   String         @unique
-  cotisation     Cotisation     @relation(fields: [cotisationId], references: [id])
+  id             String          @id @default(uuid())
+  cotisationId   String          @unique
+  cotisation     Cotisation      @relation(fields: [cotisationId], references: [id])
   typePaiement   TypePaiement?
   statutPaiement StatutPaiement?
   datePaiement   DateTime?
-}
 
+  associationId String
+  association   Association @relation(fields: [associationId], references: [id])
+}

@@ -1,12 +1,23 @@
 "use client";
-import { AlignLeft, AxeIcon, ChartNoAxesCombined, Download, FolderInput, HomeIcon, Menu, UserRoundPlus, X } from "lucide-react";
+
+import {
+  AlignLeft,
+  Download,
+  FolderInput,
+  HomeIcon,
+  Menu,
+  UserRoundPlus,
+  X,
+  LogOut,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 const Sidebar = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
@@ -19,6 +30,15 @@ const Sidebar = () => {
 
   const isActiveLink = (href: string) =>
     pathname.replace(/\/$/, "") === href.replace(/\/$/, "");
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      router.push("/");
+    } catch (error) {
+      console.error("Erreur de déconnexion", error);
+    }
+  };
 
   return (
     <>
@@ -59,13 +79,25 @@ const Sidebar = () => {
               href={href}
               onClick={() => setIsOpen(false)}
               className={`flex items-center space-x-3 p-3 rounded-md transition 
-                ${isActiveLink(href) ? "font-semibold bg-[#D9F3EA] text-[#00B074]" : "text-gray-700 hover:bg-gray-100"}`}
+                ${isActiveLink(href)
+                  ? "font-semibold bg-[#D9F3EA] text-[#00B074]"
+                  : "text-gray-700 hover:bg-gray-100"
+                }`}
             >
               {logo}
               <span>{label}</span>
             </Link>
           ))}
         </nav>
+
+        {/* Déconnexion */}
+        <button
+          onClick={handleLogout}
+          className="flex items-center space-x-3 p-3 rounded-md transition text-gray-700 hover:bg-[#D9F3EA] w-full mt-8"
+        >
+          <LogOut />
+          <span className="text-[#00B074] font-medium">Déconnexion</span>
+        </button>
       </div>
     </>
   );

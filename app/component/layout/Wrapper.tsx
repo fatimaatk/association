@@ -1,23 +1,17 @@
-import React from 'react'
-import Sidebar from './SideBar'
-import SearchBar from './searchBar'
+import { cookies } from 'next/headers'
+import jwt from 'jsonwebtoken'
+import { redirect } from 'next/navigation'
+import WrapperClient from './WrapperClient'
 
-type WrapperProps = {
-  children: React.ReactNode
+export default async function Wrapper({ children }: { children: React.ReactNode }) {
+  const token = cookies().get('token')?.value
+  if (!token) redirect('/login')
+
+  try {
+    const userPayload = jwt.verify(token, process.env.JWT_SECRET || 'supersecret')
+    return <WrapperClient utilisateur={userPayload}>{children}</WrapperClient>
+  } catch (err) {
+    console.error('❌ Token invalide ou expiré', err)
+    redirect('/login')
+  }
 }
-
-const Wrapper = ({ children }: WrapperProps) => {
-  return (
-    <div className="bg-[#f3f2f7] min-h-screen">
-      <Sidebar />
-      <div className="flex-1 px-4 md:px-8 lg:px-[10%] pt-20 md:pt-8 pb-10 md:ml-64 bg-[#f3f2f7]">
-        <SearchBar />
-        <main className="mt-4">
-          {children}
-        </main>
-      </div>
-    </div>
-  )
-}
-
-export default Wrapper
