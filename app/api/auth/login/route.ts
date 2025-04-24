@@ -39,14 +39,14 @@ export async function POST(req: NextRequest) {
     )
 
     // ✅ Utilisation asynchrone des cookies()
-    const cookieStore = cookies()
+    const cookieStore = await cookies(); // ✅
     cookieStore.set('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7 jours
-    })
+    });
 
     return NextResponse.json({
       message: 'Connexion réussie',

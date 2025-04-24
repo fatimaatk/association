@@ -1,7 +1,8 @@
 import ClientFamilleDetails from "@/app/component/famille/ClientFamilleDetails";
-import Wrapper from "@/app/component/layout/Wrapper";
 import { getFamilleById } from "@/lib/famille";
 import { Metadata } from "next";
+import { getUserFromCookies } from "@/lib/auth";
+import ProtectedWrapper from "@/app/component/layout/ProtectedWrapper";
 
 // 👇 Fonction principale
 export default async function FamillePage({
@@ -9,13 +10,16 @@ export default async function FamillePage({
 }: {
   params: { id: string };
 }) {
-  const { id } = params;
-  const initialData = await getFamilleById(id);
+  const { id } = await params;
+  const user = await getUserFromCookies();
+  if (!user?.associationId) return null;
+
+  const initialData = await getFamilleById(id, user.associationId);
 
   return (
-    <Wrapper>
+    <ProtectedWrapper>
       <ClientFamilleDetails initialData={initialData} id={id} />
-    </Wrapper>
+    </ProtectedWrapper>
   );
 }
 
@@ -25,7 +29,15 @@ export async function generateMetadata({
 }: {
   params: { id: string };
 }): Promise<Metadata> {
-  const famille = await getFamilleById(params.id);
+  const { id } = await params;
+  const user = await getUserFromCookies();
+  if (!user?.associationId)
+    return {
+      title: "Non authentifié",
+      description: "Connectez-vous pour voir les données.",
+    };
+
+  const famille = await getFamilleById(id, user.associationId);
 
   if (!famille) {
     return {

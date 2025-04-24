@@ -1,158 +1,49 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { IFamille } from '@/models/interfaceFamilles';
-import { formatDateToDDMMYYYY } from '../famille/DetailFamilleCart'
-import { AlertCircle, Search } from 'lucide-react';
-import * as XLSX from 'xlsx';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from "react";
+import { IFamille } from "@/models/interfaceFamilles";
+import { useRouter } from "next/navigation";
+import { Search, AlertCircle, SlidersHorizontal, X, Check, RotateCcw } from "lucide-react";
+import { formatDateToDDMMYYYY } from "../famille/DetailFamilleCart";
+import * as XLSX from "xlsx";
 
 interface IProps {
   familles: IFamille[] | null;
 }
 
-const DetailFamillesBoard = ({ familles }: IProps) => {
+export default function DetailFamillesBoard({ familles }: IProps) {
   const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTermDraft, setSearchTermDraft] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [itemsPerPage, setItemsPerPage] = useState<number>(10);
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedRows, setSelectedRows] = useState<IFamille[]>([]);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [feedbackPopup, setFeedbackPopup] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-
-
+  const [showFilterPopup, setShowFilterPopup] = useState(false);
 
   const handleRowClick = (familleId: string) => {
     router.push(`/famille/${familleId}`);
   };
 
-  const handleDeleteSelected = async () => {
-    try {
-      for (const famille of selectedRows) {
-        const res = await fetch(`/api/familles/${famille.id}`, { method: 'DELETE' });
-        if (!res.ok) {
-          throw new Error(`Échec pour ${famille.chefFamille.nom} ${famille.chefFamille.prenom}`);
-        }
-      }
-
-      setSelectedRows([]);
-      setShowDeleteModal(false);
-      setFeedbackPopup({
-        type: 'success',
-        message: `Famille${selectedRows.length > 1 ? 's' : ''} supprimée${selectedRows.length > 1 ? 's' : ''} avec succès.`,
-      });
-
-      setTimeout(() => {
-        setFeedbackPopup(null);
-        window.location.reload();
-      }, 2000);
-    } catch (error) {
-      setShowDeleteModal(false);
-      setFeedbackPopup({
-        type: 'error',
-        message: error as string || "Une erreur est survenue lors de la suppression.",
-      });
-
-      setTimeout(() => {
-        setFeedbackPopup(null);
-      }, 3000);
-    }
-  };
-
-
-  const exportToExcel = () => {
-    const dataToExport = selectedRows.length > 0 ? selectedRows : familles;
-    if (!dataToExport) return;
-
-    const workbook = XLSX.utils.book_new();
-
-    const familleData = dataToExport.map(famille => ({
-      'ID': famille.id,
-      'Type de famille': famille.type.nom,
-      'Nom représentant': famille.chefFamille.nom,
-      'Prénom représentant': famille.chefFamille.prenom,
-      'Adresse': famille.adresse,
-      'Email': famille.adresseEmail,
-      'Téléphone': famille.telephone,
-      'Montant cotisation': famille.cotisation?.montant || '',
-      'Statut paiement': famille.cotisation?.facture?.statutPaiement || '',
-      'Type paiement': famille.cotisation?.facture?.typePaiement || '',
-      'Date paiement': famille.cotisation?.facture?.datePaiement ? formatDateToDDMMYYYY(new Date(famille.cotisation.facture.datePaiement)) : ''
-    }));
-
-    const membreData = dataToExport.flatMap(famille =>
-      famille.membres.map(membre => ({
-        'ID': membre.id,
-        'ID Famille': famille.id,
-        'Nom': membre.nom,
-        'Prénom': membre.prenom,
-        'Date de naissance': formatDateToDDMMYYYY(new Date(membre.dateNaissance)),
-        'Est représentant': membre.id === famille.chefFamille.id ? 'Oui' : 'Non'
-      }))
-    );
-
-    const familleSheet = XLSX.utils.json_to_sheet(familleData);
-    const membreSheet = XLSX.utils.json_to_sheet(membreData);
-
-    XLSX.utils.book_append_sheet(workbook, familleSheet, 'Familles');
-    XLSX.utils.book_append_sheet(workbook, membreSheet, 'Membres');
-
-    familleSheet['!cols'] = [
-      { wch: 36 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 40 },
-      { wch: 30 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }
-    ];
-
-    membreSheet['!cols'] = [
-      { wch: 36 }, { wch: 36 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 15 }
-    ];
-
-    const today = new Date().toISOString().split("T")[0]; // format : YYYY-MM-DD
-    const fileName = selectedRows.length > 0
-      ? `export_selection_${today}.xlsx`
-      : `export_familles_${today}.xlsx`;
-
-    XLSX.writeFile(workbook, fileName);
-  };
-
-  // Fonction pour gérer la sélection/dé-sélection des lignes
-  const toggleRowSelection = (famille: IFamille) => {
-    const newSelectedRows = [...selectedRows];
-    const index = newSelectedRows.findIndex(item => item.id === famille.id);
-
-    if (index > -1) {
-      newSelectedRows.splice(index, 1);
-    } else {
-      newSelectedRows.push(famille);
-    }
-
-    setSelectedRows(newSelectedRows);
-  };
-
   const resetFilters = () => {
+    setSearchTermDraft("");
     setSearchTerm("");
-    setSortOrder('asc');
+    setSortOrder("asc");
     setItemsPerPage(10);
     setCurrentPage(1);
-    setSelectedRows([]); // Réinitialiser les lignes sélectionnées
+    setShowFilterPopup(false);
   };
 
-  if (!familles) {
-    return (
-      <div className="flex flex-col items-center justify-center p-4">
-        <AlertCircle className="text-4xl mb-2 text-gray-500" />
-        <p className="text-lg text-gray-500">Aucune donnée disponible</p>
-      </div>
-    );
-  }
+  const applyFilters = () => {
+    setSearchTerm(searchTermDraft);
+    setShowFilterPopup(false);
+  };
 
-  const filteredFamilles = familles.filter(famille => {
+  const filteredFamilles = familles?.filter(famille => {
     const searchTermLower = searchTerm.toLowerCase();
-    const nomChef = famille.chefFamille.nom.toLowerCase();
-    const prenomChef = famille.chefFamille.prenom.toLowerCase();
-
-    return nomChef.includes(searchTermLower) || prenomChef.includes(searchTermLower);
-  });
+    return famille.chefFamille.nom.toLowerCase().includes(searchTermLower) ||
+      famille.chefFamille.prenom.toLowerCase().includes(searchTermLower);
+  }) || [];
 
   const sortedFamilles = [...filteredFamilles].sort((a, b) => {
     return sortOrder === 'asc'
@@ -160,224 +51,188 @@ const DetailFamillesBoard = ({ familles }: IProps) => {
       : b.chefFamille.nom.localeCompare(a.chefFamille.nom);
   });
 
-  const paginatedFamilles = sortedFamilles.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const paginatedFamilles = sortedFamilles.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   const totalPages = Math.ceil(sortedFamilles.length / itemsPerPage);
 
   const toggleSelectAll = () => {
     if (selectedRows.length === paginatedFamilles.length) {
-      setSelectedRows([]); // Désélectionner tout
+      setSelectedRows([]);
     } else {
-      setSelectedRows(paginatedFamilles); // Sélectionner tout
+      setSelectedRows(paginatedFamilles);
     }
   };
 
-
-  const isAllSelected = selectedRows.length === paginatedFamilles.length && paginatedFamilles.length > 0;
+  const toggleRowSelection = (famille: IFamille) => {
+    setSelectedRows((prev) =>
+      prev.some((row) => row.id === famille.id)
+        ? prev.filter((row) => row.id !== famille.id)
+        : [...prev, famille]
+    );
+  };
 
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-8">
-      <div className='flex flex-col sm:flex-row w-full  items-center mb-4 gap-4'>
-
-        {feedbackPopup && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-30">
-            <div
-              className={`bg-white rounded-lg shadow-lg p-6 text-center max-w-sm w-full
-        ${feedbackPopup.type === 'success' ? 'border-green-500' : 'border-red-500'} border-t-4`}
-            >
-              <h2 className={`text-lg font-semibold mb-2 ${feedbackPopup.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
-                {feedbackPopup.type === 'success' ? 'Succès 🎉' : 'Erreur ❌'}
-              </h2>
-              <p className="text-sm text-gray-700">{feedbackPopup.message}</p>
-            </div>
-          </div>
-        )}
-
-        <div className='flex gap-4 w-full sm:w-auto'>
-          <div className="relative w-full  sm:w-auto">
-            <input
-              type="text"
-              placeholder="Rechercher par nom ou prénom..."
-              className="p-2 pl-10 border rounded w-full h-full rounded sm:w-96"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <Search className="absolute left-3 top-3 text-gray-500" size={20} />
-          </div>
-          <select
-            className="select select-bordered w-full sm:w-64"
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
-          >
-            <option value="asc">Par représentant ↓</option>
-            <option value="desc">Par représentant ↑</option>
-          </select>
-          <select
-            className="select select-bordered w-full sm:w-64"
-            value={itemsPerPage}
-            onChange={(e) => setItemsPerPage(Number(e.target.value))}
-          >
-            <option value={10}>10 familles par page</option>
-            <option value={20}>20 familles par page</option>
-            <option value={50}>50 familles par page</option>
-          </select>
-          <button
-            className="btn p-2 border rounded w-full sm:w-32 bg-white"
-            onClick={resetFilters}
-          >
-            Réinitialiser
-          </button>
-          <button
-            className="btn p-2 border rounded w-full sm:w-32 bg-white"
-            onClick={exportToExcel}
-          >
-            {selectedRows.length > 0 ? 'Exporter la sélection' : 'Exporter tout'}
-          </button>
-          {selectedRows.length > 0 && (
-            <button
-              className="btn p-2 border rounded w-full sm:w-48 bg-red-500 text-white hover:bg-red-600"
-              onClick={() => setShowDeleteModal(true)}
-            >
-              Supprimer la sélection ({selectedRows.length})
-            </button>
-          )}
-        </div>
-
+    <div className="w-full px-4 sm:px-6 lg:px-8 relative">
+      {/* Popup mobile filters */}
+      <div className="sm:hidden flex justify-end mb-4">
+        <button
+          onClick={() => setShowFilterPopup(true)}
+          className="flex items-center gap-2 px-4 py-2 border rounded bg-white shadow"
+        >
+          <SlidersHorizontal size={20} /> Filtres
+        </button>
       </div>
 
-      <div className="overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
-        <div className="inline-block min-w-full align-middle">
-          <div className="overflow-hidden border border-gray-200 sm:rounded-lg">
-            <table className="min-w-full divide-y divide-gray-200">
+      {showFilterPopup && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold">Filtres</h2>
+              <button onClick={() => setShowFilterPopup(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <input
+                type="text"
+                value={searchTermDraft}
+                onChange={(e) => setSearchTermDraft(e.target.value)}
+                placeholder="Rechercher par nom ou prénom"
+                className="w-full border rounded px-3 py-2"
+              />
+              <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
+                className="w-full border rounded px-3 py-2"
+              >
+                <option value="asc">Nom A-Z</option>
+                <option value="desc">Nom Z-A</option>
+              </select>
+              <select
+                value={itemsPerPage}
+                onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                className="w-full border rounded px-3 py-2"
+              >
+                <option value={10}>10 familles</option>
+                <option value={20}>20 familles</option>
+                <option value={50}>50 familles</option>
+              </select>
+              <div className="flex flex-col gap-2 mt-4">
+                <button
+                  onClick={applyFilters}
+                  className="w-full flex items-center justify-center gap-2 bg-[#00B074] text-white px-4 py-2 rounded hover:bg-[#01965e] transition"
+                >
+                  <Check size={18} /> Appliquer les filtres
+                </button>
+                <button
+                  onClick={resetFilters}
+                  className="w-full flex items-center justify-center gap-2 text-[#00B074] border border-[#00B074] px-4 py-2 rounded hover:bg-[#f0fef8] transition"
+                >
+                  <RotateCcw size={18} /> Réinitialiser
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="hidden sm:flex items-center justify-between mb-4 gap-4">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Rechercher par nom ou prénom"
+          className="w-64 border rounded px-3 py-2"
+        />
+        <select
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
+          className="w-48 border rounded px-3 py-2"
+        >
+          <option value="asc">Nom A-Z</option>
+          <option value="desc">Nom Z-A</option>
+        </select>
+        <select
+          value={itemsPerPage}
+          onChange={(e) => setItemsPerPage(Number(e.target.value))}
+          className="w-48 border rounded px-3 py-2"
+        >
+          <option value={10}>10 familles</option>
+          <option value={20}>20 familles</option>
+          <option value={50}>50 familles</option>
+        </select>
+      </div>
+
+      {paginatedFamilles.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center text-gray-500">
+          <AlertCircle size={48} className="mb-4" />
+          <h3 className="text-xl font-semibold mb-2">Aucun résultat</h3>
+          <p className="text-sm">Essayez de modifier vos filtres ou votre recherche.</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {paginatedFamilles.map((famille) => (
+            <div
+              key={famille.id}
+              className="border rounded-lg p-4 shadow-sm hover:shadow cursor-pointer sm:hidden"
+              onClick={() => handleRowClick(famille.id)}
+            >
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold">
+                  {famille.chefFamille.nom} {famille.chefFamille.prenom}
+                </h3>
+                <span className="text-sm text-gray-500">{famille.type.nom}</span>
+              </div>
+              <p className="text-sm text-gray-600 mt-2">Email : {famille.adresseEmail}</p>
+              <p className="text-sm text-gray-600">Montant : {famille.cotisation?.montant} €</p>
+            </div>
+          ))}
+
+          <div className="hidden sm:block overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 text-sm">
               <thead className="bg-gray-50">
                 <tr>
-                  <td className="px-3 py-3">
-                    <input
-                      type="checkbox"
-                      checked={isAllSelected}
-                      onChange={toggleSelectAll}
-                      className="h-4 w-4 rounded border-gray-300"
-                    />
-                  </td>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Représentant</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Type de famille</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Adresse postale</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Adresse email</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Membre de la famille</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Montant</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Statut</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">Mode</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">Date de paiement</th>
+                  <th className="px-4 py-2 text-left font-medium text-gray-700">Représentant</th>
+                  <th className="px-4 py-2 text-left font-medium text-gray-700">Type</th>
+                  <th className="px-4 py-2 text-left font-medium text-gray-700">Email</th>
+                  <th className="px-4 py-2 text-left font-medium text-gray-700">Montant</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {paginatedFamilles.length > 0 ? (
-                  paginatedFamilles.map((famille, index) => (
-                    <tr
-                      key={index}
-                      className="hover:bg-gray-50 cursor-pointer"
-                      onClick={() => handleRowClick(famille.id)}
-                    >
-                      <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
-                        <input
-                          type="checkbox"
-                          checked={selectedRows.some(row => row.id === famille.id)}
-                          onChange={() => toggleRowSelection(famille)}
-                          className="h-4 w-4 rounded border-gray-300"
-                        />
-                      </td>
-                      <td className="px-3 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {famille.chefFamille.nom} {famille.chefFamille.prenom}
-                      </td>
-                      <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
-                        {famille.type.nom}
-                      </td>
-                      <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
-                        {famille.adresse}
-                      </td>
-                      <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
-                        {famille.adresseEmail}
-                      </td>
-                      <td className="px-3 py-3 text-sm text-gray-500 hidden md:table-cell">
-                        {famille.membres?.map((membre) => (
-                          <div key={membre.id}>{membre.nom} {membre.prenom}</div>
-                        ))}
-                      </td>
-                      <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
-                        {famille.cotisation?.montant} €
-                      </td>
-                      <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
-                        {famille.cotisation?.facture?.statutPaiement}
-                      </td>
-                      <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-500 hidden xl:table-cell">
-                        {famille.cotisation?.facture?.typePaiement}
-                      </td>
-                      <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-500 hidden xl:table-cell">
-                        {formatDateToDDMMYYYY(famille.cotisation?.facture?.datePaiement)}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={10} className="px-3 py-4 text-center">
-                      <div className="flex flex-col items-center text-gray-500">
-                        <AlertCircle className="text-4xl mb-2" />
-                        <p className="text-lg">Aucune famille disponible</p>
-                      </div>
-                    </td>
+              <tbody className="divide-y divide-gray-200">
+                {paginatedFamilles.map((famille) => (
+                  <tr key={famille.id} onClick={() => handleRowClick(famille.id)} className="hover:bg-gray-50 cursor-pointer">
+                    <td className="px-4 py-2">{famille.chefFamille.nom} {famille.chefFamille.prenom}</td>
+                    <td className="px-4 py-2">{famille.type.nom}</td>
+                    <td className="px-4 py-2">{famille.adresseEmail}</td>
+                    <td className="px-4 py-2">{famille.cotisation?.montant} €</td>
                   </tr>
-                )}
+                ))}
               </tbody>
             </table>
           </div>
         </div>
-      </div>
+      )}
 
-      <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-4">
+      <div className="flex  justify-between items-center mt-6 gap-4">
         <button
-          className='btn p-2 border rounded w-full sm:w-32 bg-white'
           onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
+          className="px-4 py-2 border rounded bg-white disabled:opacity-50"
           disabled={currentPage === 1}
         >
           Précédent
         </button>
-        <p className="text-sm text-gray-700">
-          Page {currentPage} sur {totalPages}
-        </p>
+        <span>Page {currentPage} sur {totalPages}</span>
         <button
-          className='btn p-2 border rounded w-full sm:w-32 bg-white'
           onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
+          className="px-4 py-2 border rounded bg-white disabled:opacity-50"
           disabled={currentPage === totalPages}
         >
           Suivant
         </button>
       </div>
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md">
-            <h2 className="text-lg font-semibold mb-4">Confirmer la suppression</h2>
-            <p className="mb-6 text-sm text-gray-700">
-              Êtes-vous sûr de vouloir supprimer {selectedRows.length} famille{selectedRows.length > 1 ? "s" : ""} ?
-              Cette action est irréversible.
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={handleDeleteSelected}
-                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-              >
-                Confirmer
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
-};
-
-export default DetailFamillesBoard;
+}

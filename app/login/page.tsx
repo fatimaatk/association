@@ -1,14 +1,26 @@
 "use client"
 
-import WrapperVitrine from "../component/layout/WrapperVitrine"
+
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import PublicLayout from "../component/layout/PublicLayout"
+import { useUser } from "@/context/UserContext"
 
 export default function LoginPage() {
+  const user = useUser()
+  const router = useRouter()
+
   const [email, setEmail] = useState("")
   const [motDePasse, setMotDePasse] = useState("")
   const [erreur, setErreur] = useState(null)
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (user) {
+      router.replace("/dashboard")
+    }
+  }, [user])
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -32,7 +44,7 @@ export default function LoginPage() {
   }
 
   return (
-    <WrapperVitrine>
+    <PublicLayout >
       <div className="min-h-[80vh] flex items-center justify-center px-4">
         <div className="w-full max-w-md bg-white shadow-md rounded-xl p-8">
           <h1 className="text-2xl font-bold text-center text-[#00B074] mb-6">
@@ -82,6 +94,6 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
-    </WrapperVitrine>
+    </PublicLayout>
   )
 }

@@ -1,32 +1,14 @@
 import { IFamille, TypePaiement, StatutPaiement, convertToEnum } from "@/models/interfaceFamilles";
 import { prisma } from "./prisma";
 
-export async function getFamilles() {
+export async function getFamilles(associationId: string) {
   try {
     const familles = await prisma.famille.findMany({
+      where: { associationId },
       include: {
-        type: {
-          select: {
-            id: true,
-            nom: true,
-          }
-        },
-        chefFamille: {
-          select: {
-            id: true,
-            nom: true,
-            prenom: true,
-            dateNaissance: true,
-          }
-        },
-        membres: {
-          select: {
-            id: true,
-            nom: true,
-            prenom: true,
-            dateNaissance: true,
-          }
-        },
+        type: { select: { id: true, nom: true } },
+        chefFamille: { select: { id: true, nom: true, prenom: true, dateNaissance: true } },
+        membres: { select: { id: true, nom: true, prenom: true, dateNaissance: true } },
         cotisation: {
           select: {
             id: true,
@@ -37,11 +19,11 @@ export async function getFamilles() {
                 statutPaiement: true,
                 typePaiement: true,
                 datePaiement: true,
-              }
-            }
-          }
-        }
-      }
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!familles) return null;
@@ -64,35 +46,16 @@ export async function getFamilles() {
 }
 
 
-export async function getFamilleById(id: string): Promise<IFamille | null> {
-  if (!id) return null;
+export async function getFamilleById(id: string, associationId: string): Promise<IFamille | null> {
+  if (!id || !associationId) return null;
 
   try {
-    const famille = await prisma.famille.findUnique({
-      where: { id },
+    const famille = await prisma.famille.findFirst({
+      where: { id, associationId }, // ⬅️ filtre ici
       include: {
-        type: {
-          select: {
-            id: true,
-            nom: true,
-          }
-        },
-        chefFamille: {
-          select: {
-            id: true,
-            nom: true,
-            prenom: true,
-            dateNaissance: true,
-          }
-        },
-        membres: {
-          select: {
-            id: true,
-            nom: true,
-            prenom: true,
-            dateNaissance: true,
-          }
-        },
+        type: { select: { id: true, nom: true } },
+        chefFamille: { select: { id: true, nom: true, prenom: true, dateNaissance: true } },
+        membres: { select: { id: true, nom: true, prenom: true, dateNaissance: true } },
         cotisation: {
           select: {
             id: true,
@@ -103,11 +66,11 @@ export async function getFamilleById(id: string): Promise<IFamille | null> {
                 statutPaiement: true,
                 typePaiement: true,
                 datePaiement: true,
-              }
-            }
-          }
-        }
-      }
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!famille) return null;
@@ -130,16 +93,19 @@ export async function getFamilleById(id: string): Promise<IFamille | null> {
 }
 
 
-export const getAdherentsByIds = async (ids: string[]) => {
+export const getAdherentsByIds = async (ids: string[], associationId: string) => {
   return prisma.famille.findMany({
-    where: { id: { in: ids } },
+    where: {
+      id: { in: ids },
+      associationId,
+    },
     include: {
-      chefFamille: true, cotisation: {
+      chefFamille: true,
+      cotisation: {
         include: {
           facture: true,
-        }
-
-      }
-    } // ou selon ta structure
+        },
+      },
+    },
   });
 };

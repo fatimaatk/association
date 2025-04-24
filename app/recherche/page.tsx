@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import ResultatsRecherche from '../component/recherche/ResultatRecherche';
-import Wrapper from '../component/layout/Wrapper';
+import Wrapper from '../component/layout/ProtectedWrapper';
 
 export default function Page() {
   return (

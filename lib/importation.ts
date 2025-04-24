@@ -46,7 +46,7 @@ function convertirDateExcel(dateExcel: unknown): string {
   throw new Error(`Date invalide : ${dateExcel}`);
 }
 
-export async function importExcel(fileBuffer: Buffer) {
+export async function importExcel(fileBuffer: Buffer, associationId: string) {
   try {
     const workbook = XLSX.read(fileBuffer, { type: "buffer" });
     const famillesSheet = workbook.Sheets["Familles"];
@@ -69,33 +69,40 @@ export async function importExcel(fileBuffer: Buffer) {
           famille.chefFamille_dateNaissance
         );
 
-        // Création initiale du chef de famille sans référence à la famille
         const chefFamille = await prisma.membre.upsert({
           where: { id: familleId },
           update: {
             nom: famille.chefFamille_nom,
             prenom: famille.chefFamille_prenom,
-            dateNaissance: convertirDateExcel(famille.chefFamille_dateNaissance)
+            dateNaissance: convertirDateExcel(famille.chefFamille_dateNaissance),
+            associationId
           },
           create: {
             id: familleId,
             nom: famille.chefFamille_nom,
             prenom: famille.chefFamille_prenom,
-            dateNaissance: convertirDateExcel(famille.chefFamille_dateNaissance)
-            // La référence familleId sera ajoutée après la création de la famille
+            dateNaissance: convertirDateExcel(famille.chefFamille_dateNaissance),
+            associationId
           }
         });
 
-        const typeFamille = await prisma.typeFamille.upsert({
-          where: { nom: famille.typeFamille_nom },
-          update: {},
-          create: {
-            id: famille.typeFamille_nom.toLowerCase().replace(/\s+/g, ''),
-            nom: famille.typeFamille_nom
+        let typeFamille = await prisma.typeFamille.findFirst({
+          where: {
+            nom: famille.typeFamille_nom,
+            associationId
           }
         });
 
-        // Création de la famille
+        if (!typeFamille) {
+          typeFamille = await prisma.typeFamille.create({
+            data: {
+              id: famille.typeFamille_nom.toLowerCase().replace(/\s+/g, ''),
+              nom: famille.typeFamille_nom,
+              associationId
+            }
+          });
+        }
+
         await prisma.famille.upsert({
           where: { id: familleId },
           update: {
@@ -103,7 +110,8 @@ export async function importExcel(fileBuffer: Buffer) {
             chefFamilleId: chefFamille.id,
             adresse: famille.adresse || "",
             adresseEmail: famille.adresseEmail || "",
-            telephone: famille.telephone || ""
+            telephone: famille.telephone || "",
+            associationId
           },
           create: {
             id: familleId,
@@ -112,14 +120,17 @@ export async function importExcel(fileBuffer: Buffer) {
             adresse: famille.adresse || "",
             adresseEmail: famille.adresseEmail || "",
             telephone: famille.telephone || "",
+            associationId,
             cotisation: {
               create: {
                 montant: parseFloat((famille.montant_cotisation ?? 0).toString()) || 0,
+                associationId,
                 facture: {
                   create: {
                     typePaiement: getTypePaiement(famille.typePaiement),
                     statutPaiement: getStatutPaiement(famille.statutPaiement),
-                    datePaiement: famille.datePaiement ? new Date(famille.datePaiement) : null
+                    datePaiement: famille.datePaiement ? new Date(famille.datePaiement) : null,
+                    associationId
                   }
                 }
               }
@@ -127,13 +138,15 @@ export async function importExcel(fileBuffer: Buffer) {
           }
         });
 
-        // Mise à jour du chef de famille pour l'associer à sa propre famille
         await prisma.membre.update({
           where: { id: familleId },
-          data: { familleId: familleId }
+          data: { familleId }
         });
 
-        famillesMap.set(famille.chefFamille_nom + '_' + famille.chefFamille_prenom, familleId);
+        famillesMap.set(
+          famille.chefFamille_nom + '_' + famille.chefFamille_prenom + '_' + famille.chefFamille_dateNaissance,
+          familleId
+        );
         console.log(`✅ Famille traitée : ${famille.chefFamille_nom} ${famille.chefFamille_prenom}`);
       } catch (error) {
         console.error(`❌ Erreur traitement famille ${famille.chefFamille_nom}:`, error);
@@ -143,7 +156,9 @@ export async function importExcel(fileBuffer: Buffer) {
 
     for (const membre of membresData) {
       try {
-        const familleId = famillesMap.get(membre.familleChefNom + '_' + membre.familleChefPrenom + '_' + membre.dateNaissance);
+        const familleId = famillesMap.get(
+          membre.familleChefNom + '_' + membre.familleChefPrenom + '_' + membre.dateNaissance
+        );
 
         if (!familleId) {
           console.warn(`⚠️ Famille non trouvée pour le membre ${membre.nom} ${membre.prenom}`);
@@ -152,7 +167,6 @@ export async function importExcel(fileBuffer: Buffer) {
 
         const membreId = generateCustomId(membre.nom, membre.prenom, membre.dateNaissance);
 
-        // Vérification si ce membre n'est pas déjà le chef de famille
         if (membreId === familleId) {
           console.log(`ℹ️ ${membre.nom} ${membre.prenom} est déjà enregistré comme chef de famille, ignoré`);
           continue;
@@ -164,14 +178,16 @@ export async function importExcel(fileBuffer: Buffer) {
             nom: membre.nom,
             prenom: membre.prenom,
             dateNaissance: convertirDateExcel(membre.dateNaissance),
-            familleId: familleId
+            familleId,
+            associationId
           },
           create: {
             id: membreId,
             nom: membre.nom,
             prenom: membre.prenom,
             dateNaissance: convertirDateExcel(membre.dateNaissance),
-            familleId: familleId
+            familleId,
+            associationId
           }
         });
 
@@ -181,7 +197,10 @@ export async function importExcel(fileBuffer: Buffer) {
       }
     }
 
-    return { success: true, message: `Importation terminée avec succès : ${famillesData.length} familles et ${membresData.length} membres importés` };
+    return {
+      success: true,
+      message: `Importation terminée avec succès : ${famillesData.length} familles et ${membresData.length} membres importés`
+    };
   } catch (error) {
     console.error("❌ Erreur globale:", error);
     throw error;

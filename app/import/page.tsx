@@ -1,10 +1,11 @@
-import Wrapper from '../component/layout/Wrapper';
+
 import ImportClientPage from '../component/familles/ImportClientPage';
+import ProtectedWrapper from '../component/layout/ProtectedWrapper';
 
 export default function ImportPage() {
   return (
-    <Wrapper>
+    <ProtectedWrapper>
       <ImportClientPage />
-    </Wrapper>
+    </ProtectedWrapper>
   );
 }

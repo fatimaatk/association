@@ -1,12 +1,14 @@
-"use client"
 
-import WrapperVitrine from "./component/layout/WrapperVitrine"
+
 import Link from "next/link"
 import Image from "next/image"
+import PublicLayout from "./component/layout/PublicLayout"
+import { getUserFromCookies } from "@/lib/auth";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const user = await getUserFromCookies();
   return (
-    <WrapperVitrine>
+    <PublicLayout utilisateur={user}>
       <section className="w-full max-w-7xl mx-auto px-4 py-20 flex flex-col-reverse lg:flex-row items-center gap-12">
         <div className="flex-1 text-center lg:text-left">
           <h1 className="text-4xl sm:text-5xl font-bold leading-tight text-[#004d3b]">
@@ -104,6 +106,6 @@ export default function HomePage() {
           100% { transform: translateX(-50%); }
         }
       `}</style>
-    </WrapperVitrine>
+    </PublicLayout>
   )
 }

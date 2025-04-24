@@ -11,6 +11,10 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        primary: {
+          DEFAULT: '#00B074',
+          foreground: '#ffffff', // pour le texte sur fond vert
+        },
       },
     },
   },

@@ -1,15 +1,17 @@
 'use client'
 
+//C’est le layout général quand on est connecté
+
 import Sidebar from './SideBar'
 import SearchBar from './searchBar'
-import { UserContext } from '@/context/UserContext'
+import { TUser, UserContext } from '@/context/UserContext'
 
-export default function WrapperClient({
+export default function AppLayout({
   children,
   utilisateur,
 }: {
   children: React.ReactNode
-  utilisateur: any
+  utilisateur: TUser
 }) {
   return (
     <UserContext.Provider value={utilisateur}>

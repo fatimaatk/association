@@ -19,7 +19,6 @@ export default function ExportPDFClient() {
       try {
         const res = await fetch("/api/adherents");
         const data: IFamille[] = await res.json();
-        console.log(data)
         // Filtrage selon le type de PDF
         const filtered = type === "attestation"
           ? data.filter((a) => a.cotisation?.facture?.statutPaiement === "ACQUITTE")
@@ -72,7 +71,10 @@ export default function ExportPDFClient() {
       a.href = url;
       a.download = `export-${type}.zip`;
       a.click();
-      window.URL.revokeObjectURL(url);
+      setTimeout(() => {
+        window.URL.revokeObjectURL(url);
+        alert("Le téléchargement a bien été lancé.");
+      }, 100);
     } catch (err) {
       console.error(err);
       alert("Une erreur est survenue lors de l'exportation");
@@ -89,8 +91,9 @@ export default function ExportPDFClient() {
       </h1>
 
       <div className="mb-6">
-        <label className="block mb-2 text-sm font-medium">Type de document :</label>
+        <label htmlFor="type-doc" className="block mb-2 text-sm font-medium">Type de document :</label>
         <select
+          id="type-doc"
           className="border rounded px-4 py-2 w-full"
           value={type}
           onChange={(e) => setType(e.target.value)}

@@ -9,6 +9,8 @@ import confetti from "canvas-confetti";
 import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
 import { ArrowDownFromLine, FileUser } from "lucide-react";
+import GeneratedPdfViewer from "../export/GeneratedPDFviewer";
+import CustomPdfEditor from "../export/CustomPdfEditor";
 
 interface IProps {
   initialData: IFamille | null;
@@ -116,34 +118,24 @@ export default function ClientFamilleDetails({ initialData, id }: IProps) {
       {loading ? (
         <Loader loading={loading} />
       ) : (
-        <div className="relative mb-6">
+        <div className="space-y-12">
+          {/* Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <h1 className="text-xl sm:text-2xl font-semibold uppercase flex items-center gap-2">
               <FileUser size={24} className="sm:w-[30px] sm:h-[30px]" color='#00B074' />
-              {famille?.chefFamille?.nom} {famille?.chefFamille?.prenom}
+              {famille.chefFamille.nom} {famille.chefFamille.prenom}
             </h1>
+          </div>
 
-            <button
-              onClick={handleDownloadPdf}
-              disabled={isGenerating}
-              className="btn btn-m bg-[#00B074] text-white w-full sm:w-auto"
-            >
-              {isGenerating ? 'Génération...' : 'Télécharger PDF'}
-              <ArrowDownFromLine className="w-4" />
-            </button>
-          </div>
-          <div className="flex flex-col lg:flex-row gap-6 mt-5">
-            <div className="w-full lg:w-1/3">
-              <DetailFamilleCart
-                famille={famille}
-                setFamilleIsUpdated={setFamilleIsUpdated}
-                deleteFamille={deleteFamille}
-              />
-            </div>
-            <div className="w-full lg:w-2/3">
-              <InvoicePaiement famille={famille} factureRef={factureRef} />
-            </div>
-          </div>
+          <DetailFamilleCart
+            famille={famille}
+            setFamilleIsUpdated={setFamilleIsUpdated}
+            deleteFamille={() => setFamille(null)}
+          />
+          <GeneratedPdfViewer famille={famille} />
+
+
+
         </div>
       )}
     </div>

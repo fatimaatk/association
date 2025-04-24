@@ -1,12 +1,21 @@
 'use server'
-import Wrapper from "@/app/component/layout/Wrapper";
+
 import { ChartNoAxesCombined, User, Users, } from "lucide-react";
 import Link from "next/link";
 import { getFamilles } from "@/lib/famille";
 import AccueilInfos from "../component/layout/AccueilInfo";
+import { getUserFromCookies } from "@/lib/auth";
+import { notFound } from "next/navigation";
+import ProtectedWrapper from "@/app/component/layout/ProtectedWrapper";
 
 export default async function Home() {
-  const familles = await getFamilles();
+  const user = await getUserFromCookies();
+  const associationId = user?.associationId;
+
+  if (!associationId) return notFound();
+
+  const familles = await getFamilles(associationId);
+  if (!familles) return notFound();
 
   const uniqueAdherents = familles?.filter(x => x.type.nom === "Individuel");
   const familleAdherents = familles?.filter(x => x.type.nom === "Famille");
@@ -29,11 +38,11 @@ export default async function Home() {
 
 
   return (
-    <Wrapper>
+    <ProtectedWrapper>
       <div className=" flex-1">
         <h1 className="text-2xl font-semibold mb-4">Accueil</h1>
         <AccueilInfos />
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white p-5 shadow-md rounded-lg text-center hover:bg-[#e6f7f1] transition duration-200 group">
             <Link href="/familles?filter=famille">
               <Users size={40} className="text-[#00B074] mx-auto transform transition duration-200 group-hover:scale-110 group-hover:text-[#00965e]" />
@@ -65,7 +74,7 @@ export default async function Home() {
         </div>
 
       </div>
-    </Wrapper>
+    </ProtectedWrapper>
   );
 }
 

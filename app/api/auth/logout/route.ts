@@ -1,15 +1,16 @@
 // app/api/auth/logout/route.ts
-import { NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
+import { cookies } from "next/headers"
 
 export async function POST() {
-  cookies().set('token', '', {
+  const cookieStore = await cookies()
+
+  cookieStore.set('token', '', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
     path: '/',
-    expires: new Date(0),
+    expires: new Date(0), // Expiration immédiate
   })
 
-  return NextResponse.json({ message: 'Déconnecté avec succès' })
+  return new Response(null, { status: 200 })
 }

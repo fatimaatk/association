@@ -1,11 +1,11 @@
 
 import ExportPDFClient from "../component/export/ExportPDFClient";
-import Wrapper from "../component/layout/Wrapper";
+import ProtectedWrapper from "../component/layout/ProtectedWrapper";
 
 export default function ExportPage() {
   return (
-    <Wrapper>
+    <ProtectedWrapper>
       <ExportPDFClient />
-    </Wrapper>
+    </ProtectedWrapper>
   );
 }

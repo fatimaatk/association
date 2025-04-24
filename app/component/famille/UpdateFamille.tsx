@@ -98,7 +98,6 @@ const UpdateFamilleModal: React.FC<UpdateFamilleProps> = ({ famille, onUpdate, s
       const formattedData = {
         ...editedFamille,
         id: editedFamille.id,
-        representantId: editedFamille.chefFamille?.id || null,
         membres: editedFamille.membres.map((membre: IMembre) => ({
           id: membre.id || undefined,
           nom: membre.nom,

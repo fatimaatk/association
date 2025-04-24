@@ -1,10 +1,23 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import WrapperVitrine from "../component/layout/WrapperVitrine"
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import WrapperVitrine from "../component/layout/PublicLayout";
+import { useUser } from "@/context/UserContext";
 
 export default function InscriptionPage() {
+  const user = useUser()
+  const router = useRouter();
+
+
+  useEffect(() => {
+    if (user) {
+      router.replace("/dashboard")
+    }
+  }, [user])
+
+
   const [formData, setFormData] = useState({
     nom: "",
     email: "",
@@ -12,17 +25,56 @@ export default function InscriptionPage() {
     telephone: "",
     type: "",
     password: "",
-  })
+  });
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-  }
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    console.log("Soumission de l'association :", formData)
-    // TODO: POST vers /api/inscription
-  }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/association", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nom: formData.nom,
+          email: formData.email,
+          siret: formData.siret,
+          telephone: formData.telephone,
+          type: formData.type,
+          compte: {
+            email: formData.email,
+            motDePasse: formData.password,
+            nom: "Admin",
+            prenom: "Admin",
+          },
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Erreur lors de la création");
+        return;
+      }
+
+      // Si l'API renvoie un token à stocker (à activer si tu veux le gérer ici)
+      document.cookie = `token=${data.token}; path=/;`;
+
+      alert("Association créée avec succès !");
+      router.push("/dashboard"); // change la route cible si nécessaire
+    } catch (error) {
+      console.error("Erreur lors de la soumission :", error);
+      alert("Une erreur est survenue");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <WrapperVitrine>
@@ -32,100 +84,41 @@ export default function InscriptionPage() {
             Créer votre association
           </h1>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="nom" className="block text-sm font-medium text-gray-700">
-                Nom de l'association
-              </label>
-              <input
-                type="text"
-                name="nom"
-                id="nom"
-                value={formData.nom}
-                onChange={handleChange}
-                required
-                className="mt-1 block w-full border px-4 py-2 rounded-md shadow-sm focus:ring focus:ring-[#00B074]"
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email de contact
-              </label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="mt-1 block w-full border px-4 py-2 rounded-md shadow-sm focus:ring focus:ring-[#00B074]"
-              />
-            </div>
-            <div>
-              <label htmlFor="siret" className="block text-sm font-medium text-gray-700">
-                Numéro SIRET
-              </label>
-              <input
-                type="text"
-                name="siret"
-                id="siret"
-                value={formData.siret}
-                onChange={handleChange}
-                required
-                className="mt-1 block w-full border px-4 py-2 rounded-md shadow-sm focus:ring focus:ring-[#00B074]"
-              />
-            </div>
-            <div>
-              <label htmlFor="telephone" className="block text-sm font-medium text-gray-700">
-                Téléphone
-              </label>
-              <input
-                type="text"
-                name="telephone"
-                id="telephone"
-                value={formData.telephone}
-                onChange={handleChange}
-                required
-                className="mt-1 block w-full border px-4 py-2 rounded-md shadow-sm focus:ring focus:ring-[#00B074]"
-              />
-            </div>
-            <div>
-              <label htmlFor="type" className="block text-sm font-medium text-gray-700">
-                Type d'association
-              </label>
-              <input
-                type="text"
-                name="type"
-                id="type"
-                value={formData.type}
-                onChange={handleChange}
-                placeholder="Sportive, culturelle..."
-                required
-                className="mt-1 block w-full border px-4 py-2 rounded-md shadow-sm focus:ring focus:ring-[#00B074]"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Mot de passe administrateur
-              </label>
-              <input
-                type="password"
-                name="password"
-                id="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="mt-1 block w-full border px-4 py-2 rounded-md shadow-sm focus:ring focus:ring-[#00B074]"
-              />
-            </div>
+            {[
+              { label: "Nom de l'association", name: "nom", type: "text" },
+              { label: "Email de contact", name: "email", type: "email" },
+              { label: "Numéro SIRET", name: "siret", type: "text" },
+              { label: "Téléphone", name: "telephone", type: "text" },
+              { label: "Type d'association", name: "type", type: "text" },
+              { label: "Mot de passe administrateur", name: "password", type: "password" },
+            ].map(({ label, name, type }) => (
+              <div key={name}>
+                <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+                  {label}
+                </label>
+                <input
+                  type={type}
+                  name={name}
+                  id={name}
+                  value={formData[name as keyof typeof formData]}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 block w-full border px-4 py-2 rounded-md shadow-sm focus:ring focus:ring-[#00B074]"
+                />
+              </div>
+            ))}
+
             <button
               type="submit"
               className="w-full bg-[#00B074] text-white font-semibold py-2 rounded-md hover:bg-[#009a66] transition"
+              disabled={loading}
             >
-              Créer mon association
+              {loading ? "Création en cours..." : "Créer mon association"}
             </button>
           </form>
+
           <p className="text-center text-sm text-gray-600 mt-4">
-            Déjà un compte ?{' '}
+            Déjà un compte ?{" "}
             <Link href="/login" className="text-[#00B074] hover:underline">
               Se connecter
             </Link>
@@ -133,5 +126,5 @@ export default function InscriptionPage() {
         </div>
       </div>
     </WrapperVitrine>
-  )
+  );
 }

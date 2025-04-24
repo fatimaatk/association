@@ -1,7 +1,8 @@
 import { getFamilles } from "@/lib/famille";
 import DetailFamillesBoard from "../component/familles/DetailFamillesBoard";
-import Wrapper from "@/app/component/layout/WrapperClient";
 import { notFound } from "next/navigation";
+import ProtectedWrapper from "../component/layout/ProtectedWrapper";
+import { getUserFromCookies } from "@/lib/auth";
 
 interface SearchParams {
   searchParams?: {
@@ -10,8 +11,12 @@ interface SearchParams {
 }
 
 export default async function FamillePage({ searchParams }: SearchParams) {
-  const familles = await getFamilles();
+  const user = await getUserFromCookies();
+  const associationId = user?.associationId;
 
+  if (!associationId) return notFound();
+
+  const familles = await getFamilles(associationId);
   if (!familles) return notFound();
 
   const filter = searchParams?.filter;
@@ -38,7 +43,7 @@ export default async function FamillePage({ searchParams }: SearchParams) {
   };
 
   return (
-    <Wrapper>
+    <ProtectedWrapper>
       <div className="mb-6 flex flex-wrap gap-4 justify-start">
         <a
           href="/familles"
@@ -72,6 +77,6 @@ export default async function FamillePage({ searchParams }: SearchParams) {
         </a>
       </div>
       <DetailFamillesBoard familles={filteredFamilles} />
-    </Wrapper>
+    </ProtectedWrapper>
   );
 };

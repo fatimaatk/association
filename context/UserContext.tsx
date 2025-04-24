@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from 'react'
 
-type User = {
+export type TUser = {
   id: string
   email: string
   prenom: string
@@ -11,6 +11,6 @@ type User = {
   associationId: string
 }
 
-export const UserContext = createContext<User | null>(null)
+export const UserContext = createContext<TUser | null>(null)
 
 export const useUser = () => useContext(UserContext)
