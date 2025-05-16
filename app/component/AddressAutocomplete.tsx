@@ -38,7 +38,6 @@ export default function AddressAutocomplete({
   const inputRef = useRef<HTMLInputElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  console.log(suggestions)
   useEffect(() => {
     // Fermer les suggestions si on clique en dehors
     const handleClickOutside = (event: MouseEvent) => {

@@ -14,14 +14,14 @@ export async function POST(req: NextRequest) {
   if (!email || !motDePasse) {
     return NextResponse.json({ message: 'Email et mot de passe requis' }, { status: 400 })
   }
-
   try {
     const compte = await prisma.compte.findUnique({
       where: { email },
       include: { association: true }
     })
-
     const passwordOk = compte && await bcrypt.compare(motDePasse, compte.motDePasse)
+
+
     if (!compte || !passwordOk) {
       return NextResponse.json({ message: 'Identifiants invalides' }, { status: 401 })
     }
