@@ -767,21 +767,13 @@ export default function InscriptionPage() {
                   Retour
                 </button>
               )}
-              {currentStep < 4 ? (
+              {currentStep < 4 && (
                 <button
                   type="button"
                   onClick={handleNext}
                   className="ml-auto px-4 py-2 bg-[#00B074] text-white rounded-md hover:bg-[#009a66] transition"
                 >
                   Suivant
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="ml-auto px-4 py-2 bg-[#00B074] text-white rounded-md hover:bg-[#009a66] transition disabled:opacity-50"
-                >
-                  {loading ? "Création en cours..." : "Créer mon association"}
                 </button>
               )}
             </div>
