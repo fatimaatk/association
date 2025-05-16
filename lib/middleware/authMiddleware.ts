@@ -1,10 +1,17 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import { parse } from 'cookie'
+
+declare module "next" {
+  interface NextApiRequest {
+    user?: string | JwtPayload;
+  }
+}
+type ApiHandler = (req: NextApiRequest, res: NextApiResponse) => Promise<void> | void;
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret'
 
-export function withAuth(handler: Function) {
+export function withAuth(handler: ApiHandler) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     const cookies = parse(req.headers.cookie || '')
     const token = cookies.token

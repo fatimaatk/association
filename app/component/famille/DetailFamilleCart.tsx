@@ -27,7 +27,6 @@ const DetailFamilleCart = ({ famille, setFamilleIsUpdated, deleteFamille }: IPro
     setOpenModalDelete(true)
   }
 
-  console.log(openModalDelete, famille)
   const cancelDeleteFamille = () => {
     setOpenModalDelete(false)
   }

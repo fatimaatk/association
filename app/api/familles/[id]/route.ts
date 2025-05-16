@@ -50,8 +50,8 @@ export async function GET(req: Request, context: { params: Promise<{ id: string 
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
-  const { id } = params;
+export async function DELETE(req: Request, context: { params: { id: string } }) {
+  const { id } = context.params;
   const user = await getUserFromRequest(req);
   if (!user?.associationId) {
     return NextResponse.json({ message: 'Non authentifié' }, { status: 401 });

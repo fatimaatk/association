@@ -8,17 +8,18 @@ import ProtectedWrapper from "@/app/component/layout/ProtectedWrapper";
 export default async function FamillePage({
   params,
 }: {
-  params: { id: string };
+  params: { slug: string };
 }) {
-  const { id } = await params;
+  const { slug } = await params;
+  const decodedSlug = decodeURIComponent(slug);
   const user = await getUserFromCookies();
   if (!user?.associationId) return null;
 
-  const initialData = await getFamilleById(id, user.associationId);
+  const initialData = await getFamilleById(decodedSlug, user.associationId);
 
   return (
     <ProtectedWrapper>
-      <ClientFamilleDetails initialData={initialData} id={id} />
+      <ClientFamilleDetails initialData={initialData} id={slug} />
     </ProtectedWrapper>
   );
 }

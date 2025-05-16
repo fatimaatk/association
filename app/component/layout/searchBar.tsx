@@ -16,9 +16,7 @@ const SearchBar = () => {
   const fetchFamille = async () => {
     try {
       const res = await fetch(`/api/familles`);
-      if (!res.ok) {
-        throw new Error("Famille non trouvée");
-      }
+
       const data = await res.json();
       setFamilles(data);
     } catch (error) {

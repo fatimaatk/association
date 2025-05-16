@@ -247,7 +247,6 @@ export default function FormAjoutFamille({ types }: Props) {
     }
   };
 
-  console.log(typeFamilleId)
 
   return (
     <div className="max-w-3xl mx-auto bg-white p-6 shadow-md rounded-xl">

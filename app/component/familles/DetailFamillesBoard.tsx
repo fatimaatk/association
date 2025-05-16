@@ -2,10 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { IFamille } from "@/models/interfaceFamilles";
-import { useRouter } from "next/navigation";
-import { Search, AlertCircle, SlidersHorizontal, X, Check, RotateCcw } from "lucide-react";
-import { formatDateToDDMMYYYY } from "../famille/DetailFamilleCart";
-import * as XLSX from "xlsx";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AlertCircle, SlidersHorizontal, X, Check, RotateCcw } from "lucide-react";
+import toast from "react-hot-toast";
 
 interface IProps {
   familles: IFamille[] | null;
@@ -18,12 +17,25 @@ export default function DetailFamillesBoard({ familles }: IProps) {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedRows, setSelectedRows] = useState<IFamille[]>([]);
+  //const [selectedRows, setSelectedRows] = useState<IFamille[]>([]);
   const [showFilterPopup, setShowFilterPopup] = useState(false);
 
   const handleRowClick = (familleId: string) => {
     router.push(`/famille/${familleId}`);
   };
+
+
+  const searchParametres = useSearchParams()
+  useEffect(() => {
+    if (searchParametres.get('deleted') === 'true') {
+      toast.success('Famille supprimée avec succès')
+    }
+
+    const newUrl = new URL(window.location.href)
+    newUrl.searchParams.delete('deleted')
+    router.replace(newUrl.toString())
+  }, [router, searchParametres])
+
 
   const resetFilters = () => {
     setSearchTermDraft("");
@@ -58,7 +70,7 @@ export default function DetailFamillesBoard({ familles }: IProps) {
 
   const totalPages = Math.ceil(sortedFamilles.length / itemsPerPage);
 
-  const toggleSelectAll = () => {
+  {/* const toggleSelectAll = () => {
     if (selectedRows.length === paginatedFamilles.length) {
       setSelectedRows([]);
     } else {
@@ -72,7 +84,7 @@ export default function DetailFamillesBoard({ familles }: IProps) {
         ? prev.filter((row) => row.id !== famille.id)
         : [...prev, famille]
     );
-  };
+  }; */}
 
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 relative">

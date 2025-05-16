@@ -1,16 +1,13 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DetailFamilleCart from "@/app/component/famille/DetailFamilleCart";
-import { InvoicePaiement } from "@/app/component/invoices/invoicePaiement";
 import Loader from "@/app/component/ui/loader";
 import { IFamille } from "@/models/interfaceFamilles";
-import confetti from "canvas-confetti";
-import html2canvas from "html2canvas-pro";
-import jsPDF from "jspdf";
-import { ArrowDownFromLine, FileUser } from "lucide-react";
-import GeneratedPdfViewer from "../export/GeneratedPDFviewer";
-import CustomPdfEditor from "../export/CustomPdfEditor";
+import GeneratedPdfViewer from "../export/GeneratedPdfViewer";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { FileUser } from "lucide-react";
 
 interface IProps {
   initialData: IFamille | null;
@@ -18,9 +15,8 @@ interface IProps {
 }
 
 export default function ClientFamilleDetails({ initialData, id }: IProps) {
-  const factureRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
   const [famille, setFamille] = useState<IFamille | null>(initialData);
-  const [isGenerating, setIsGenerating] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [familleIsUpdated, setFamilleIsUpdated] = useState(false);
 
@@ -50,62 +46,20 @@ export default function ClientFamilleDetails({ initialData, id }: IProps) {
 
   const deleteFamille = async (id: string) => {
     try {
-      const payload = {
-        id
-      };
-
       const res = await fetch(`/api/familles/${id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ id }),
       });
-      if (!res.ok) {
-        throw new Error("Famille non supprimée");
-      }
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-        zIndex: 9999,
-      });
-      await res.json();
-      fetchFamille();
+
+      if (!res.ok) throw new Error("Famille non supprimée");
+
+      setTimeout(() => {
+        router.push('/familles?deleted=true');
+      }, 1500);
     } catch (error) {
-      console.error("Erreur lors du chargement des factures", error);
-    }
-  };
-
-  const handleDownloadPdf = async () => {
-    const element = factureRef.current;
-    if (element) {
-      setIsGenerating(true);
-      try {
-        const canvas = await html2canvas(element, { scale: 3, useCORS: true });
-        const imgData = canvas.toDataURL('image/png');
-
-        const pdf = new jsPDF({
-          orientation: 'portrait',
-          unit: 'mm',
-          format: 'A4',
-        });
-
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`facture-${famille?.chefFamille?.nom}.pdf`);
-
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
-          zIndex: 9999,
-        });
-      } catch (error) {
-        console.error('Erreur lors de la génération du PDF :', error);
-      } finally {
-        setIsGenerating(false);
-      }
+      console.error("Erreur lors de la suppression", error);
+      toast.error("Erreur lors de la suppression");
     }
   };
 
@@ -124,13 +78,34 @@ export default function ClientFamilleDetails({ initialData, id }: IProps) {
             <h1 className="text-xl sm:text-2xl font-semibold uppercase flex items-center gap-2">
               <FileUser size={24} className="sm:w-[30px] sm:h-[30px]" color='#00B074' />
               {famille.chefFamille.nom} {famille.chefFamille.prenom}
+              {famille?.cotisation?.facture?.statutPaiement && (
+                <span
+                  className={`inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1 rounded-md
+      ${famille.cotisation.facture.statutPaiement === 'ACQUITTE'
+                      ? 'bg-green-50 text-green-700 border border-green-200'
+                      : 'bg-orange-50 text-orange-700 border border-orange-200'
+                    }
+    `}
+                >
+                  {famille.cotisation.facture.statutPaiement === 'ACQUITTE' ? (
+                    <>
+                      ✅ <span>Paiement effectué</span>
+                    </>
+                  ) : (
+                    <>
+                      ⏳ <span>Paiement en attente</span>
+                    </>
+                  )}
+                </span>
+              )}
+
             </h1>
           </div>
 
           <DetailFamilleCart
             famille={famille}
             setFamilleIsUpdated={setFamilleIsUpdated}
-            deleteFamille={() => setFamille(null)}
+            deleteFamille={deleteFamille}
           />
           <GeneratedPdfViewer famille={famille} />
 

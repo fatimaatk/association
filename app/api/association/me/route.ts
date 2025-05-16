@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const cookieStore = cookies();
   const token = (await cookieStore).get('token')?.value;
 
@@ -42,7 +42,8 @@ export async function GET(req: NextRequest) {
 
 
 export async function PUT(req: NextRequest) {
-  const token = cookies().get('token')?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token')?.value;
 
   if (!token) {
     return NextResponse.json({ message: 'Non authentifié' }, { status: 401 });

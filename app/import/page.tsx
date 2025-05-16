@@ -1,11 +1,11 @@
 
-import ImportClientPage from '../component/familles/ImportClientPage';
-import ProtectedWrapper from '../component/layout/ProtectedWrapper';
+import ImportFamillesClient from "../component/import/ImportfamillesClient";
+import ProtectedWrapper from "../component/layout/ProtectedWrapper";
 
 export default function ImportPage() {
   return (
     <ProtectedWrapper>
-      <ImportClientPage />
+      <ImportFamillesClient />
     </ProtectedWrapper>
   );
 }

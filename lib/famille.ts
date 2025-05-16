@@ -50,6 +50,7 @@ export async function getFamilleById(id: string, associationId: string): Promise
   if (!id || !associationId) return null;
 
   try {
+
     const famille = await prisma.famille.findFirst({
       where: { id, associationId }, // ⬅️ filtre ici
       include: {
@@ -72,7 +73,6 @@ export async function getFamilleById(id: string, associationId: string): Promise
         },
       },
     });
-
     if (!famille) return null;
 
     return {

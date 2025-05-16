@@ -1,4 +1,4 @@
-import { useState, useEffect, ChangeEvent } from "react";
+import { useState, useEffect, ChangeEvent, RefObject } from "react";
 import { IFamille } from "@/models/interfaceFamilles";
 import { Textarea } from "../ui/textarea";
 import { Input } from "../ui/input";
@@ -11,7 +11,7 @@ import confetti from "canvas-confetti";
 
 interface IProps {
   famille: IFamille;
-  factureRef: React.RefObject<HTMLDivElement>;
+  factureRef: RefObject<HTMLDivElement | null>;
 }
 
 interface CustomContent {
@@ -174,7 +174,7 @@ export default function CustomPdfEditor({ famille, factureRef }: IProps) {
         <div className="text-right mt-8 space-y-2">
           <p>Fait à {customContent.associationCity}, le {new Date().toLocaleDateString("fr-FR")}</p>
           <p>{customContent.signatureTitle}</p>
-          <p className="text-sm italic text-gray-500">Cachet de l'association</p>
+          <p className="text-sm italic text-gray-500">Cachet de l`&apos;`association</p>
         </div>
       </div>
     </div>

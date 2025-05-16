@@ -22,6 +22,29 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Champs requis manquants' }, { status: 400 });
     }
 
+    // Recherche des conflits
+    const existingByEmail = await prisma.association.findFirst({ where: { email } });
+    const existingBySiret = await prisma.association.findFirst({ where: { siret } });
+    const existingByNom = await prisma.association.findFirst({ where: { nom } });
+
+    const fields: string[] = [];
+    if (existingByEmail) fields.push("email");
+    if (existingBySiret) fields.push("siret");
+    if (existingByNom) fields.push("nom");
+
+    if (fields.length > 0) {
+      return NextResponse.json(
+        {
+          message: "Un compte existe déjà avec ces informations.",
+          fields,
+          email: existingByEmail?.email,
+          siret: existingBySiret?.siret,
+          nom: existingByNom?.nom,
+        },
+        { status: 409 }
+      );
+    }
+
     const existingCompte = await prisma.compte.findUnique({
       where: { email: compte.email },
     });

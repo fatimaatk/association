@@ -6,7 +6,17 @@ import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { useState } from "react";
 
-export default function EditAssociationForm({ associationServerData }: { associationServerData: any }) {
+interface Association {
+  nom: string;
+  adresse: string;
+  siret: string;
+  type: string;
+  email: string;
+  telephone: string;
+  // Ajoute d'autres champs si besoin
+}
+
+export default function EditAssociationForm({ associationServerData }: { associationServerData: Association }) {
   const [association, setAssociation] = useState(associationServerData);
   const [editMode, setEditMode] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -34,7 +44,7 @@ export default function EditAssociationForm({ associationServerData }: { associa
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow space-y-6">
       <h1 className="text-2xl font-bold text-center text-[#00B074]">
-        Informations de l'association
+        Informations de l`&apos;`association
       </h1>
 
       {!editMode ? (

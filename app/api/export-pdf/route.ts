@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { renderToStream } from '@react-pdf/renderer';
 import JSZip from 'jszip';
-import { getAdherentsByIds } from '@/lib/famille';
 import { createAttestationPDF, createRelancePDF } from '@/lib/pdfGenerators';
 import { getUserFromRequest } from '@/lib/auth';
 
@@ -18,22 +17,37 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const adherents = await getAdherentsByIds(ids, user.associationId);
-
+    //const adherents = await getAdherentsByIds(ids, user.associationId);
+    const adherents = await prisma.famille.findMany({
+      where: {
+        id: { in: ids },
+        associationId: user.associationId,
+      },
+      include: {
+        type: true,
+        membres: true,
+        cotisation: { include: { facture: true } },
+        chefFamille: true,
+      }
+    });
     if (adherents.length === 1) {
       const adherent = adherents[0];
       const doc = type === 'attestation' ? createAttestationPDF(adherent) : createRelancePDF(adherent);
       const stream = await renderToStream(doc);
       const chunks: Uint8Array[] = [];
       for await (const chunk of stream) {
-        chunks.push(chunk);
+        if (typeof chunk === "string") {
+          chunks.push(Buffer.from(chunk));
+        } else {
+          chunks.push(chunk as Uint8Array);
+        }
       }
       const pdfBuffer = Buffer.concat(chunks);
       const nom = adherent.chefFamille?.nom || 'inconnu';
       const prenom = adherent.chefFamille?.prenom || '';
       const fileName = `${nom}_${prenom}_${type}.pdf`;
 
-      return new NextResponse(pdfBuffer, {
+      return new NextResponse(new Uint8Array(pdfBuffer), {
         status: 200,
         headers: {
           'Content-Type': 'application/pdf',
@@ -49,7 +63,11 @@ export async function POST(req: NextRequest) {
       const stream = await renderToStream(doc);
       const chunks: Uint8Array[] = [];
       for await (const chunk of stream) {
-        chunks.push(chunk);
+        if (typeof chunk === "string") {
+          chunks.push(Buffer.from(chunk));
+        } else {
+          chunks.push(chunk as Uint8Array);
+        }
       }
       const pdfBuffer = Buffer.concat(chunks);
       const nom = adherent.chefFamille?.nom || 'inconnu';
@@ -60,7 +78,7 @@ export async function POST(req: NextRequest) {
 
     const zipBuffer = await zip.generateAsync({ type: 'nodebuffer' });
 
-    return new NextResponse(zipBuffer, {
+    return new NextResponse(new Uint8Array(zipBuffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',

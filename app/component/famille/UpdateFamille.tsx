@@ -1,7 +1,10 @@
+'use client';
+
 import React, { SetStateAction, useState } from 'react';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { ICotisation, IFamille } from '@/models/interfaceFamilles';
 import { IMembre } from '@/models/interfaceFamilles';
+import toast from 'react-hot-toast';
 
 interface UpdateFamilleProps {
   famille: IFamille;
@@ -13,7 +16,7 @@ export function formatDateToYYYYMMDD(date: Date | null | undefined | string): st
   if (!date) return "";
   const d = new Date(date);
   const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0'); // Les mois commencent à 0
+  const month = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
@@ -36,33 +39,31 @@ const UpdateFamilleModal: React.FC<UpdateFamilleProps> = ({ famille, onUpdate, s
   const handleInputChange = (field: string, value: unknown, index?: number) => {
     setEditedFamille((prev) => {
       if (index !== undefined) {
-        // Cas des membres, on met à jour le membre à l'index donné
         const updatedMembres = [...prev.membres];
         updatedMembres[index] = {
           ...updatedMembres[index],
           [field]: value,
         };
+        toast.success(`Mise à jour du membre ${index + 1}`);
         return {
           ...prev,
           membres: updatedMembres,
         };
       } else if (field.includes('.')) {
-        // Cas des champs imbriqués (comme cotisation.facture.statutPaiement)
-        const keys = field.split('.'); // Décomposer le champ pour accéder à l'objet imbriqué
+        const keys = field.split('.');
         const updatedFamille = { ...prev };
 
         let obj: Record<string, unknown> = updatedFamille;
-        // Parcourir les clés sauf la dernière pour accéder à l'objet imbriqué
         for (let i = 0; i < keys.length - 1; i++) {
-          obj = obj[keys[i]] as Record<string, unknown>; // Accéder à l'objet imbriqué
+          obj = obj[keys[i]] as Record<string, unknown>;
         }
 
-        // Mettre à jour la dernière clé de l'objet imbriqué
         obj[keys[keys.length - 1]] = value;
+        toast.success(`Champ modifié : ${keys.join('.')}`);
 
         return updatedFamille;
       } else {
-        // Cas des autres champs de famille (type, chefFamille, etc.)
+        toast.success(`Champ modifié : ${field}`);
         return {
           ...prev,
           [field]: value,
@@ -84,6 +85,7 @@ const UpdateFamilleModal: React.FC<UpdateFamilleProps> = ({ famille, onUpdate, s
         }
       ]
     }));
+    toast.success("Nouveau membre ajouté");
   };
 
   const supprimerMembre = (index: number) => {
@@ -91,10 +93,19 @@ const UpdateFamilleModal: React.FC<UpdateFamilleProps> = ({ famille, onUpdate, s
       ...prev,
       membres: prev.membres.filter((_, i) => i !== index)
     }));
+    toast.success("Membre supprimé");
   };
 
   const handleSubmit = async () => {
     try {
+      const statut = (editedFamille?.cotisation as ICotisation)?.facture?.statutPaiement;
+      const datePaiement = (editedFamille?.cotisation as ICotisation)?.facture?.datePaiement;
+
+      if (statut === "ACQUITTE" && !datePaiement) {
+        toast.error("La date de paiement est obligatoire si le statut est 'Acquitté'");
+        return;
+      }
+
       const formattedData = {
         ...editedFamille,
         id: editedFamille.id,
@@ -121,13 +132,20 @@ const UpdateFamilleModal: React.FC<UpdateFamilleProps> = ({ famille, onUpdate, s
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formattedData),
       });
-      if (!response.ok) throw new Error('Mise à jour échouée');
+
+      if (!response.ok) {
+        toast.error('Mise à jour échouée');
+        throw new Error('Mise à jour échouée');
+      }
+
       const updatedData = await response.json();
       onUpdate(updatedData);
       setFamilleIsUpdated(true);
       setIsModalOpen(false);
+      toast.success('Famille modifiée avec succès');
     } catch (error) {
       console.error('Erreur de mise à jour:', error);
+      toast.error("Une erreur est survenue lors de la mise à jour");
     }
   };
 
@@ -224,6 +242,7 @@ const UpdateFamilleModal: React.FC<UpdateFamilleProps> = ({ famille, onUpdate, s
                       <div>
                         <label className="block mb-1">Nom :</label>
                         <input
+                          disabled={membre.id === editedFamille.chefFamille?.id}
                           type="text"
                           value={membre.nom}
                           onChange={(e) => handleInputChange('nom', e.target.value, index)}
@@ -233,6 +252,7 @@ const UpdateFamilleModal: React.FC<UpdateFamilleProps> = ({ famille, onUpdate, s
                       <div>
                         <label className="block mb-1">Prénom :</label>
                         <input
+                          disabled={membre.id === editedFamille.chefFamille?.id}
                           type="text"
                           value={membre.prenom}
                           onChange={(e) => handleInputChange('prenom', e.target.value, index)}

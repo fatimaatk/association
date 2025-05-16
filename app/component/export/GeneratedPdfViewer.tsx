@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useCallback, useState, useEffect, useRef } from "react";
 import { Button } from "../ui/button";
 import { IFamille } from "@/models/interfaceFamilles";
 import CustomPdfEditor from "./CustomPdfEditor";
@@ -16,9 +16,9 @@ export default function GeneratedPdfViewer({ famille }: GeneratedPdfViewerProps)
   const [viewMode, setViewMode] = useState<'attestation' | 'relance' | 'personnalise'>(isAcquitte ? 'attestation' : 'relance');
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const pdfRef = useRef<HTMLDivElement | null>(null);
+  const pdfRef = useRef<HTMLDivElement>(null);
 
-  const fetchPdf = async (type: 'attestation' | 'relance') => {
+  const fetchPdf = useCallback(async (type: 'attestation' | 'relance') => {
     setLoading(true);
     try {
       const res = await fetch('/api/export-pdf', {
@@ -44,7 +44,7 @@ export default function GeneratedPdfViewer({ famille }: GeneratedPdfViewerProps)
     } finally {
       setLoading(false);
     }
-  };
+  }, [famille.id, setLoading, setPdfUrl]);
 
   const handleDownload = async () => {
     if (viewMode === 'personnalise' && pdfRef.current) {
@@ -78,7 +78,7 @@ export default function GeneratedPdfViewer({ famille }: GeneratedPdfViewerProps)
     } else {
       setPdfUrl(null);
     }
-  }, [viewMode]);
+  }, [viewMode, fetchPdf]);
 
   return (
     <div className="space-y-6 mb-10">

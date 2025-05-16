@@ -1,6 +1,5 @@
 // lib/pdfGenerators.tsx
-import { Document, Page, Text, StyleSheet, View } from '@react-pdf/renderer';
-import type { ReactElement } from 'react';
+import { Document, DocumentProps, Page, Text, StyleSheet, View } from '@react-pdf/renderer';
 import type { IFamille } from '@/models/interfaceFamilles';
 
 const styles = StyleSheet.create({
@@ -45,7 +44,7 @@ function formatDate(dateString: string | Date | null | undefined): string {
   });
 }
 
-export const createAttestationPDF = (famille: IFamille): ReactElement => (
+export const createAttestationPDF = (famille: IFamille): React.ReactElement<DocumentProps> => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.infoBlock}>
@@ -78,7 +77,7 @@ export const createAttestationPDF = (famille: IFamille): ReactElement => (
   </Document>
 );
 
-export const createRelancePDF = (famille: IFamille): ReactElement => (
+export const createRelancePDF = (famille: IFamille): React.ReactElement<DocumentProps> => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.infoBlock}>

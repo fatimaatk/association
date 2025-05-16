@@ -1,4 +1,4 @@
-//C’est lui qui protège les pages privées
+//C'est lui qui protège les pages privées
 
 import { cookies } from 'next/headers'
 import jwt from 'jsonwebtoken'
