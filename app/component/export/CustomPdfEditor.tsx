@@ -174,7 +174,9 @@ export default function CustomPdfEditor({ famille, factureRef }: IProps) {
         <div className="text-right mt-8 space-y-2">
           <p>Fait à {customContent.associationCity}, le {new Date().toLocaleDateString("fr-FR")}</p>
           <p>{customContent.signatureTitle}</p>
-          <p className="text-sm italic text-gray-500">Cachet de l&aposassociation</p>
+          <p className="text-sm italic text-gray-500">
+            {/* eslint-disable-next-line react/no-unescaped-entities */}
+            Cachet de 'association</p>
         </div>
       </div>
     </div>
