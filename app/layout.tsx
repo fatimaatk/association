@@ -52,6 +52,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme='fantasy'>
+      <meta name="robots" content="noindex, nofollow" />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
