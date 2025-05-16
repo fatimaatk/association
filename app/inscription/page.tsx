@@ -410,7 +410,8 @@ export default function InscriptionPage() {
                       Commencez à taper pour voir les suggestions d&aposadresse
                     </p>
                     <p className="text-sm text-gray-500">
-                      Exemple: &quot;3 rue de la Paix&quot; ou &quot;15 avenue des Champs-Élysées&quot;
+                      {/* eslint-disable-next-line react/no-unescaped-entities */}
+                      Exemple: "3 rue de la Paix" ou "15 avenue des Champs-Élysées"
                     </p>
                   </div>
                 </div>

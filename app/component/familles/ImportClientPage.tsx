@@ -93,7 +93,8 @@ export default function ImportClientPage() {
           <FileUp className="w-16 h-16 text-[#00B074] mb-4" />
           <h2 className="text-2xl font-semibold text-gray-800 mb-2">Importation Excel</h2>
           <p className="text-gray-600 text-center">
-            Importez vos données depuis un fichier Excel. Assurez-vous que le fichier contient les onglets &quot;Familles&quot; et &quot;Membres&quot;.
+            {/* eslint-disable-next-line react/no-unescaped-entities */}
+            Importez vos données depuis un fichier Excel. Assurez-vous que le fichier contient les onglets "Familles" et "Membres".
           </p>
         </div>
 

@@ -73,7 +73,8 @@ L’adhésion a été enregistrée en date du ${formatDate(famille?.cotisation?.
           <div className="space-y-6 mt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">Nom de l&apos;association</Label>
+                {/* eslint-disable-next-line react/no-unescaped-entities */}
+                <Label className="text-sm font-medium text-gray-700">Nom de l'association</Label>
                 <Input
                   value={customContent.associationName}
                   onChange={(e) => handleInputChange(e, 'associationName')}
@@ -82,7 +83,8 @@ L’adhésion a été enregistrée en date du ${formatDate(famille?.cotisation?.
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">Adresse de l&apos;association</Label>
+                {/* eslint-disable-next-line react/no-unescaped-entities */}
+                <Label className="text-sm font-medium text-gray-700">Adresse de l'association</Label>
                 <Input
                   value={customContent.associationAddress}
                   onChange={(e) => handleInputChange(e, 'associationAddress')}
@@ -118,7 +120,8 @@ L’adhésion a été enregistrée en date du ${formatDate(famille?.cotisation?.
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">Titre de l&apos;attestation</Label>
+                {/* eslint-disable-next-line react/no-unescaped-entities */}
+                <Label className="text-sm font-medium text-gray-700">Titre de l'attestation</Label>
                 <Input
                   value={customContent.attestationTitle}
                   onChange={(e) => handleInputChange(e, 'attestationTitle')}
@@ -128,7 +131,8 @@ L’adhésion a été enregistrée en date du ${formatDate(famille?.cotisation?.
             </div>
 
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-700">Contenu de l&apos;attestation</Label>
+              {/* eslint-disable-next-line react/no-unescaped-entities */}
+              <Label className="text-sm font-medium text-gray-700">Contenu de l'attestation</Label>
               <Textarea
                 value={customContent.attestationContent}
                 onChange={(e) => handleInputChange(e, 'attestationContent')}
