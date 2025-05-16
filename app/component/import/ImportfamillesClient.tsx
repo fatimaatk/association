@@ -2,7 +2,6 @@
 import { useRef, useState, useEffect } from "react";
 import { CheckCircle, AlertCircle, UploadCloud, Info } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import * as XLSX from "xlsx";
 import { useRouter } from "next/navigation";
 
 export default function ImportFamillesClient() {
@@ -56,7 +55,8 @@ export default function ImportFamillesClient() {
         fileInputRef.current.value = "";
         setStep(3); // Succès
       }
-    } catch (err: any) {
+    } catch (err) {
+      console.error(err);
       setImportError("Erreur lors de l'envoi du fichier.");
       setStep(0);
     }
@@ -192,7 +192,9 @@ export default function ImportFamillesClient() {
           className="md:hidden mt-6 flex items-center gap-2 text-[#00B074] underline"
           onClick={() => setShowHelp(true)}
         >
-          <Info className="w-5 h-5" /> Besoin d'aide sur le format ?
+          <Info className="w-5 h-5" />
+          {/* eslint-disable-next-line react/no-unescaped-entities */}
+          Besoin d'aide sur le format ?
         </button>
       </div>
       {/* Colonne pédagogique (desktop) */}
@@ -283,7 +285,7 @@ function AideImport() {
         <div>• Dates au format <span className="font-mono">JJ/MM/AAAA</span>.</div>
       </div>
       <a
-        href="/samples/fichier_import_20_familles.xlsx"
+        href="/samples/fichier_import_familles_et_membres.xlsx"
         className="block mt-5 bg-[#00B074] text-white text-center px-4 py-2 rounded-md font-semibold hover:bg-[#009a66] transition text-sm shadow"
         download
       >
