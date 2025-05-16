@@ -72,7 +72,7 @@ export default async function HomePage() {
                   <div className="w-16 h-16 bg-[#00B074] text-white flex items-center justify-center rounded-full text-xl font-bold mb-4">
                     {testimonial.name[0]}
                   </div>
-                  <p className="text-gray-600 text-sm mb-3">`&quot;`{testimonial.review}`&quot;`</p>
+                  <p className="text-gray-600 text-sm mb-3">&quot;{testimonial.review}&quot;</p>
                   <span className="block text-sm font-semibold text-[#004d3b]">{testimonial.name}</span>
                   <span className="block text-xs text-gray-500">{testimonial.role}</span>
                 </div>

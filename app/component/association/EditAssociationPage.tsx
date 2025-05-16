@@ -44,7 +44,7 @@ export default function EditAssociationForm({ associationServerData }: { associa
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow space-y-6">
       <h1 className="text-2xl font-bold text-center text-[#00B074]">
-        Informations de l`&apos;`association
+        Informations de l&aposassociation
       </h1>
 
       {!editMode ? (

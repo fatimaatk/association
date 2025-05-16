@@ -335,14 +335,14 @@ export default function InscriptionPage() {
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
               <div className="flex items-center mb-4">
-                <h3 className="text-lg font-medium text-gray-900">Informations de l`&apos;`association</h3>
+                <h3 className="text-lg font-medium text-gray-900">Informations de l&aposassociation</h3>
                 <HelpTooltip text="Ces informations permettront d'identifier votre association et de la catégoriser correctement." />
               </div>
 
               <div className="space-y-4">
                 <div>
                   <label htmlFor="nom" className="block text-sm font-medium text-gray-700">
-                    Nom de l`&apos;`association <span className="text-red-500">*</span>
+                    Nom de l&aposassociation <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -363,7 +363,7 @@ export default function InscriptionPage() {
 
                 <div>
                   <label htmlFor="type" className="block text-sm font-medium text-gray-700">
-                    Type d`&apos;`association <span className="text-red-500">*</span>
+                    Type d&aposassociation <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="type"
@@ -391,7 +391,7 @@ export default function InscriptionPage() {
 
             <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
               <div className="flex items-center mb-4">
-                <h3 className="text-lg font-medium text-gray-900">Adresse de l`&apos;`association</h3>
+                <h3 className="text-lg font-medium text-gray-900">Adresse de l&aposassociation</h3>
                 <HelpTooltip text="L'adresse complète de votre association est nécessaire pour la communication officielle et les documents administratifs." />
               </div>
 
@@ -407,10 +407,10 @@ export default function InscriptionPage() {
                   />
                   <div className="mt-2 space-y-1">
                     <p className="text-sm text-gray-500">
-                      Commencez à taper pour voir les suggestions d`&apos;`adresse
+                      Commencez à taper pour voir les suggestions d&aposadresse
                     </p>
                     <p className="text-sm text-gray-500">
-                      Exemple: `&quot;`3 rue de la Paix`&quot;` ou `&quot;`15 avenue des Champs-Élysées`&quot;`
+                      Exemple: &quot;3 rue de la Paix&quot; ou &quot;15 avenue des Champs-Élysées&quot;
                     </p>
                   </div>
                 </div>
@@ -453,7 +453,7 @@ export default function InscriptionPage() {
                     </p>
                     <ul className="list-disc list-inside mt-1">
                       <li>La création de votre compte administrateur</li>
-                      <li>Les documents officiels de l`&apos;`association</li>
+                      <li>Les documents officiels de l&aposassociation</li>
                       <li>La communication avec les membres</li>
                     </ul>
                   </div>
@@ -525,7 +525,7 @@ export default function InscriptionPage() {
                   <h3 className="text-sm font-medium text-blue-800">Information importante</h3>
                   <div className="mt-2 text-sm text-blue-700">
                     <p>
-                      L`&apos;`email que vous renseignez sera utilisé pour :
+                      L&aposemail que vous renseignez sera utilisé pour :
                     </p>
                     <ul className="list-disc list-inside mt-1">
                       <li>La connexion à votre espace administrateur</li>
@@ -669,7 +669,7 @@ export default function InscriptionPage() {
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <span className="block text-sm font-medium text-gray-700">Nom de l`&apos;`association :</span>
+                    <span className="block text-sm font-medium text-gray-700">Nom de l&aposassociation :</span>
                     <span className="block text-base text-gray-900">{formData.nom}</span>
                   </div>
                   <div>
