@@ -1,10 +1,11 @@
 'use client';
 
 import React, { SetStateAction, useState } from 'react';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { Pencil, Plus, Trash2, X } from 'lucide-react';
 import { ICotisation, IFamille } from '@/models/interfaceFamilles';
 import { IMembre } from '@/models/interfaceFamilles';
 import toast from 'react-hot-toast';
+import AddressAutocomplete from '../AddressAutocomplete';
 
 interface UpdateFamilleProps {
   famille: IFamille;
@@ -44,7 +45,6 @@ const UpdateFamilleModal: React.FC<UpdateFamilleProps> = ({ famille, onUpdate, s
           ...updatedMembres[index],
           [field]: value,
         };
-        toast.success(`Mise à jour du membre ${index + 1}`);
         return {
           ...prev,
           membres: updatedMembres,
@@ -59,11 +59,9 @@ const UpdateFamilleModal: React.FC<UpdateFamilleProps> = ({ famille, onUpdate, s
         }
 
         obj[keys[keys.length - 1]] = value;
-        toast.success(`Champ modifié : ${keys.join('.')}`);
 
         return updatedFamille;
       } else {
-        toast.success(`Champ modifié : ${field}`);
         return {
           ...prev,
           [field]: value,
@@ -156,8 +154,22 @@ const UpdateFamilleModal: React.FC<UpdateFamilleProps> = ({ famille, onUpdate, s
       </button>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ">
-          <div className="bg-white p-6 rounded-lg w-[600px] max-h-[90vh] overflow-y-auto">
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        >
+          <div
+            className="bg-white p-6 rounded-lg w-[600px] max-h-[90vh] overflow-y-auto relative"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Bouton fermer */}
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-700"
+              aria-label="Fermer la fenêtre"
+              type="button"
+            >
+              <X size={24} />
+            </button>
             <h2 className="text-xl font-semibold mb-4">Modifier la famille</h2>
 
             <div className="space-y-4">
@@ -180,10 +192,10 @@ const UpdateFamilleModal: React.FC<UpdateFamilleProps> = ({ famille, onUpdate, s
               </div>
 
               <div>
-                <label>Adresse</label>
-                <input
+                <label>Adresse <span className="text-xs text-gray-400">(autocomplétion)</span></label>
+                <AddressAutocomplete
                   value={editedFamille.adresse || ''}
-                  onChange={(e) => handleInputChange('adresse', e.target.value)}
+                  onChange={(value: string) => handleInputChange('adresse', value)}
                   className="w-full border p-2 rounded"
                 />
               </div>

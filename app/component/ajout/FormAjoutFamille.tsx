@@ -6,6 +6,8 @@ import { ITypeFamille } from '@/models/interfaceFamilles';
 import { Dialog, DialogContent, DialogTitle } from '@radix-ui/react-dialog';
 import { CheckCircle, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation';
+import AddressAutocomplete from '../AddressAutocomplete';
+
 
 interface Props {
   types: ITypeFamille[];
@@ -336,12 +338,13 @@ export default function FormAjoutFamille({ types }: Props) {
           <h2 className="font-semibold mb-4">Coordonnées de contact</h2>
           <div className="space-y-4">
             <div>
-              <label className="block mb-1">Adresse*</label>
-              <input
-                type="text"
+              <label className="block mb-1">
+                Adresse* <span className="text-xs text-gray-400">(autocomplétion)</span>
+              </label>
+              <AddressAutocomplete
                 value={adresse}
-                onChange={(e) => {
-                  setAdresse(e.target.value);
+                onChange={(value: string) => {
+                  setAdresse(value);
                   clearError(['adresse']);
                 }}
                 className={`input input-bordered w-full ${errors.adresse ? 'border-red-500' : ''}`}

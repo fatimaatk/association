@@ -98,7 +98,9 @@ export async function POST(req: Request) {
               },
             },
           }),
-          associationId: user.associationId,
+          association: {
+            connect: { id: user.associationId }
+          },
         },
         include: {
           chefFamille: true,
