@@ -14,11 +14,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FamEase",
-  authors: [{ name: "FamEase" }],
-  creator: "FamEase",
+  title: "FamEasy",
+  authors: [{ name: "FamEasy" }],
+  creator: "FamEasy",
   keywords: [
-    "FamEase",
+    "FamEasy",
     "Famille",
     "Gestion",
     "Suivi",

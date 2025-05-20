@@ -12,7 +12,7 @@ export default function PolitiqueConfidentialite() {
         </h1>
 
         <p className="mb-8 text-gray-700 text-base text-center">
-          Famease s’engage à protéger la vie privée de ses utilisateurs et la confidentialité de leurs données personnelles, conformément au RGPD.
+          Fameasy s’engage à protéger la vie privée de ses utilisateurs et la confidentialité de leurs données personnelles, conformément au RGPD.
         </p>
 
         <div className="space-y-8 text-gray-700 text-base">
@@ -36,7 +36,7 @@ export default function PolitiqueConfidentialite() {
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">3. Sécurité et hébergement</h2>
             <p>
-              Famease met en œuvre toutes les mesures techniques et organisationnelles nécessaires pour garantir la sécurité de vos données (chiffrement, accès restreint, sauvegardes). Les données sont hébergées en France ou en Union Européenne.
+              Fameasy met en œuvre toutes les mesures techniques et organisationnelles nécessaires pour garantir la sécurité de vos données (chiffrement, accès restreint, sauvegardes). Les données sont hébergées en France ou en Union Européenne.
             </p>
           </div>
 
@@ -44,21 +44,21 @@ export default function PolitiqueConfidentialite() {
             <h2 className="text-xl font-semibold text-gray-800 mb-2">4. Droits des utilisateurs</h2>
             <p>
               Conformément au RGPD, vous disposez d’un droit d’accès, de rectification, de suppression et de portabilité de vos données. Pour exercer vos droits, contactez-nous à :{" "}
-              <a href="mailto:contact@famease.fr" className="text-[#00B074] hover:underline">contact@famease.fr</a>
+              <a href="mailto:contact@fameasy.fr" className="text-[#00B074] hover:underline">contact@fameasy.fr</a>
             </p>
           </div>
 
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">5. Cookies</h2>
             <p>
-              Famease utilise uniquement des cookies techniques nécessaires au bon fonctionnement du service (authentification, sécurité). Aucun cookie publicitaire ou de suivi tiers n’est utilisé.
+              Fameasy utilise uniquement des cookies techniques nécessaires au bon fonctionnement du service (authentification, sécurité). Aucun cookie publicitaire ou de suivi tiers n’est utilisé.
             </p>
           </div>
 
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">6. Modification de la politique</h2>
             <p>
-              Famease se réserve le droit de modifier la présente politique de confidentialité. Toute modification sera publiée sur cette page.
+              Fameasy se réserve le droit de modifier la présente politique de confidentialité. Toute modification sera publiée sur cette page.
             </p>
           </div>
         </div>

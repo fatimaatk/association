@@ -6,9 +6,9 @@ export default function APropos() {
 
       <section className="max-w-3xl mx-auto py-16 px-4 animate-fade-up">
         <div className="mb-10 text-center">
-          <h1 className="text-4xl font-extrabold text-[#00B074] mb-2">À propos de Famease</h1>
+          <h1 className="text-4xl font-extrabold text-[#00B074] mb-2">À propos de Fameasy</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Famease est la solution SaaS pensée pour simplifier la gestion des associations familiales, sportives et culturelles. Notre mission : vous faire gagner du temps, sécuriser vos données et offrir une expérience moderne à tous vos membres.
+            Fameasy est la solution SaaS pensée pour simplifier la gestion des associations familiales, sportives et culturelles. Notre mission : vous faire gagner du temps, sécuriser vos données et offrir une expérience moderne à tous vos membres.
           </p>
         </div>
 
@@ -20,7 +20,7 @@ export default function APropos() {
             <div>
               <h2 className="text-xl font-semibold text-gray-800 mb-1">Pour toutes les associations</h2>
               <p className="text-gray-600">
-                Que vous soyez une association familiale, sportive, culturelle ou sociale, Famease s’adapte à vos besoins et à votre organisation.
+                Que vous soyez une association familiale, sportive, culturelle ou sociale, Fameasy s’adapte à vos besoins et à votre organisation.
               </p>
             </div>
           </div>
@@ -42,7 +42,7 @@ export default function APropos() {
             <div>
               <h2 className="text-xl font-semibold text-gray-800 mb-1">Sécurité & Confidentialité</h2>
               <p className="text-gray-600">
-                Vos données sont protégées et hébergées en France. Famease respecte la vie privée de vos membres.
+                Vos données sont protégées et hébergées en France. Fameasy respecte la vie privée de vos membres.
               </p>
             </div>
           </div>
@@ -53,7 +53,7 @@ export default function APropos() {
             <div>
               <h2 className="text-xl font-semibold text-gray-800 mb-1">Innovation continue</h2>
               <p className="text-gray-600">
-                Nous faisons évoluer Famease en permanence grâce à vos retours et aux besoins du secteur associatif.
+                Nous faisons évoluer Fameasy en permanence grâce à vos retours et aux besoins du secteur associatif.
               </p>
             </div>
           </div>

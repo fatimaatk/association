@@ -19,7 +19,7 @@ export default function ProcessSwiper() {
     <section className="w-full bg-[#f9f9f9] py-20 px-4">
       <div className="max-w-6xl mx-auto text-center">
         <h2 className="text-3xl sm:text-4xl font-bold text-[#004d3b] mb-4">
-          Découvrez Famease en 5 étapes
+          Découvrez Fameasy en 5 étapes
         </h2>
 
         <Swiper

@@ -51,7 +51,7 @@ export default function ConnexionPage() {
     <PublicLayout>
       <section className="min-h-[80vh] flex items-center justify-center px-2 sm:px-4 animate-fade-up">
         <div className="w-full max-w-md bg-white shadow-md rounded-xl p-6 sm:p-8 mx-auto">
-          <h1 className="text-2xl font-bold text-center text-[#00B074] mb-2">Connexion à Famease</h1>
+          <h1 className="text-2xl font-bold text-center text-[#00B074] mb-2">Connexion à Fameasy</h1>
           <p className="text-center text-gray-600 mb-6">Accédez à votre espace association</p>
           <form className="space-y-5" onSubmit={handleSubmit} autoComplete="on">
             <div>

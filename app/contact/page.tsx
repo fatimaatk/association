@@ -10,7 +10,7 @@ export default function Contact() {
     <PublicLayout>
       <section className="max-w-3xl mx-auto py-16 px-4 animate-fade-up">
         <div className="mb-10 text-center">
-          <h1 className="text-4xl font-extrabold text-[#00B074] mb-2">Contactez l’équipe Famease</h1>
+          <h1 className="text-4xl font-extrabold text-[#00B074] mb-2">Contactez l’équipe Fameasy</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Une question sur la gestion de votre association ? Un besoin d’assistance ou une suggestion ? Notre équipe vous répond rapidement et avec le sourire !
           </p>
@@ -26,7 +26,7 @@ export default function Contact() {
               <div>
                 <div className="font-semibold text-gray-800">Déjà client ?</div>
                 <div className="text-sm text-gray-600">
-                  Pour une assistance technique rapide, écrivez à <a href="mailto:support@famease.fr" className="text-[#00B074] underline">support@famease.fr</a>
+                  Pour une assistance technique rapide, écrivez à <a href="mailto:support@fameasy.fr" className="text-[#00B074] underline">support@fameasy.fr</a>
                 </div>
               </div>
             </div>

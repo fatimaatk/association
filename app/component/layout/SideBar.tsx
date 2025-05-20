@@ -46,7 +46,7 @@ const Sidebar = () => {
       {/* Mobile Top Bar with fixed logo and burger */}
       <div className="fixed top-0 left-0 w-full bg-white shadow-md z-50 flex items-center justify-between px-4 py-2 md:hidden">
         <Link href="/" className="flex items-center space-x-2">
-          <Image alt="logo" src="/FamEase.svg" width={120} height={40} />
+          <Image alt="logo" src="/FamEasy.svg" width={120} height={40} />
         </Link>
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -71,7 +71,7 @@ const Sidebar = () => {
         {/* Logo always visible in desktop sidebar */}
         <div className="mb-10 hidden md:flex flex-col">
           <Link href="/">
-            <Image alt="logo" src="/FamEase.svg" width={150} height={50} />
+            <Image alt="logo" src="/FamEasy.svg" width={150} height={50} />
             <h1 className="text-gray-500 text-sm mt-2">Gérer. Suivre. Simplifier.</h1>
           </Link>
         </div>

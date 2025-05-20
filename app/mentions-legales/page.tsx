@@ -10,9 +10,9 @@ export default function MentionsLegales() {
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">Éditeur du site</h2>
             <p>
-              <span className="font-semibold">Famease</span><br />
+              <span className="font-semibold">Fameasy</span><br />
               Solution SaaS de gestion d’associations familiales, sportives et culturelles.<br />
-              Email : <a href="mailto:contact@famease.fr" className="text-[#00B074] hover:underline">contact@famease.fr</a>
+              Email : <a href="mailto:contact@fameasy.fr" className="text-[#00B074] hover:underline">contact@fameasy.fr</a>
             </p>
           </div>
 
@@ -28,28 +28,28 @@ export default function MentionsLegales() {
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">Responsable de la publication</h2>
             <p>
-              Famease – contact@famease.fr
+              Fameasy – contact@fameasy.fr
             </p>
           </div>
 
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">Propriété intellectuelle</h2>
             <p>
-              L’ensemble du contenu du site Famease (textes, images, logos, icônes, logiciels, etc.) est protégé par le droit d’auteur. Toute reproduction, représentation, modification, publication, adaptation de tout ou partie des éléments du site, quel que soit le moyen ou le procédé utilisé, est interdite sans l’autorisation écrite préalable de Famease.
+              L’ensemble du contenu du site Fameasy (textes, images, logos, icônes, logiciels, etc.) est protégé par le droit d’auteur. Toute reproduction, représentation, modification, publication, adaptation de tout ou partie des éléments du site, quel que soit le moyen ou le procédé utilisé, est interdite sans l’autorisation écrite préalable de Fameasy.
             </p>
           </div>
 
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">Données personnelles</h2>
             <p>
-              Famease s’engage à respecter la confidentialité des données personnelles collectées et à les traiter dans le respect du RGPD. Pour en savoir plus, consultez notre <a href="/politique-confidentialite" className="text-[#00B074] hover:underline">politique de confidentialité</a>.
+              Fameasy s’engage à respecter la confidentialité des données personnelles collectées et à les traiter dans le respect du RGPD. Pour en savoir plus, consultez notre <a href="/politique-confidentialite" className="text-[#00B074] hover:underline">politique de confidentialité</a>.
             </p>
           </div>
 
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">Contact</h2>
             <p>
-              Pour toute question concernant les mentions légales du site Famease, vous pouvez nous écrire à <a href="mailto:contact@famease.fr" className="text-[#00B074] hover:underline">contact@famease.fr</a>.
+              Pour toute question concernant les mentions légales du site Fameasy, vous pouvez nous écrire à <a href="mailto:contact@fameasy.fr" className="text-[#00B074] hover:underline">contact@fameasy.fr</a>.
             </p>
           </div>
         </div>

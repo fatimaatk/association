@@ -108,7 +108,7 @@ export default function TarifContent() {
         <div className="p-6 sm:p-8 md:p-12">
           <div className="flex flex-col md:flex-row items-center justify-between mb-6 sm:mb-8">
             <div className="text-center md:text-left">
-              <Image alt="logo" src="/FamEase.svg" width={120} height={40} className="mx-auto md:mx-0" />
+              <Image alt="logo" src="/FamEasy.svg" width={120} height={40} className="mx-auto md:mx-0" />
               <p className="text-gray-600 text-base sm:text-lg mt-2">La solution tout-en-un</p>
             </div>
             <motion.div
@@ -260,8 +260,8 @@ export default function TarifContent() {
               answer: "Non, le prix affiché est le prix final. Aucun frais supplémentaire ne sera appliqué. Toutes les fonctionnalités sont incluses dans l'abonnement."
             },
             {
-              question: "Comment Famease aide-t-il les bénévoles ?",
-              answer: "Famease automatise les tâches administratives répétitives, permet la gestion collaborative et offre des outils intuitifs pour que les bénévoles puissent se concentrer sur l'essentiel : leur mission associative."
+              question: "Comment Fameasy aide-t-il les bénévoles ?",
+              answer: "Fameasy automatise les tâches administratives répétitives, permet la gestion collaborative et offre des outils intuitifs pour que les bénévoles puissent se concentrer sur l'essentiel : leur mission associative."
             }
           ].map((faq, index) => (
             <motion.div
