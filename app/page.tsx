@@ -5,6 +5,8 @@ import { getUserFromCookies } from "@/lib/auth";
 import ProcessSwiper from "./component/home/ProcessSwiper";
 import { FadeUp } from "./component/home/FadeUp";
 import { TUser } from "@/context/UserContext";
+import HomePageBanner from './component/HomePageBanner';
+
 export default async function HomePage() {
   const user = await getUserFromCookies();
   return (
@@ -44,11 +46,15 @@ export default async function HomePage() {
       </FadeUp>
 
       <FadeUp>
-        <section className="w-full bg-[#f9f9f9] py-20 sm:py-24 lg:py-32 px-4">
-          <div className="max-w-5xl mx-auto text-center">
+        <HomePageBanner variant="secondary" className="mb-12" />
+      </FadeUp>
+
+      <FadeUp>
+        <section className="w-full bg-gray-50 py-20 ">
+          <div className="max-w-7xl mx-auto px-4 flex flex-col items-center">
             <h2 className="text-3xl sm:text-4xl font-bold text-[#004d3b] mb-4">Ils nous font confiance</h2>
-            <p className="text-gray-700 max-w-2xl mx-auto mb-10">
-              Découvrez comment Famease aide les associations à gagner du temps et à se concentrer sur l’essentiel : leurs adhérents.
+            <p className="text-gray-700 max-w-2xl mx-auto mb-10 sm:text-center">
+              Découvrez comment Famease aide les associations à gagner du temps et à se concentrer sur l&apos;essentiel : leurs adhérents.
             </p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
