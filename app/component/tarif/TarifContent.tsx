@@ -117,7 +117,7 @@ export default function TarifContent() {
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <div className="text-4xl sm:text-5xl font-bold text-[#00B074]">9.99€ HT</div>
+              <div className="text-4xl sm:text-5xl font-bold text-[#00B074]">9.99€</div>
               <div className="text-gray-600 text-sm sm:text-base">HT / mois</div>
             </motion.div>
           </div>
@@ -229,7 +229,7 @@ export default function TarifContent() {
           {[
             {
               question: "Pourquoi un prix unique ?",
-              answer: "Nous croyons que toutes les associations méritent les mêmes outils, quelle que soit leur taille. Notre prix unique de 9.99€ HT/mois permet à toutes les structures d'accéder à une solution complète."
+              answer: "Nous croyons que toutes les associations méritent les mêmes outils, quelle que soit leur taille. Notre prix unique de 9.99€/mois permet à toutes les structures d'accéder à une solution complète."
             },
             {
               question: "Comment fonctionne l'essai gratuit ?",
