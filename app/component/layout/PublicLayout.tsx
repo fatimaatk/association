@@ -188,7 +188,7 @@ export default function PublicLayout({
       <footer className="w-full bg-[#f9f9f9] border-t border-gray-200 py-8 px-4 mt-12">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-center items-center gap-4 text-sm text-gray-600">
           <div className="flex flex-col sm:flex-row items-center gap-4">
-            <span>© {new Date().getFullYear()} <span className="font-semibold text-[#00B074]">Fameasy</span>. Tous droits réservés.</span>
+            <span>© {new Date().getFullYear()} <span className="font-semibold text-[#00B074]">FamEasy</span>. Tous droits réservés.</span>
             <div className="flex gap-4">
               <Link href="/mentions-legales" className="hover:text-[#00B074] transition">Mentions légales</Link>
               <Link href="/politique-confidentialite" className="hover:text-[#00B074] transition">Politique de confidentialité</Link>

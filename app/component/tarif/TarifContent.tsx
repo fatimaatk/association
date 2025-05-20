@@ -260,8 +260,8 @@ export default function TarifContent() {
               answer: "Non, le prix affiché est le prix final. Aucun frais supplémentaire ne sera appliqué. Toutes les fonctionnalités sont incluses dans l'abonnement."
             },
             {
-              question: "Comment Fameasy aide-t-il les bénévoles ?",
-              answer: "Fameasy automatise les tâches administratives répétitives, permet la gestion collaborative et offre des outils intuitifs pour que les bénévoles puissent se concentrer sur l'essentiel : leur mission associative."
+              question: "Comment FamEasy aide-t-il les bénévoles ?",
+              answer: "FamEasy automatise les tâches administratives répétitives, permet la gestion collaborative et offre des outils intuitifs pour que les bénévoles puissent se concentrer sur l'essentiel : leur mission associative."
             }
           ].map((faq, index) => (
             <motion.div

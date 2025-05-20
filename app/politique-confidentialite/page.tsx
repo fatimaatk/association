@@ -12,7 +12,7 @@ export default function PolitiqueConfidentialite() {
         </h1>
 
         <p className="mb-8 text-gray-700 text-base text-center">
-          Fameasy s’engage à protéger la vie privée de ses utilisateurs et la confidentialité de leurs données personnelles, conformément au RGPD.
+          FamEasy s’engage à protéger la vie privée de ses utilisateurs et la confidentialité de leurs données personnelles, conformément au RGPD.
         </p>
 
         <div className="space-y-8 text-gray-700 text-base">
@@ -36,7 +36,7 @@ export default function PolitiqueConfidentialite() {
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">3. Sécurité et hébergement</h2>
             <p>
-              Fameasy met en œuvre toutes les mesures techniques et organisationnelles nécessaires pour garantir la sécurité de vos données (chiffrement, accès restreint, sauvegardes). Les données sont hébergées en France ou en Union Européenne.
+              FamEasy met en œuvre toutes les mesures techniques et organisationnelles nécessaires pour garantir la sécurité de vos données (chiffrement, accès restreint, sauvegardes). Les données sont hébergées en France ou en Union Européenne.
             </p>
           </div>
 
@@ -51,14 +51,14 @@ export default function PolitiqueConfidentialite() {
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">5. Cookies</h2>
             <p>
-              Fameasy utilise uniquement des cookies techniques nécessaires au bon fonctionnement du service (authentification, sécurité). Aucun cookie publicitaire ou de suivi tiers n’est utilisé.
+              FamEasy utilise uniquement des cookies techniques nécessaires au bon fonctionnement du service (authentification, sécurité). Aucun cookie publicitaire ou de suivi tiers n’est utilisé.
             </p>
           </div>
 
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">6. Modification de la politique</h2>
             <p>
-              Fameasy se réserve le droit de modifier la présente politique de confidentialité. Toute modification sera publiée sur cette page.
+              FamEasy se réserve le droit de modifier la présente politique de confidentialité. Toute modification sera publiée sur cette page.
             </p>
           </div>
         </div>

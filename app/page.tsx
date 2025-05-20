@@ -18,7 +18,7 @@ export default async function HomePage() {
               La solution tout-en-un pour les associations
             </p>
             <h1 className="text-4xl sm:text-5xl font-bold leading-tight text-[#004d3b]">
-              Simplifiez la gestion de votre association avec <span className="text-[#00B074]">Fameasy</span>
+              Simplifiez la gestion de votre association avec <span className="text-[#00B074]">FamEasy</span>
             </h1>
             <ul className="mt-6 text-gray-700 text-lg space-y-2">
               <li>Gérez familles & cotisations sans effort</li>
@@ -54,14 +54,14 @@ export default async function HomePage() {
           <div className="max-w-7xl mx-auto px-4 flex flex-col items-center">
             <h2 className="text-3xl sm:text-4xl font-bold text-[#004d3b] mb-4">Ils nous font confiance</h2>
             <p className="text-gray-700 max-w-2xl mx-auto mb-10 sm:text-center">
-              Découvrez comment Fameasy aide les associations à gagner du temps et à se concentrer sur l&apos;essentiel : leurs adhérents.
+              Découvrez comment FamEasy aide les associations à gagner du temps et à se concentrer sur l&apos;essentiel : leurs adhérents.
             </p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
                 {
                   name: "Sophie Martin",
                   role: "Présidente - Union Club",
-                  review: "Nous avons complètement abandonné Excel. Fameasy est intuitif, rapide et parfaitement adapté à nos besoins.",
+                  review: "Nous avons complètement abandonné Excel. FamEasy est intuitif, rapide et parfaitement adapté à nos besoins.",
                 },
                 {
                   name: "Karim Benali",
