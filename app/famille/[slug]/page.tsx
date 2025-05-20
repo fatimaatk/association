@@ -28,9 +28,9 @@ export default async function FamillePage({
 export async function generateMetadata({
   params,
 }: {
-  params: { id: string };
+  params: { slug: string };
 }): Promise<Metadata> {
-  const { id } = await params;
+  const { slug } = await params;
   const user = await getUserFromCookies();
   if (!user?.associationId)
     return {
@@ -38,7 +38,7 @@ export async function generateMetadata({
       description: "Connectez-vous pour voir les données.",
     };
 
-  const famille = await getFamilleById(id, user.associationId);
+  const famille = await getFamilleById(slug, user.associationId);
 
   if (!famille) {
     return {
@@ -50,7 +50,7 @@ export async function generateMetadata({
   const fullName = `${chef.prenom} ${chef.nom}`;
 
   return {
-    title: `Famille de ${fullName}`,
-    description: `Informations détaillées sur la famille de ${fullName}.`,
+    title: `Famille de ${fullName.toUpperCase()}`,
+    description: `Informations détaillées sur la famille de ${fullName.toUpperCase()}.`,
   };
 }
