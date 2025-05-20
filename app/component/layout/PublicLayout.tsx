@@ -49,7 +49,7 @@ export default function PublicLayout({
           {/* Desktop Menu */}
           <nav className="hidden md:flex gap-4 items-center text-sm font-medium">
             <Link href="/" className="text-gray-700 hover:text-[#00B074] px-3 py-2 rounded transition">Accueil</Link>
-            <Link href="/tarif" className="text-gray-700 hover:text-[#00B074] px-3 py-2 rounded transition">Abonnement</Link>
+            <Link href="/tarif" className="text-gray-700 hover:text-[#00B074] px-3 py-2 rounded transition">Tarif</Link>
             <Link href="/a-propos" className="text-gray-700 hover:text-[#00B074] px-3 py-2 rounded transition">À propos</Link>
             <Link href="/contact" className="text-gray-700 hover:text-[#00B074] px-3 py-2 rounded transition">Contact</Link>
             {!utilisateur ? (

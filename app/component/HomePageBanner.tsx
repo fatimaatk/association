@@ -56,7 +56,7 @@ export default function HomePageBanner({ variant = 'primary', className = '' }: 
                 transition={{ delay: 0.4 }}
                 className={`text-lg mb-6 ${isPrimary ? 'text-white/90' : 'text-gray-600'}`}
               >
-                Un prix unique de 9.99€/mois, quel que soit votre nombre d&apos;adhérents.
+                Un prix unique de 12.99€/mois, quel que soit votre nombre d&apos;adhérents.
                 <br className="hidden sm:block" />
                 Pour soutenir le travail des bénévoles et simplifier la gestion associative.
               </motion.p>

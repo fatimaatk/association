@@ -117,8 +117,8 @@ export default function TarifContent() {
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <div className="text-4xl sm:text-5xl font-bold text-[#00B074]">9.99€</div>
-              <div className="text-gray-600 text-sm sm:text-base">HT / mois</div>
+              <div className="text-4xl sm:text-5xl font-bold text-[#00B074]">12.99€</div>
+              <div className="text-gray-600 text-sm sm:text-base">/ mois</div>
             </motion.div>
           </div>
 
@@ -193,13 +193,17 @@ export default function TarifContent() {
             variants={scaleIn}
             whileHover={{ y: -5 }}
           >
-            <div className="flex items-center gap-3 mb-3 sm:mb-4">
-              <div className="p-2 sm:p-3 bg-[#00B074]/10 rounded-lg flex-shrink-0">
+            <div className="flex flex-col items-center text-center">
+              <motion.div
+                className="p-3 sm:p-4 bg-[#00B074]/10 rounded-full mb-4"
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
                 {benefit.icon}
-              </div>
-              <h3 className="font-semibold text-gray-900 text-sm sm:text-base">{benefit.title}</h3>
+              </motion.div>
+              <h3 className="font-semibold text-gray-900 text-base sm:text-lg mb-2">{benefit.title}</h3>
+              <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{benefit.description}</p>
             </div>
-            <p className="text-gray-600 text-xs sm:text-sm pl-11 sm:pl-0 text-center">{benefit.description}</p>
           </motion.div>
         ))}
       </motion.div>
@@ -229,7 +233,7 @@ export default function TarifContent() {
           {[
             {
               question: "Pourquoi un prix unique ?",
-              answer: "Nous croyons que toutes les associations méritent les mêmes outils, quelle que soit leur taille. Notre prix unique de 9.99€/mois permet à toutes les structures d'accéder à une solution complète."
+              answer: "Nous croyons que toutes les associations méritent les mêmes outils, quelle que soit leur taille. Notre prix unique de 12.99€/mois permet à toutes les structures d'accéder à une solution complète."
             },
             {
               question: "Comment fonctionne l'essai gratuit ?",
