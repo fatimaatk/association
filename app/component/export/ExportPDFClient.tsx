@@ -6,11 +6,26 @@ import { Button } from "../ui/button";
 import { Download, FileText } from "lucide-react";
 import { IFamille } from "@/models/interfaceFamilles";
 
+type IAdherent = {
+  id: string;
+  nom: string;
+  prenom: string;
+  adresse: string;
+  adresseEmail: string;
+  telephone: string;
+  cotisation?: {
+    id: string;
+    montant: number;
+    facture: {
+      statutPaiement: string;
+    };
+  };
+}
 
 export default function ExportPDFClient() {
   const [type, setType] = useState("attestation");
   const [loading, setLoading] = useState(false);
-  const [adherents, setAdherents] = useState<IFamille[]>([]);
+  const [adherents, setAdherents] = useState<IAdherent[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
 
@@ -18,7 +33,7 @@ export default function ExportPDFClient() {
     const fetchAdherents = async () => {
       try {
         const res = await fetch("/api/adherents");
-        const data: IFamille[] = await res.json();
+        const data: IAdherent[] = await res.json();
         // Filtrage selon le type de PDF
         const filtered = type === "attestation"
           ? data.filter((a) => a.cotisation?.facture?.statutPaiement === "ACQUITTE")
@@ -122,7 +137,7 @@ export default function ExportPDFClient() {
                 checked={selectedIds.includes(a.id)}
                 onChange={() => toggleSelection(a.id)}
               />
-              <span>{a.chefFamille.nom.toUpperCase()} {a.chefFamille.prenom}</span>
+              <span>{a.nom.toUpperCase()} {a.prenom}</span>
             </label>
           ))}
           {adherents.length === 0 && <p className="text-sm text-gray-500">Aucun adhérent trouvé.</p>}
