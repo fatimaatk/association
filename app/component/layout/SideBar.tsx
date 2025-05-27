@@ -9,6 +9,7 @@ import {
   UserRoundPlus,
   X,
   LogOut,
+  Users,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,6 +23,7 @@ const Sidebar = () => {
 
   const navLinks = [
     { logo: <HomeIcon />, href: "/dashboard", label: "Dashboard" },
+    { logo: <Users />, href: "/membre", label: "Gestion des membres" },
     { logo: <AlignLeft />, href: "/familles", label: "Liste des familles" },
     { logo: <UserRoundPlus />, href: "/ajout", label: "Ajouter une famille" },
     { logo: <Download />, href: "/import", label: "Import excel" },

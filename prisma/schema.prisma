@@ -19,6 +19,12 @@ enum TypePaiement {
   CHEQUE
 }
 
+enum StatutMembre {
+  ACTIF
+  INACTIF
+  ARCHIVE
+}
+
 model Association {
   id        String   @id @default(uuid())
   nom       String
@@ -63,9 +69,9 @@ model Famille {
   type          TypeFamille @relation(fields: [typeFamilleId], references: [id])
 
   chefFamilleId String @unique
-  chefFamille   Membre @relation(name: "FamilleRepresentant", fields: [chefFamilleId], references: [id])
+  chefFamille   Membre @relation("FamilleChef", fields: [chefFamilleId], references: [id])
 
-  membres      Membre[]    @relation(name: "FamilleMembres")
+  membres      Membre[]    @relation("FamilleMembres")
   cotisation   Cotisation?
   adresse      String      @default("")
   adresseEmail String      @default("")
@@ -76,16 +82,24 @@ model Famille {
 }
 
 model Membre {
-  id             String   @id @default(uuid())
-  nom            String
-  prenom         String
-  dateNaissance  String
-  familleId      String?
-  famille        Famille? @relation(name: "FamilleMembres", fields: [familleId], references: [id])
-  representantDe Famille? @relation(name: "FamilleRepresentant")
-
+  id            String      @id @default(cuid())
+  nom           String
+  prenom        String
+  dateNaissance DateTime
+  dateEntree    DateTime    @default(now())
+  dateSortie    DateTime?
+  statut        StatutMembre @default(ACTIF)
+  annee         Int         @default(dbgenerated("EXTRACT(YEAR FROM CURRENT_DATE)"))
   associationId String
   association   Association @relation(fields: [associationId], references: [id])
+  
+  famille       Famille?    @relation("FamilleMembres", fields: [familleId], references: [id])
+  familleId     String?
+  
+  familleChef   Famille?    @relation("FamilleChef")
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 }
 
 model Cotisation {

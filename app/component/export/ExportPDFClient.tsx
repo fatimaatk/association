@@ -83,6 +83,8 @@ export default function ExportPDFClient() {
     }
   };
 
+  console.log(adherents);
+
   return (
     <div className="max-w-2xl mx-auto py-8">
       <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
@@ -122,7 +124,7 @@ export default function ExportPDFClient() {
                 checked={selectedIds.includes(a.id)}
                 onChange={() => toggleSelection(a.id)}
               />
-              <span>{a.chefFamille.nom.toUpperCase()} {a.chefFamille.prenom}</span>
+              <span>{a.nom.toUpperCase()} {a.prenom}</span>
             </label>
           ))}
           {adherents.length === 0 && <p className="text-sm text-gray-500">Aucun adhérent trouvé.</p>}

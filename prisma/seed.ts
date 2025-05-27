@@ -1,10 +1,27 @@
-const { PrismaClient } = require('@prisma/client');
-const bcrypt = require('bcrypt');
+import { PrismaClient, StatutMembre } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
+const hashPassword = async (password: string): Promise<string> =>
+  await bcrypt.hash(password, 10);
+
+type MembreInput = {
+  nom: string;
+  prenom: string;
+  dateNaissance: string; // format ISO "YYYY-MM-DD"
+};
+
+type AssociationSeedInput = {
+  nom: string;
+  email: string;
+  adminEmail: string;
+  adminPassword: string;
+  membresSupp?: MembreInput[];
+};
+
 async function main() {
-  // 🚨 Supprimer les données existantes (ordre inverse des relations)
+  // 🚨 Supprimer les données (ordre inverse des relations)
   await prisma.facture.deleteMany();
   await prisma.cotisation.deleteMany();
   await prisma.famille.deleteMany();
@@ -14,17 +31,6 @@ async function main() {
   await prisma.association.deleteMany();
 
   console.log('🧹 Données précédentes supprimées');
-
-  const hashPassword = async (password: string): Promise<string> =>
-    await bcrypt.hash(password, 10);
-
-  type AssociationSeedInput = {
-    nom: string;
-    email: string;
-    adminEmail: string;
-    adminPassword: string;
-    membresSupp?: { nom: string; prenom: string; dateNaissance: string }[];
-  };
 
   const createAssociationWithData = async ({
     nom,
@@ -54,27 +60,23 @@ async function main() {
       },
     });
 
-    // ✅ Créer les types "Individuel" et "Famille" pour cette association
-    const typeIndividuel = await prisma.typeFamille.create({
-      data: {
-        nom: 'Individuel',
-        associationId: association.id,
-      },
-    });
-
-    const typeFamille = await prisma.typeFamille.create({
-      data: {
-        nom: 'Famille',
-        associationId: association.id,
-      },
-    });
+    const [typeIndividuel, typeFamille] = await Promise.all([
+      prisma.typeFamille.create({
+        data: { nom: 'Individuel', associationId: association.id },
+      }),
+      prisma.typeFamille.create({
+        data: { nom: 'Famille', associationId: association.id },
+      }),
+    ]);
 
     const chef = await prisma.membre.create({
       data: {
         nom: 'Test',
         prenom: 'Responsable',
-        dateNaissance: '1980-01-01',
+        dateNaissance: new Date('1980-01-01'),
         associationId: association.id,
+        statut: StatutMembre.ACTIF,
+        dateEntree: new Date(),
       },
     });
 
@@ -84,8 +86,10 @@ async function main() {
           data: {
             nom: m.nom,
             prenom: m.prenom,
-            dateNaissance: m.dateNaissance,
+            dateNaissance: new Date(m.dateNaissance),
             associationId: association.id,
+            statut: StatutMembre.ACTIF,
+            dateEntree: new Date(),
           },
         })
       )
@@ -134,7 +138,7 @@ async function main() {
     email: 'alpha@email.com',
     adminEmail: 'admin@alpha.com',
     adminPassword: 'alpha123',
-    membresSupp: [], // → type Individuel
+    membresSupp: [], // → Individuel
   });
 
   await createAssociationWithData({
@@ -148,14 +152,14 @@ async function main() {
         prenom: 'Claire',
         dateNaissance: '2012-06-03',
       },
-    ], // → type Famille
+    ], // → Famille
   });
 
   console.log('🎉 Seed terminé');
 }
 
 main()
-  .catch((e: any) => {
+  .catch((e) => {
     console.error('❌ Erreur dans le seed :', e);
     process.exit(1);
   })

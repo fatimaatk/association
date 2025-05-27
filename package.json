@@ -2,10 +2,11 @@
   "name": "association",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "dotenv -e .env.development -- next dev",
     "build": "set NEXT_IGNORE_TS_CONFIG=true && next build",
-    "seed": "ts-node prisma/seed.ts",
+    "seed": "set NODE_OPTIONS=--loader ts-node/esm && ts-node prisma/seed.ts",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
@@ -24,6 +25,7 @@
     "clsx": "^2.1.1",
     "cookie": "^1.0.2",
     "crypto": "^1.0.1",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.12.1",
     "html2canvas-pro": "^1.5.8",
     "jsonwebtoken": "^9.0.2",
@@ -36,6 +38,7 @@
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.2",
     "react-spinners": "^0.15.0",
+    "rimraf": "^5.0.10",
     "swiper": "^11.2.6",
     "tailwind-merge": "^3.0.2",
     "xlsx": "^0.18.5"
@@ -49,6 +52,7 @@
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
     "daisyui": "^4.12.23",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
     "postcss": "^8",
@@ -56,5 +60,8 @@
     "tailwindcss": "^3.4.1",
     "ts-node": "^10.9.2",
     "typescript": "^5"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   }
 }

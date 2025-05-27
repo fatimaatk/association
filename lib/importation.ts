@@ -1,5 +1,5 @@
-import { IFamilleImport, IMembreImport, StatutPaiement, TypePaiement, } from "@/models/interfaceFamilles";
-import { PrismaClient } from "@prisma/client";
+import { IFamilleImport, IMembreImport } from "@/models/interfaceFamilles";
+import { PrismaClient, StatutPaiement, TypePaiement, StatutMembre } from "@prisma/client";
 import * as XLSX from "xlsx";
 
 const prisma = new PrismaClient();
@@ -24,23 +24,32 @@ export function getStatutPaiement(value: string | null | undefined): StatutPaiem
     : null;
 }
 
+export function getStatutMembre(value: string | null | undefined): StatutMembre {
+  if (!value) return StatutMembre.ACTIF;
+  const upper = value.toUpperCase();
+  return Object.values(StatutMembre).includes(upper as StatutMembre)
+    ? upper as StatutMembre
+    : StatutMembre.ACTIF;
+}
+
 function convertirDateExcel(dateExcel: unknown): string {
   if (dateExcel instanceof Date) {
-    return dateExcel.toISOString().split('T')[0];
+    return dateExcel.toISOString();
   }
 
-  // Si c’est un nombre Excel (genre 25121)
+  // Si c'est un nombre Excel (genre 25121)
   if (typeof dateExcel === 'number') {
     const date = XLSX.SSF.parse_date_code(dateExcel);
     if (date) {
       const jsDate = new Date(date.y, date.m - 1, date.d);
-      return jsDate.toISOString().split('T')[0];
+      return jsDate.toISOString();
     }
   }
 
-  // Si c’est déjà une chaîne au bon format
+  // Si c'est une chaîne au format YYYY-MM-DD
   if (typeof dateExcel === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateExcel)) {
-    return dateExcel;
+    const date = new Date(dateExcel);
+    return date.toISOString();
   }
 
   throw new Error(`Date invalide : ${dateExcel}`);
@@ -75,6 +84,9 @@ export async function importExcel(fileBuffer: Buffer, associationId: string) {
             nom: famille.chefFamille_nom,
             prenom: famille.chefFamille_prenom,
             dateNaissance: convertirDateExcel(famille.chefFamille_dateNaissance),
+            dateEntree: famille.dateEntree ? new Date(famille.dateEntree) : new Date(),
+            dateSortie: famille.dateSortie ? new Date(famille.dateSortie) : null,
+            statut: getStatutMembre(famille.statut),
             associationId
           },
           create: {
@@ -82,6 +94,9 @@ export async function importExcel(fileBuffer: Buffer, associationId: string) {
             nom: famille.chefFamille_nom,
             prenom: famille.chefFamille_prenom,
             dateNaissance: convertirDateExcel(famille.chefFamille_dateNaissance),
+            dateEntree: famille.dateEntree ? new Date(famille.dateEntree) : new Date(),
+            dateSortie: famille.dateSortie ? new Date(famille.dateSortie) : null,
+            statut: getStatutMembre(famille.statut),
             associationId
           }
         });
@@ -178,6 +193,9 @@ export async function importExcel(fileBuffer: Buffer, associationId: string) {
             nom: membre.nom,
             prenom: membre.prenom,
             dateNaissance: convertirDateExcel(membre.dateNaissance),
+            dateEntree: membre.dateEntree ? new Date(membre.dateEntree) : new Date(),
+            dateSortie: membre.dateSortie ? new Date(membre.dateSortie) : null,
+            statut: getStatutMembre(membre.statut),
             familleId,
             associationId
           },
@@ -186,6 +204,9 @@ export async function importExcel(fileBuffer: Buffer, associationId: string) {
             nom: membre.nom,
             prenom: membre.prenom,
             dateNaissance: convertirDateExcel(membre.dateNaissance),
+            dateEntree: membre.dateEntree ? new Date(membre.dateEntree) : new Date(),
+            dateSortie: membre.dateSortie ? new Date(membre.dateSortie) : null,
+            statut: getStatutMembre(membre.statut),
             familleId,
             associationId
           }
