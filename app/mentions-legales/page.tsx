@@ -12,7 +12,7 @@ export default function MentionsLegales() {
             <p>
               <span className="font-semibold">FamEasy</span><br />
               Solution SaaS de gestion d’associations familiales, sportives et culturelles.<br />
-              Email : <a href="mailto:contact@fameasy.fr" className="text-[#00B074] hover:underline">contact@fameasy.fr</a>
+              Email : <a href="mailto:fameasy.contact@gmail.com" className="text-[#00B074] hover:underline">fameasy.contact@gmail.com</a>
             </p>
           </div>
 
@@ -28,7 +28,7 @@ export default function MentionsLegales() {
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">Responsable de la publication</h2>
             <p>
-              FamEasy – contact@fameasy.fr
+              FamEasy – fameasy.contact@gmail.com
             </p>
           </div>
 
@@ -49,7 +49,7 @@ export default function MentionsLegales() {
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">Contact</h2>
             <p>
-              Pour toute question concernant les mentions légales du site FamEasy, vous pouvez nous écrire à <a href="mailto:contact@fameasy.fr" className="text-[#00B074] hover:underline">contact@fameasy.fr</a>.
+              Pour toute question concernant les mentions légales du site FamEasy, vous pouvez nous écrire à <a href="mailto:fameasy.contact@gmail.com" className="text-[#00B074] hover:underline">fameasy.contact@gmail.com</a>.
             </p>
           </div>
         </div>
