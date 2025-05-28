@@ -47,7 +47,7 @@ export default function HomePageBanner({ variant = 'primary', className = '' }: 
                 transition={{ delay: 0.3 }}
                 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${isPrimary ? 'text-white' : 'text-gray-900'}`}
               >
-                Une solution unique pour toutes les associations
+                Rejoignez l&apos;aventure FamEasy
               </motion.h2>
 
               <motion.p
@@ -56,9 +56,9 @@ export default function HomePageBanner({ variant = 'primary', className = '' }: 
                 transition={{ delay: 0.4 }}
                 className={`text-lg mb-6 ${isPrimary ? 'text-white/90' : 'text-gray-600'}`}
               >
-                Un prix unique de 12.99€/mois, quel que soit votre nombre d&apos;adhérents.
+                Nous recherchons des associations pour tester notre solution
                 <br className="hidden sm:block" />
-                Pour soutenir le travail des bénévoles et simplifier la gestion associative.
+                et nous aider à la rendre parfaite pour vous.
               </motion.p>
 
               <motion.div
@@ -73,7 +73,7 @@ export default function HomePageBanner({ variant = 'primary', className = '' }: 
                     : 'bg-[#00B074] text-white hover:bg-[#00965e]'
                     }`}
                 >
-                  Découvrir le tarif unique
+                  Devenir testeur
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </motion.div>

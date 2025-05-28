@@ -27,7 +27,7 @@ export default async function HomePage() {
             </ul>
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link href="/inscription" className="bg-[#00B074] hover:bg-[#009a66] text-white px-8 py-4 rounded-md text-base font-semibold shadow-md transition">
-                Créer une association
+                Devenir testeur
               </Link>
               <Link href="/a-propos" className="border-2 border-[#00B074] text-[#00B074] px-8 py-4 rounded-md text-base font-semibold shadow-md transition hover:bg-[#f0fef8]">
                 En savoir plus
