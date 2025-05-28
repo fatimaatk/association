@@ -49,45 +49,7 @@ export default async function HomePage() {
         <HomePageBanner variant="secondary" className="mb-12" />
       </FadeUp>
 
-      <FadeUp>
-        <section className="w-full bg-gray-50 py-20 ">
-          <div className="max-w-7xl mx-auto px-4 flex flex-col items-center">
-            <h2 className="text-3xl sm:text-4xl font-bold text-[#004d3b] mb-4">Ils nous font confiance</h2>
-            <p className="text-gray-700 max-w-2xl mx-auto mb-10 sm:text-center">
-              Découvrez comment FamEasy aide les associations à gagner du temps et à se concentrer sur l&apos;essentiel : leurs adhérents.
-            </p>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                {
-                  name: "Sophie Martin",
-                  role: "Présidente - Union Club",
-                  review: "Nous avons complètement abandonné Excel. FamEasy est intuitif, rapide et parfaitement adapté à nos besoins.",
-                },
-                {
-                  name: "Karim Benali",
-                  role: "Trésorier - Asso Sportive",
-                  review: "Un vrai gain de temps pour gérer les cotisations et les attestations. La prise en main est super simple.",
-                },
-                {
-                  name: "Laura Dupuis",
-                  role: "Secrétaire - Culture Ensemble",
-                  review: "Un outil moderne qui nous facilite la vie. On peut enfin suivre les paiements et générer les documents facilement.",
-                },
-              ].map((testimonial, index) => (
-                <div key={index} className="bg-white rounded-lg shadow p-6 hover:shadow-md transition flex flex-col items-center text-center">
-                  <div className="w-16 h-16 bg-[#00B074] text-white flex items-center justify-center rounded-full text-xl font-bold mb-4">
-                    {testimonial.name[0]}
-                  </div>
-                  {/* eslint-disable-next-line react/no-unescaped-entities */}
-                  <p className="text-gray-600 text-sm mb-3">"{testimonial.review}"</p>
-                  <span className="block text-sm font-semibold text-[#004d3b]">{testimonial.name}</span>
-                  <span className="block text-xs text-gray-500">{testimonial.role}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      </FadeUp>
+
     </PublicLayout>
   );
 }

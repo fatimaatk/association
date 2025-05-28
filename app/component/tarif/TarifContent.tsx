@@ -91,7 +91,8 @@ export default function TarifContent() {
         transition={{ duration: 0.6 }}
       >
         <p className="text-sm font-medium text-[#00B074] uppercase tracking-wide">
-          ⚠️ Version bêta – Recherche d&apos;associations testeurs
+          {/* eslint-disable-next-line react/no-unescaped-entities */}
+          ⚠️ Version bêta – Recherche d'associations testeurs
         </p>
       </motion.div>
 
@@ -103,7 +104,8 @@ export default function TarifContent() {
       >
         <div className="absolute inset-0 bg-gradient-to-b from-[#00B074]/5 to-transparent -z-10 rounded-3xl" />
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#004d3b] mb-3 sm:mb-4">
-          Rejoignez l&apos;aventure FamEasy
+          {/* eslint-disable-next-line react/no-unescaped-entities */}
+          Rejoignez l'aventure FamEasy
         </h1>
         <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto px-4">
           Nous recherchons des associations pour tester notre solution et nous aider à la rendre parfaite pour vous.
@@ -249,7 +251,7 @@ export default function TarifContent() {
             },
             {
               question: "Quelles sont les conditions pour tester ?",
-              answer: "Il suffit d&apos;être une association et d&apos;avoir envie de simplifier votre gestion administrative. Nous vous offrons un accès gratuit pendant la phase de test."
+              answer: "Il suffit d'être une association et d'avoir envie de simplifier votre gestion administrative. Nous vous offrons un accès gratuit pendant la phase de test."
             },
             {
               question: "Comment sont protégées mes données ?",
@@ -261,11 +263,11 @@ export default function TarifContent() {
             },
             {
               question: "Comment fonctionne le support ?",
-              answer: "Notre équipe est disponible du lundi au vendredi de 9h à 18h. Vous pouvez nous contacter par email ou via le chat intégré à l&apos;application."
+              answer: "Notre équipe est disponible du lundi au vendredi de 9h à 18h. Vous pouvez nous contacter par email ou via le chat intégré à l'application."
             },
             {
               question: "Comment FamEasy aide-t-il les bénévoles ?",
-              answer: "FamEasy automatise les tâches administratives répétitives, permet la gestion collaborative et offre des outils intuitifs pour que les bénévoles puissent se concentrer sur l&apos;essentiel : leur mission associative."
+              answer: "FamEasy automatise les tâches administratives répétitives, permet la gestion collaborative et offre des outils intuitifs pour que les bénévoles puissent se concentrer sur l'essentiel : leur mission associative."
             }
           ].map((faq, index) => (
             <motion.div

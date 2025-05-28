@@ -47,7 +47,8 @@ export default function HomePageBanner({ variant = 'primary', className = '' }: 
                 transition={{ delay: 0.3 }}
                 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${isPrimary ? 'text-white' : 'text-gray-900'}`}
               >
-                Rejoignez l&apos;aventure FamEasy
+                {/* eslint-disable-next-line react/no-unescaped-entities */}
+                Rejoignez l'aventure FamEasy
               </motion.h2>
 
               <motion.p
@@ -58,7 +59,7 @@ export default function HomePageBanner({ variant = 'primary', className = '' }: 
               >
                 Nous recherchons des associations pour tester notre solution
                 <br className="hidden sm:block" />
-                et nous aider à la rendre parfaite pour vous.
+                { }et nous aider à la rendre parfaite pour vous.
               </motion.p>
 
               <motion.div

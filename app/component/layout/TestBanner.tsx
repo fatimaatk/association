@@ -43,7 +43,8 @@ export default function TestBanner() {
               </div>
               <h3 className="text-base font-semibold mb-1">Cette version est en test</h3>
               <p className="text-sm text-gray-600 mb-3 leading-snug">
-                Si vous constatez un bug ou avez une idée d&apos;amélioration, n&apos;hésitez pas à nous écrire !
+                {/* eslint-disable-next-line react/no-unescaped-entities */}
+                Si vous constatez un bug ou avez une idée d'amélioration, n'hésitez pas à nous écrire !
               </p>
               <a
                 href="mailto:fameasy.contact@gmail.com"
