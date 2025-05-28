@@ -8,7 +8,7 @@ import { useUser } from "@/context/UserContext";
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import AddressAutocomplete from '../component/AddressAutocomplete';
-import { Info, CheckCircle, Circle } from "lucide-react";
+import { Info, CheckCircle, Circle, Sparkles } from "lucide-react";
 
 // Types pour la validation
 interface FormData {
@@ -725,7 +725,7 @@ export default function InscriptionPage() {
                   disabled={loading}
                   className="ml-auto px-4 py-2 bg-[#00B074] text-white rounded-md hover:bg-[#009a66] transition disabled:opacity-50"
                 >
-                  {loading ? "Création en cours..." : "Créer mon association"}
+                  {loading ? "Création en cours..." : "Devenir testeur"}
                 </button>
               )}
             </div>
@@ -736,15 +736,24 @@ export default function InscriptionPage() {
 
   return (
     <WrapperVitrine>
-      <div className="min-h-[80vh] flex items-center justify-center px-2 sm:px-4">
-        <div className="w-full max-w-2xl bg-white shadow-md rounded-xl p-4 sm:p-8 mx-auto">
-          <h1 className="text-2xl font-bold text-center text-[#00B074] mb-6">
-            Créer votre association
+      <div className="min-h-[80vh] w-full px-2 sm:px-4 py-4 sm:py-8 overflow-x-hidden">
+        <div className="w-full max-w-2xl mx-auto bg-white shadow-md rounded-xl p-3 sm:p-6">
+          <h1 className="text-xl sm:text-2xl font-bold text-center text-[#00B074] mb-4 sm:mb-6">
+            Rejoignez la phase de test FamEasy
           </h1>
+
+          <div className="bg-[#00B074]/10 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6">
+            <div className="flex flex-col sm:flex-row items-center gap-2">
+              <Sparkles className="w-5 h-5 text-[#00B074] flex-shrink-0" />
+              <p className="text-[#00B074] font-medium text-sm sm:text-base text-center sm:text-left">
+                Accès gratuit pendant la phase de test • Support prioritaire • Influencez le développement
+              </p>
+            </div>
+          </div>
 
           <Timeline currentStep={currentStep} />
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentStep}
@@ -752,6 +761,7 @@ export default function InscriptionPage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
+                className="w-full"
               >
                 {renderStep()}
               </motion.div>
@@ -762,7 +772,7 @@ export default function InscriptionPage() {
                 <button
                   type="button"
                   onClick={handlePrevious}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                  className="px-3 sm:px-4 py-2 text-gray-600 hover:text-gray-800"
                 >
                   Retour
                 </button>
@@ -771,7 +781,7 @@ export default function InscriptionPage() {
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="ml-auto px-4 py-2 bg-[#00B074] text-white rounded-md hover:bg-[#009a66] transition"
+                  className="ml-auto px-3 sm:px-4 py-2 bg-[#00B074] text-white rounded-md hover:bg-[#009a66] transition"
                 >
                   Suivant
                 </button>
