@@ -44,7 +44,7 @@ export default function PolitiqueConfidentialite() {
             <h2 className="text-xl font-semibold text-gray-800 mb-2">4. Droits des utilisateurs</h2>
             <p>
               Conformément au RGPD, vous disposez d’un droit d’accès, de rectification, de suppression et de portabilité de vos données. Pour exercer vos droits, contactez-nous à :{" "}
-              <a href="mailto:contact@fameasy.fr" className="text-[#00B074] hover:underline">contact@fameasy.fr</a>
+              <a href="mailto:fameasy.contact@gmail.com" className="text-[#00B074] hover:underline">fameasy.contact@gmail.com</a>
             </p>
           </div>
 
