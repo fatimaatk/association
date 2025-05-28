@@ -26,7 +26,7 @@ export function getStatutPaiement(value: string | null | undefined): StatutPaiem
 
 function convertirDateExcel(dateExcel: unknown): string {
   if (dateExcel instanceof Date) {
-    return dateExcel.toISOString().split('T')[0];
+    return dateExcel.toString().split('T')[0];
   }
 
   // Si c’est un nombre Excel (genre 25121)
@@ -34,7 +34,7 @@ function convertirDateExcel(dateExcel: unknown): string {
     const date = XLSX.SSF.parse_date_code(dateExcel);
     if (date) {
       const jsDate = new Date(date.y, date.m - 1, date.d);
-      return jsDate.toISOString().split('T')[0];
+      return jsDate.toString().split('T')[0];
     }
   }
 

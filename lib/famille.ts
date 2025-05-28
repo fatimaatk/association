@@ -32,11 +32,11 @@ export async function getFamilles(associationId: string) {
       ...famille,
       chefFamille: {
         ...famille.chefFamille,
-        dateNaissance: famille.chefFamille.dateNaissance.toISOString().split('T')[0]
+        dateNaissance: famille.chefFamille.dateNaissance.toString().split('T')[0]
       },
       membres: famille.membres.map(membre => ({
         ...membre,
-        dateNaissance: membre.dateNaissance.toISOString().split('T')[0]
+        dateNaissance: membre.dateNaissance.toString().split('T')[0]
       })),
       cotisation: famille.cotisation ? {
         ...famille.cotisation,
@@ -87,11 +87,11 @@ export async function getFamilleById(id: string, associationId: string): Promise
       ...famille,
       chefFamille: {
         ...famille.chefFamille,
-        dateNaissance: famille.chefFamille.dateNaissance.toISOString().split('T')[0]
+        dateNaissance: famille.chefFamille.dateNaissance.toString().split('T')[0]
       },
       membres: famille.membres.map(membre => ({
         ...membre,
-        dateNaissance: membre.dateNaissance.toISOString().split('T')[0]
+        dateNaissance: membre.dateNaissance.toString().split('T')[0]
       })),
       cotisation: famille.cotisation ? {
         ...famille.cotisation,
