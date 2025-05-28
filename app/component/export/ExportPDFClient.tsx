@@ -4,7 +4,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Download, FileText } from "lucide-react";
-import { IFamille } from "@/models/interfaceFamilles";
 
 type IAdherent = {
   id: string;

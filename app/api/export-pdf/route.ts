@@ -33,7 +33,18 @@ export async function POST(req: NextRequest) {
     });
     if (adherents.length === 1) {
       const adherent = adherents[0];
-      const doc = type === 'attestation' ? createAttestationPDF(adherent) : createRelancePDF(adherent);
+      const adherentFormatted = {
+        ...adherent,
+        chefFamille: {
+          ...adherent.chefFamille,
+          dateNaissance: adherent.chefFamille.dateNaissance.toISOString().split('T')[0]
+        },
+        membres: adherent.membres.map(membre => ({
+          ...membre,
+          dateNaissance: membre.dateNaissance.toISOString().split('T')[0]
+        }))
+      };
+      const doc = type === 'attestation' ? createAttestationPDF(adherentFormatted) : createRelancePDF(adherentFormatted);
       const stream = await renderToStream(doc);
       const chunks: Uint8Array[] = [];
       for await (const chunk of stream) {
@@ -60,7 +71,18 @@ export async function POST(req: NextRequest) {
     const zip = new JSZip();
 
     for (const adherent of adherents) {
-      const doc = type === 'attestation' ? createAttestationPDF(adherent) : createRelancePDF(adherent);
+      const adherentFormatted = {
+        ...adherent,
+        chefFamille: {
+          ...adherent.chefFamille,
+          dateNaissance: adherent.chefFamille.dateNaissance.toISOString().split('T')[0]
+        },
+        membres: adherent.membres.map(membre => ({
+          ...membre,
+          dateNaissance: membre.dateNaissance.toISOString().split('T')[0]
+        }))
+      };
+      const doc = type === 'attestation' ? createAttestationPDF(adherentFormatted) : createRelancePDF(adherentFormatted);
       const stream = await renderToStream(doc);
       const chunks: Uint8Array[] = [];
       for await (const chunk of stream) {
