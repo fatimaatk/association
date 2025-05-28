@@ -37,11 +37,11 @@ export async function POST(req: NextRequest) {
         ...adherent,
         chefFamille: {
           ...adherent.chefFamille,
-          dateNaissance: adherent.chefFamille.dateNaissance.toISOString().split('T')[0]
+          dateNaissance: adherent.chefFamille.dateNaissance.toString().split('T')[0]
         },
         membres: adherent.membres.map(membre => ({
           ...membre,
-          dateNaissance: membre.dateNaissance.toISOString().split('T')[0]
+          dateNaissance: membre.dateNaissance.toString().split('T')[0]
         }))
       };
       const doc = type === 'attestation' ? createAttestationPDF(adherentFormatted) : createRelancePDF(adherentFormatted);
@@ -75,11 +75,11 @@ export async function POST(req: NextRequest) {
         ...adherent,
         chefFamille: {
           ...adherent.chefFamille,
-          dateNaissance: adherent.chefFamille.dateNaissance.toISOString().split('T')[0]
+          dateNaissance: adherent.chefFamille.dateNaissance.toString().split('T')[0]
         },
         membres: adherent.membres.map(membre => ({
           ...membre,
-          dateNaissance: membre.dateNaissance.toISOString().split('T')[0]
+          dateNaissance: membre.dateNaissance.toString().split('T')[0]
         }))
       };
       const doc = type === 'attestation' ? createAttestationPDF(adherentFormatted) : createRelancePDF(adherentFormatted);
