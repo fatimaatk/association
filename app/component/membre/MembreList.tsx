@@ -2,23 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Edit2, MoreVertical } from 'lucide-react';
+import { Search, } from 'lucide-react';
 import StatutBadge from './StatutBadge';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { Membre } from '@prisma/client';
+import Link from 'next/link';
 
-interface Membre {
-  id: string;
-  nom: string;
-  prenom: string;
-  statut: 'ACTIF' | 'INACTIF' | 'ARCHIVE';
-  dateEntree: string;
-  dateSortie: string | null;
-  famille: {
-    id: string;
-    nom: string;
-  } | null;
-}
 
 export default function MembreList() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -54,9 +44,11 @@ export default function MembreList() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Gestion des Membres</h1>
-          <p className="text-gray-600">Gérez vos membres et suivez leur statut</p>
+        <div className="space-y-2">
+          <h1 className="text-3xl font-extrabold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
+            Gestion des Membres
+          </h1>
+
         </div>
       </div>
 
@@ -116,6 +108,7 @@ export default function MembreList() {
                   Statut
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {/* eslint-disable-next-line react/no-unescaped-entities */}
                   Date d'entrée
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -167,15 +160,12 @@ export default function MembreList() {
                         : '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {membre.famille ? membre.famille.nom : '-'}
+                      {membre.nom ? membre.nom : '-'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button className="text-[#00B074] hover:text-[#00965e] mr-4">
-                        <Edit2 className="w-5 h-5" />
-                      </button>
-                      <button className="text-gray-400 hover:text-gray-500">
-                        <MoreVertical className="w-5 h-5" />
-                      </button>
+                    <td className="px-6 py-4 whitespace-nowrap  text-sm font-medium">
+                      <Link href={`/famille/${membre.familleId}`} className="text-[#00B074] hover:text-[#00965e] mr-4">
+                        Voir la famille
+                      </Link>
                     </td>
                   </motion.tr>
                 ))

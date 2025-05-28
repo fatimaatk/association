@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { UserCheck, UserX, UserMinus } from 'lucide-react';
 
-type StatutMembre = 'ACTIF' | 'INACTIF' | 'SORTI';
+type StatutMembre = 'ACTIF' | 'INACTIF' | 'ARCHIVE';
 
 interface StatutBadgeProps {
   statut: StatutMembre;
@@ -20,10 +20,10 @@ const statutConfig = {
     icon: UserMinus,
     label: 'Inactif'
   },
-  SORTI: {
+  ARCHIVE: {
     color: 'bg-red-100 text-red-800',
     icon: UserX,
-    label: 'Sorti'
+    label: 'ARCHIVE'
   }
 };
 

@@ -2,8 +2,8 @@
 
 import React, { SetStateAction, useState } from 'react';
 import { Pencil, Plus, Trash2, X } from 'lucide-react';
-import { ICotisation, IFamille } from '@/models/interfaceFamilles';
-import { IMembre } from '@/models/interfaceFamilles';
+import { ICotisation, IFamille, IMembres } from '@/models/interfaceFamilles';
+import { StatutMembre } from '@prisma/client';
 import toast from 'react-hot-toast';
 import AddressAutocomplete from '../AddressAutocomplete';
 
@@ -79,7 +79,15 @@ const UpdateFamilleModal: React.FC<UpdateFamilleProps> = ({ famille, onUpdate, s
           id: '',
           nom: '',
           prenom: '',
-          dateNaissance: '',
+          dateNaissance: new Date(),
+          familleId: null,
+          associationId: prev.associationId,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          dateEntree: new Date(),
+          dateSortie: null,
+          statut: 'ACTIF' as StatutMembre,
+          annee: new Date().getFullYear()
         }
       ]
     }));
@@ -107,7 +115,7 @@ const UpdateFamilleModal: React.FC<UpdateFamilleProps> = ({ famille, onUpdate, s
       const formattedData = {
         ...editedFamille,
         id: editedFamille.id,
-        membres: editedFamille.membres.map((membre: IMembre) => ({
+        membres: editedFamille.membres.map((membre: IMembres) => ({
           id: membre.id || undefined,
           nom: membre.nom,
           prenom: membre.prenom,
@@ -275,7 +283,7 @@ const UpdateFamilleModal: React.FC<UpdateFamilleProps> = ({ famille, onUpdate, s
                         <label className="block mb-1">Date de naissance :</label>
                         <input
                           type="date"
-                          value={formatDateToYYYYMMDD(membre.dateNaissance as string)}
+                          value={formatDateToYYYYMMDD(membre.dateNaissance as unknown as string)}
                           onChange={(e) => handleInputChange('dateNaissance', e.target.value, index)}
                           className="w-full border p-2 rounded"
                         />

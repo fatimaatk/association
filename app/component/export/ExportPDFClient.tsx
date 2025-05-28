@@ -124,7 +124,7 @@ export default function ExportPDFClient() {
                 checked={selectedIds.includes(a.id)}
                 onChange={() => toggleSelection(a.id)}
               />
-              <span>{a.nom.toUpperCase()} {a.prenom}</span>
+              <span>{a.chefFamille.nom.toUpperCase()} {a.chefFamille.prenom.toUpperCase()}</span>
             </label>
           ))}
           {adherents.length === 0 && <p className="text-sm text-gray-500">Aucun adhérent trouvé.</p>}

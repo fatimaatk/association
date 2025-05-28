@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Info, Trash2 } from 'lucide-react';
-import { ITypeFamille } from '@/models/interfaceFamilles';
+import { TypeFamille } from '@/models/interfaceFamilles';
 import { Dialog, DialogContent, DialogTitle } from '@radix-ui/react-dialog';
 import { CheckCircle, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation';
@@ -10,7 +10,7 @@ import AddressAutocomplete from '../AddressAutocomplete';
 
 
 interface Props {
-  types: ITypeFamille[];
+  types: TypeFamille[];
 }
 
 export interface MembreFormData {
@@ -267,7 +267,7 @@ export default function FormAjoutFamille({ types }: Props) {
         <div className="border p-4 rounded-xl bg-gray-50">
           <h2 className="font-semibold mb-2">Type de famille</h2>
           <div className="flex flex-wrap gap-4">
-            {types.map((type: ITypeFamille, index: number) => (
+            {types.map((type: TypeFamille, index: number) => (
               <label key={index} className="flex items-center gap-2">
                 <input
                   type="radio"

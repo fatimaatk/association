@@ -17,7 +17,7 @@ export async function GET(req: Request) {
   const where: Prisma.MembreWhereInput = {
     associationId: user.associationId,
     ...(year && { annee: parseInt(year) }),
-    ...(status && status !== 'TOUS' && { statut: status as 'ACTIF' | 'INACTIF' | 'SORTI' }),
+    ...(status && status !== 'TOUS' && { statut: status as 'ACTIF' | 'INACTIF' | 'ARCHIVE' }),
     ...(search && {
       OR: [
         { nom: { contains: search, mode: 'insensitive' as Prisma.QueryMode } },
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
       prenom,
       dateNaissance: new Date(dateNaissance),
       dateEntree: new Date(),
-      statut: statut as 'ACTIF' | 'INACTIF' | 'SORTI',
+      statut: statut as 'ACTIF' | 'INACTIF' | 'ARCHIVE',
       annee: new Date().getFullYear(),
       associationId: user.associationId,
       familleId
@@ -76,7 +76,7 @@ export async function PUT(req: Request) {
   const membre = await prisma.membre.update({
     where: { id },
     data: {
-      statut: statut as 'ACTIF' | 'INACTIF' | 'SORTI',
+      statut: statut as 'ACTIF' | 'INACTIF' | 'ARCHIVE',
       dateSortie: dateSortie ? new Date(dateSortie) : null
     }
   });
