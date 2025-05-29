@@ -57,9 +57,9 @@ export default function HomePageBanner({ variant = 'primary', className = '' }: 
                 transition={{ delay: 0.4 }}
                 className={`text-lg mb-6 ${isPrimary ? 'text-white/90' : 'text-gray-600'}`}
               >
-                Nous recherchons des associations pour tester notre solution
+                Nous recherchons des associations pour tester notre solution{' '}
                 <br className="hidden sm:block" />
-                { }et nous aider à la rendre parfaite pour vous.
+                et nous aider à la rendre parfaite pour vous.
               </motion.p>
 
               <motion.div
