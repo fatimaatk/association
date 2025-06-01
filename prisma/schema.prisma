@@ -34,6 +34,9 @@ model Association {
   type      String
   email     String
   telephone String
+  description String?
+  reseauxSociaux String?
+  siteWeb    String?
   createdAt DateTime @default(now())
 
   comptes      Compte[]
