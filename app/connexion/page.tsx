@@ -114,10 +114,10 @@ export default function ConnexionPage() {
           </form>
           <div className="flex justify-between items-center mt-4 text-sm">
             <a href="/mot-de-passe-oublie" className="text-[#00B074] hover:underline">
-              Mot de passe oublié ?
+              Mot de passe oublié ?
             </a>
             <a href="/inscription" className="text-gray-600 hover:underline">
-              Créer une association
+              Devenir testeur
             </a>
           </div>
         </div>

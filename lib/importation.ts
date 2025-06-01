@@ -34,7 +34,7 @@ export function getStatutMembre(value: string | null | undefined): StatutMembre 
 
 function convertirDateExcel(dateExcel: unknown): string {
   if (dateExcel instanceof Date) {
-    return dateExcel.toISOString();
+    return dateExcel.toString().split('T')[0];
   }
 
   // Si c'est un nombre Excel (genre 25121)
@@ -42,7 +42,7 @@ function convertirDateExcel(dateExcel: unknown): string {
     const date = XLSX.SSF.parse_date_code(dateExcel);
     if (date) {
       const jsDate = new Date(date.y, date.m - 1, date.d);
-      return jsDate.toISOString();
+      return jsDate.toString().split('T')[0];
     }
   }
 

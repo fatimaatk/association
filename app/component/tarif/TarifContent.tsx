@@ -85,6 +85,18 @@ export default function TarifContent() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col items-center">
       <motion.div
+        className="text-center mb-4"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <p className="text-sm font-medium text-[#00B074] uppercase tracking-wide">
+          {/* eslint-disable-next-line react/no-unescaped-entities */}
+          ⚠️ Version bêta – Recherche d'associations testeurs
+        </p>
+      </motion.div>
+
+      <motion.div
         className="text-center mb-8 sm:mb-16 relative w-full"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -92,10 +104,11 @@ export default function TarifContent() {
       >
         <div className="absolute inset-0 bg-gradient-to-b from-[#00B074]/5 to-transparent -z-10 rounded-3xl" />
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#004d3b] mb-3 sm:mb-4">
-          Un prix unique pour toutes les associations
+          {/* eslint-disable-next-line react/no-unescaped-entities */}
+          Rejoignez l'aventure FamEasy
         </h1>
         <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto px-4">
-          Notre mission : simplifier la vie des bénévoles et rendre la gestion associative accessible à tous.
+          Nous recherchons des associations pour tester notre solution et nous aider à la rendre parfaite pour vous.
         </p>
       </motion.div>
 
@@ -117,8 +130,9 @@ export default function TarifContent() {
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <div className="text-4xl sm:text-5xl font-bold text-[#00B074]">12.99€</div>
-              <div className="text-gray-600 text-sm sm:text-base">/ mois</div>
+              <div className="text-4xl sm:text-5xl font-bold text-[#00B074]">Gratuit</div>
+              <div className="text-gray-600 text-sm sm:text-base">Pendant la phase de test</div>
+              <div className="text-gray-500 text-xs mt-1">Prix prévu à terme : 12.99€/mois</div>
             </motion.div>
           </div>
 
@@ -130,7 +144,7 @@ export default function TarifContent() {
           >
             <Sparkles className="w-5 h-5 text-[#00B074] flex-shrink-0" />
             <span className="text-[#00B074] font-medium text-sm sm:text-base">
-              1 mois d&apos;essai gratuit • Aucun engagement • Prix unique quel que soit votre taille
+              Accès gratuit • Support prioritaire • Influencez le développement
             </span>
           </motion.div>
 
@@ -163,11 +177,11 @@ export default function TarifContent() {
             whileTap={{ scale: 0.98 }}
           >
             <Link
-              href="#"
+              href="/contact"
               className="block w-full text-center bg-[#00B074] text-white font-semibold py-3 sm:py-4 rounded-lg hover:bg-[#00965e] transition-colors group"
             >
               <span className="flex items-center justify-center gap-2 text-sm sm:text-base">
-                Commencer l&apos;essai gratuit
+                Devenir testeur
                 <motion.span
                   animate={{ x: [0, 5, 0] }}
                   transition={{ repeat: Infinity, duration: 1.5 }}
@@ -232,16 +246,12 @@ export default function TarifContent() {
         >
           {[
             {
-              question: "Pourquoi un prix unique ?",
-              answer: "Nous croyons que toutes les associations méritent les mêmes outils, quelle que soit leur taille. Notre prix unique de 12.99€/mois permet à toutes les structures d'accéder à une solution complète."
+              question: "Comment devenir testeur ?",
+              answer: "Contactez-nous via le formulaire de contact. Nous vous accompagnerons dans la mise en place de FamEasy et recueillerons vos retours pour améliorer la solution."
             },
             {
-              question: "Comment fonctionne l'essai gratuit ?",
-              answer: "Commencez votre essai gratuit sans carte bancaire. Vous pourrez ajouter vos informations de paiement à la fin de la période d'essai si vous souhaitez continuer."
-            },
-            {
-              question: "Puis-je annuler à tout moment ?",
-              answer: "Oui, vous pouvez annuler votre abonnement à tout moment depuis votre espace client. Aucun engagement n'est requis."
+              question: "Quelles sont les conditions pour tester ?",
+              answer: "Il suffit d'être une association et d'avoir envie de simplifier votre gestion administrative. Nous vous offrons un accès gratuit pendant la phase de test."
             },
             {
               question: "Comment sont protégées mes données ?",
@@ -249,15 +259,11 @@ export default function TarifContent() {
             },
             {
               question: "Puis-je personnaliser les documents générés ?",
-              answer: "Oui, vous pouvez personnaliser tous les documents (attestations, reçus, etc.) avec votre logo et vos informations d'association."
+              answer: "Oui, vous pouvez personnaliser tous vos documents (attestations, reçus, etc.) avec les informations de votre association (nom, adresse, SIRET, téléphone). Les documents sont générés automatiquement avec une mise en page professionnelle."
             },
             {
               question: "Comment fonctionne le support ?",
               answer: "Notre équipe est disponible du lundi au vendredi de 9h à 18h. Vous pouvez nous contacter par email ou via le chat intégré à l'application."
-            },
-            {
-              question: "Y a-t-il des frais cachés ?",
-              answer: "Non, le prix affiché est le prix final. Aucun frais supplémentaire ne sera appliqué. Toutes les fonctionnalités sont incluses dans l'abonnement."
             },
             {
               question: "Comment FamEasy aide-t-il les bénévoles ?",

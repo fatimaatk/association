@@ -49,13 +49,13 @@ export default function PublicLayout({
           {/* Desktop Menu */}
           <nav className="hidden md:flex gap-4 items-center text-sm font-medium">
             <Link href="/" className="text-gray-700 hover:text-[#00B074] px-3 py-2 rounded transition">Accueil</Link>
-            <Link href="/tarif" className="text-gray-700 hover:text-[#00B074] px-3 py-2 rounded transition">Tarif</Link>
+            <Link href="/tarif" className="text-gray-700 hover:text-[#00B074] px-3 py-2 rounded transition">Tarifs</Link>
             <Link href="/a-propos" className="text-gray-700 hover:text-[#00B074] px-3 py-2 rounded transition">À propos</Link>
             <Link href="/contact" className="text-gray-700 hover:text-[#00B074] px-3 py-2 rounded transition">Contact</Link>
             {!utilisateur ? (
               <>
                 <Link href="/connexion" className="border border-[#00B074] text-[#00B074] px-4 py-2 rounded-md hover:bg-[#f0fef8] transition">Connexion</Link>
-                <Link href="/inscription" className="bg-[#00B074] text-white px-4 py-2 rounded-md hover:bg-[#009a66] transition">Créer une association</Link>
+                <Link href="/inscription" className="bg-[#00B074] text-white px-4 py-2 rounded-md hover:bg-[#009a66] transition">Devenir testeur</Link>
               </>
             ) : (
               <>
@@ -122,7 +122,7 @@ export default function PublicLayout({
                   onClick={() => setMenuOpen(false)}
                   className="block text-lg font-medium text-gray-700 hover:text-[#00B074] py-2 rounded transition"
                 >
-                  Tarif
+                  Tarifs
                 </Link>
                 <Link
                   href="/a-propos"
@@ -152,7 +152,7 @@ export default function PublicLayout({
                       onClick={() => setMenuOpen(false)}
                       className="block bg-[#00B074] text-white font-semibold text-lg px-4 py-2 rounded-md mt-2 text-center hover:bg-[#009a66] transition"
                     >
-                      Créer une association
+                      Devenir testeur
                     </Link>
                   </>
                 ) : (

@@ -119,7 +119,7 @@ const UpdateFamilleModal: React.FC<UpdateFamilleProps> = ({ famille, onUpdate, s
           id: membre.id || undefined,
           nom: membre.nom,
           prenom: membre.prenom,
-          dateNaissance: new Date(membre.dateNaissance).toISOString() || null,
+          dateNaissance: new Date(membre.dateNaissance).toString() || null,
         })),
         cotisation: editedFamille.cotisation ? {
           montant: (editedFamille.cotisation as ICotisation).montant,
@@ -127,7 +127,7 @@ const UpdateFamilleModal: React.FC<UpdateFamilleProps> = ({ famille, onUpdate, s
             typePaiement: (editedFamille.cotisation as ICotisation).facture?.typePaiement || null,
             statutPaiement: (editedFamille.cotisation as ICotisation)?.facture?.statutPaiement || null,
             datePaiement: (editedFamille.cotisation as ICotisation)?.facture?.datePaiement
-              ? new Date((editedFamille.cotisation as ICotisation)?.facture?.datePaiement ?? '').toISOString()
+              ? new Date((editedFamille.cotisation as ICotisation)?.facture?.datePaiement ?? '').toString()
               : null
           }
         } : undefined
