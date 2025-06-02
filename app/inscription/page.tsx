@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import PublicWrapper from "../component/layout/PublicWrapper";
-import { useUser } from "@/context/UserContext";
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import AddressAutocomplete from '../component/AddressAutocomplete';
 import { Info, CheckCircle, Circle, Sparkles } from "lucide-react";
+import PublicLayout from "../component/layout/PublicLayout";
 
 // Types pour la validation
 interface FormData {
@@ -134,10 +134,9 @@ export function Timeline({ currentStep }: { currentStep: number }) {
 }
 
 export default function InscriptionPage() {
-  const user = useUser();
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
-  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     nom: "",
     email: "",
@@ -157,10 +156,23 @@ export default function InscriptionPage() {
   const [associationExists, setAssociationExists] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      router.replace("/dashboard");
-    }
-  }, [user, router]);
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          router.replace("/dashboard");
+        }
+      } catch (error) {
+        console.error('Erreur lors de la vérification de l\'authentification:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, [router]);
+
+
 
   const validateStep = (step: number): boolean => {
     const newErrors: ValidationErrors = {};
@@ -733,70 +745,71 @@ export default function InscriptionPage() {
         );
     }
   };
-
   return (
     <PublicWrapper>
-      <div className="min-h-[80vh] w-full px-2 sm:px-4 py-4 sm:py-8 overflow-x-hidden">
-        <div className="w-full max-w-2xl mx-auto bg-white shadow-md rounded-xl p-3 sm:p-6">
-          <h1 className="text-xl sm:text-2xl font-bold text-center text-[#00B074] mb-4 sm:mb-6">
-            Rejoignez la phase de test FamEasy
-          </h1>
+      <PublicLayout>
+        <div className="min-h-[80vh] w-full px-2 sm:px-4 py-4 sm:py-8 overflow-x-hidden">
+          <div className="w-full max-w-2xl mx-auto bg-white shadow-md rounded-xl p-3 sm:p-6">
+            <h1 className="text-xl sm:text-2xl font-bold text-center text-[#00B074] mb-4 sm:mb-6">
+              Rejoignez la phase de test FamEasy
+            </h1>
 
-          <div className="bg-[#00B074]/10 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6">
-            <div className="flex flex-col sm:flex-row items-center gap-2">
-              <Sparkles className="w-5 h-5 text-[#00B074] flex-shrink-0" />
-              <p className="text-[#00B074] font-medium text-sm sm:text-base text-center sm:text-left">
-                Accès gratuit pendant la phase de test • Support prioritaire • Influencez le développement
-              </p>
+            <div className="bg-[#00B074]/10 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6">
+              <div className="flex flex-col sm:flex-row items-center gap-2">
+                <Sparkles className="w-5 h-5 text-[#00B074] flex-shrink-0" />
+                <p className="text-[#00B074] font-medium text-sm sm:text-base text-center sm:text-left">
+                  Accès gratuit pendant la phase de test • Support prioritaire • Influencez le développement
+                </p>
+              </div>
             </div>
+
+            <Timeline currentStep={currentStep} />
+
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentStep}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-full"
+                >
+                  {renderStep()}
+                </motion.div>
+              </AnimatePresence>
+
+              <div className="flex justify-between pt-4">
+                {currentStep > 1 && currentStep !== 4 && (
+                  <button
+                    type="button"
+                    onClick={handlePrevious}
+                    className="px-3 sm:px-4 py-2 text-gray-600 hover:text-gray-800"
+                  >
+                    Retour
+                  </button>
+                )}
+                {currentStep < 4 && (
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="ml-auto px-3 sm:px-4 py-2 bg-[#00B074] text-white rounded-md hover:bg-[#009a66] transition"
+                  >
+                    Suivant
+                  </button>
+                )}
+              </div>
+            </form>
+
+            <p className="text-center text-sm text-gray-600 mt-4">
+              Déjà un compte ?{" "}
+              <Link href="/connexion" className="text-[#00B074] hover:underline">
+                Se connecter
+              </Link>
+            </p>
           </div>
-
-          <Timeline currentStep={currentStep} />
-
-          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentStep}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
-                className="w-full"
-              >
-                {renderStep()}
-              </motion.div>
-            </AnimatePresence>
-
-            <div className="flex justify-between pt-4">
-              {currentStep > 1 && currentStep !== 4 && (
-                <button
-                  type="button"
-                  onClick={handlePrevious}
-                  className="px-3 sm:px-4 py-2 text-gray-600 hover:text-gray-800"
-                >
-                  Retour
-                </button>
-              )}
-              {currentStep < 4 && (
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  className="ml-auto px-3 sm:px-4 py-2 bg-[#00B074] text-white rounded-md hover:bg-[#009a66] transition"
-                >
-                  Suivant
-                </button>
-              )}
-            </div>
-          </form>
-
-          <p className="text-center text-sm text-gray-600 mt-4">
-            Déjà un compte ?{" "}
-            <Link href="/connexion" className="text-[#00B074] hover:underline">
-              Se connecter
-            </Link>
-          </p>
         </div>
-      </div>
+      </PublicLayout>
     </PublicWrapper>
   );
 }
