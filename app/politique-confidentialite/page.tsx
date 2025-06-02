@@ -1,25 +1,28 @@
-"use client";
-
 import Link from "next/link";
 import PublicLayout from "../component/layout/PublicLayout";
+import { TUser } from "@/context/UserContext";
+import { getUserFromCookies } from "@/lib/server-auth";
 
-export default function PolitiqueConfidentialite() {
+export default async function PolitiqueConfidentialite() {
+  const user = await getUserFromCookies();
   return (
-    <PublicLayout>
+    <PublicLayout utilisateur={user as TUser}>
       <section className="max-w-3xl mx-auto px-4 py-16 animate-fade-up">
         <h1 className="text-3xl font-extrabold text-[#00B074] mb-6 text-center">
           Politique de confidentialité
         </h1>
 
         <p className="mb-8 text-gray-700 text-base text-center">
-          FamEasy s’engage à protéger la vie privée de ses utilisateurs et la confidentialité de leurs données personnelles, conformément au RGPD.
+          {/* eslint-disable-next-line react/no-unescaped-entities */}
+          FamEasy s'engage à protéger la vie privée de ses utilisateurs et la confidentialité de leurs données personnelles, conformément au RGPD.
         </p>
 
         <div className="space-y-8 text-gray-700 text-base">
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">1. Collecte des données</h2>
             <p>
-              Nous collectons uniquement les données strictement nécessaires à la gestion de votre compte, de votre association et de ses membres : nom, prénom, email, informations d’association, et données de connexion.
+              {/* eslint-disable-next-line react/no-unescaped-entities */}
+              Nous collectons uniquement les données strictement nécessaires à la gestion de votre compte, de votre association et de ses membres : nom, prénom, email, informations d'association, et données de connexion.
             </p>
           </div>
 
@@ -28,7 +31,8 @@ export default function PolitiqueConfidentialite() {
             <ul className="list-disc list-inside mt-2 mb-2">
               <li>Gestion de votre espace utilisateur et de votre association</li>
               <li>Suivi des membres, cotisations, factures et attestations</li>
-              <li>Envoi d’informations importantes liées à votre activité associative</li>
+              <li>    {/* eslint-disable-next-line react/no-unescaped-entities */}
+                Envoi d'informations importantes liées à votre activité associative</li>
             </ul>
             <p>Vos données ne sont jamais revendues à des tiers.</p>
           </div>
@@ -42,8 +46,8 @@ export default function PolitiqueConfidentialite() {
 
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">4. Droits des utilisateurs</h2>
-            <p>
-              Conformément au RGPD, vous disposez d’un droit d’accès, de rectification, de suppression et de portabilité de vos données. Pour exercer vos droits, contactez-nous à :{" "}
+            <p>    {/* eslint-disable-next-line react/no-unescaped-entities */}
+              Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression et de portabilité de vos données. Pour exercer vos droits, contactez-nous à :{" "}
               <a href="mailto:fameasy.contact@gmail.com" className="text-[#00B074] hover:underline">fameasy.contact@gmail.com</a>
             </p>
           </div>
@@ -51,7 +55,8 @@ export default function PolitiqueConfidentialite() {
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">5. Cookies</h2>
             <p>
-              FamEasy utilise uniquement des cookies techniques nécessaires au bon fonctionnement du service (authentification, sécurité). Aucun cookie publicitaire ou de suivi tiers n’est utilisé.
+              {/* eslint-disable-next-line react/no-unescaped-entities */}
+              FamEasy utilise uniquement des cookies techniques nécessaires au bon fonctionnement du service (authentification, sécurité). Aucun cookie publicitaire ou de suivi tiers n'est utilisé.
             </p>
           </div>
 
@@ -65,7 +70,8 @@ export default function PolitiqueConfidentialite() {
 
         <div className="mt-10 text-center">
           <Link href="/" className="text-[#00B074] hover:underline font-medium">
-            Retour à l’accueil
+            {/* eslint-disable-next-line react/no-unescaped-entities */}
+            Retour à l'accueil
           </Link>
         </div>
       </section>

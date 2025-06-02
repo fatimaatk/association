@@ -2,18 +2,17 @@
 
 import { useEffect, useState } from 'react';
 import { Info, Trash2 } from 'lucide-react';
-import { ITypeFamille } from '@/models/interfaceFamilles';
 import { Dialog, DialogContent, DialogTitle } from '@radix-ui/react-dialog';
 import { CheckCircle, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation';
 import AddressAutocomplete from '../AddressAutocomplete';
 
-
-interface Props {
-  types: ITypeFamille[];
+interface TypeFamille {
+  id: string;
+  nom: string;
 }
 
-export interface MembreFormData {
+interface MembreFormData {
   nom: string;
   prenom: string;
   dateNaissance: string;
@@ -49,16 +48,18 @@ interface FormErrors {
   };
   submit?: string;
 }
+
 type NestedErrors = {
   [key: string]: NestedErrors | unknown;
 };
 
-export default function FormAjoutFamille({ types }: Props) {
+export default function FormAjoutFamille() {
   const router = useRouter();
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [typeFamilleId, setTypeFamilleId] = useState('');
   const [typeFamilleNom, setTypeFamilleNom] = useState('');
+  const [typesFamille, setTypesFamille] = useState<TypeFamille[]>([]);
   const [chefFamille, setChefFamille] = useState<MembreFormData>({ nom: '', prenom: '', dateNaissance: '' });
   const [membres, setMembres] = useState<MembreFormData[]>([]);
   const [adresse, setAdresse] = useState('');
@@ -69,6 +70,20 @@ export default function FormAjoutFamille({ types }: Props) {
   const [errors, setErrors] = useState<FormErrors>({});
 
   const isEnAttente = cotisation.facture.statutPaiement === 'EN_ATTENTE';
+
+  useEffect(() => {
+    const fetchTypesFamille = async () => {
+      try {
+        const res = await fetch('/api/types');
+        if (!res.ok) throw new Error('Erreur lors du chargement des types');
+        const data = await res.json();
+        setTypesFamille(data);
+      } catch (error) {
+        console.error('Erreur:', error);
+      }
+    };
+    fetchTypesFamille();
+  }, []);
 
   useEffect(() => {
     if (!cotisation.facture.statutPaiement) {
@@ -109,7 +124,6 @@ export default function FormAjoutFamille({ types }: Props) {
     if (!adresse) {
       newErrors.adresse = "L'adresse est requise";
     }
-
 
     if (!adresseEmail) {
       newErrors.adresseEmail = "L'adresse email est requise";
@@ -188,7 +202,6 @@ export default function FormAjoutFamille({ types }: Props) {
     clearError(['membres', index.toString(), field]);
   };
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -206,9 +219,7 @@ export default function FormAjoutFamille({ types }: Props) {
         id: generateChefId(m.nom, m.prenom, m.dateNaissance)
       }))
     ];
-    const type = types.find(t => t.id === typeFamilleId);
     const payload = {
-      type,
       typeFamilleId,
       chefFamille: chefFamille,
       membres: membresComplets,
@@ -249,7 +260,6 @@ export default function FormAjoutFamille({ types }: Props) {
     }
   };
 
-
   return (
     <div className="max-w-3xl mx-auto bg-white p-6 shadow-md rounded-xl">
       <h1 className="text-2xl font-semibold mb-2 text-[#00B074] flex items-center gap-2">
@@ -267,8 +277,8 @@ export default function FormAjoutFamille({ types }: Props) {
         <div className="border p-4 rounded-xl bg-gray-50">
           <h2 className="font-semibold mb-2">Type de famille</h2>
           <div className="flex flex-wrap gap-4">
-            {types.map((type: ITypeFamille, index: number) => (
-              <label key={index} className="flex items-center gap-2">
+            {typesFamille.map((type) => (
+              <label key={type.id} className="flex items-center gap-2">
                 <input
                   type="radio"
                   name="typeFamilleId"
@@ -515,12 +525,9 @@ export default function FormAjoutFamille({ types }: Props) {
             ) : (
               'Créer la famille'
             )}
-
-
-
           </button>
         </div>
-      </form >
+      </form>
       <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
         <DialogContent className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
@@ -554,6 +561,6 @@ export default function FormAjoutFamille({ types }: Props) {
           </div>
         </DialogContent>
       </Dialog>
-    </div >
+    </div>
   );
 }

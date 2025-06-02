@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import WrapperVitrine from "../component/layout/PublicLayout";
+import PublicWrapper from "../component/layout/PublicWrapper";
 import { useUser } from "@/context/UserContext";
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -735,7 +735,7 @@ export default function InscriptionPage() {
   };
 
   return (
-    <WrapperVitrine>
+    <PublicWrapper>
       <div className="min-h-[80vh] w-full px-2 sm:px-4 py-4 sm:py-8 overflow-x-hidden">
         <div className="w-full max-w-2xl mx-auto bg-white shadow-md rounded-xl p-3 sm:p-6">
           <h1 className="text-xl sm:text-2xl font-bold text-center text-[#00B074] mb-4 sm:mb-6">
@@ -797,6 +797,6 @@ export default function InscriptionPage() {
           </p>
         </div>
       </div>
-    </WrapperVitrine>
+    </PublicWrapper>
   );
 }

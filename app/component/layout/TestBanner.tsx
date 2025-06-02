@@ -3,6 +3,7 @@
 import { Hammer, Mail, X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 export default function TestBanner() {
   const pathname = usePathname();
@@ -16,20 +17,23 @@ export default function TestBanner() {
   const [isExpanded, setIsExpanded] = useState(true);
 
   return (
-    <div className="fixed bottom-0 right-0 z-[100]">
-      {!isExpanded && (
-        <button
+    <div className="fixed bottom-0 right-0 z-[45]">
+      {!isExpanded ? (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
           onClick={() => setIsExpanded(true)}
           className="fixed bottom-4 right-4 bg-[#00B074] p-3 rounded-full shadow-lg text-white hover:bg-[#009a66] transition-colors"
           aria-label="Afficher le widget de test"
         >
           <Hammer className="h-5 w-5" />
-        </button>
-      )}
-
-      {isExpanded && (
-        <div
-          className={`fixed bottom-0 sm:bottom-4 right-0 sm:right-4 bg-white text-gray-800 rounded-t-lg sm:rounded-lg shadow-lg p-4 w-full sm:w-auto sm:max-w-sm border border-[#00B074] ${isDashboard ? 'md:ml-64' : ''} animate-fade-up`}
+        </motion.button>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          className={`fixed bottom-0 sm:bottom-4 right-0 sm:right-4 bg-white text-gray-800 rounded-t-lg sm:rounded-lg shadow-lg p-4 w-full sm:w-auto sm:max-w-sm border border-[#00B074] ${isDashboard ? 'md:ml-64' : ''}`}
           role="dialog"
           aria-label="Widget de test"
         >
@@ -43,8 +47,7 @@ export default function TestBanner() {
               </div>
               <h3 className="text-base font-semibold mb-1">Cette version est en test</h3>
               <p className="text-sm text-gray-600 mb-3 leading-snug">
-                {/* eslint-disable-next-line react/no-unescaped-entities */}
-                Si vous constatez un bug ou avez une idée d'amélioration, n'hésitez pas à nous écrire !
+                Si vous constatez un bug ou avez une idée d&apos;amélioration, n&apos;hésitez pas à nous écrire !
               </p>
               <a
                 href="mailto:fameasy.contact@gmail.com"
@@ -62,7 +65,7 @@ export default function TestBanner() {
               <X className="h-4 w-4" />
             </button>
           </div>
-        </div>
+        </motion.div>
       )}
     </div>
   );

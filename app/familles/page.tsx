@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 import { getFamilles } from "@/lib/famille";
 import { notFound } from "next/navigation";
 import ProtectedWrapper from "../component/layout/ProtectedWrapper";
-import { getUserFromCookies } from "@/lib/auth";
+import { getUserFromCookies } from "@/lib/server-auth";
 import FamilleListWithFilters from "../component/familles/FamillesListWithFilters";
 
 export default async function FamillePage() {

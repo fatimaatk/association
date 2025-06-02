@@ -4,7 +4,7 @@ import { ChartNoAxesCombined, User, Users, } from "lucide-react";
 import Link from "next/link";
 import { getFamilles } from "@/lib/famille";
 import AccueilInfos from "../component/layout/AccueilInfo";
-import { getUserFromCookies } from "@/lib/auth";
+import { getUserFromCookies } from "@/lib/server-auth";
 import { notFound } from "next/navigation";
 import ProtectedWrapper from "@/app/component/layout/ProtectedWrapper";
 

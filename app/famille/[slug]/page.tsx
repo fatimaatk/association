@@ -1,7 +1,7 @@
 import ClientFamilleDetails from "@/app/component/famille/ClientFamilleDetails";
 import { getFamilleById } from "@/lib/famille";
 import { Metadata } from "next";
-import { getUserFromCookies } from "@/lib/auth";
+import { getUserFromCookies } from "@/lib/server-auth";
 import ProtectedWrapper from "@/app/component/layout/ProtectedWrapper";
 
 // 👇 Fonction principale

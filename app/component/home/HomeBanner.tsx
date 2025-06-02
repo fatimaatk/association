@@ -3,14 +3,31 @@
 import Link from 'next/link';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { TUser } from '@/context/UserContext';
 
-interface HomePageBannerProps {
+interface HomeBannerProps {
   variant?: 'primary' | 'secondary';
   className?: string;
+  user: TUser | null;
 }
 
-export default function HomePageBanner({ variant = 'primary', className = '' }: HomePageBannerProps) {
+export default function HomeBanner({ variant = 'primary', className = '', user }: HomeBannerProps) {
   const isPrimary = variant === 'primary';
+
+
+  const bannerContent = user ? {
+    badge: 'Testeur actif',
+    title: "Bienvenue dans l'aventure FamEasy",
+    description: 'Merci de faire partie de nos testeurs privilégiés. Votre retour est précieux pour améliorer FamEasy.',
+    buttonText: 'Accéder à mon espace',
+    buttonLink: '/dashboard'
+  } : {
+    badge: 'Nouveau',
+    title: "Rejoignez l'aventure FamEasy",
+    description: 'Nous recherchons des associations pour tester notre solution et nous aider à la rendre parfaite pour vous.',
+    buttonText: 'Devenir testeur',
+    buttonLink: '/tarif'
+  };
 
   return (
     <motion.div
@@ -19,15 +36,12 @@ export default function HomePageBanner({ variant = 'primary', className = '' }: 
       transition={{ duration: 0.6 }}
       className={`relative overflow-hidden rounded-2xl ${className}`}
     >
-      {/* Fond avec dégradé et motif */}
       <div className={`absolute inset-0 ${isPrimary ? 'bg-gradient-to-br from-[#00B074] to-[#00965e]' : 'bg-gradient-to-br from-white to-gray-50'} -z-10`} />
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10 -z-10 border" />
 
-      {/* Contenu */}
       <div className="relative px-6 py-8 sm:px-8 sm:py-12">
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col md:flex-row items-center gap-8">
-            {/* Texte */}
             <div className="flex-1 text-center md:text-left">
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -37,7 +51,7 @@ export default function HomePageBanner({ variant = 'primary', className = '' }: 
               >
                 <Sparkles className={`w-4 h-4 ${isPrimary ? 'text-white' : 'text-[#00B074]'}`} />
                 <span className={`text-sm font-medium ${isPrimary ? 'text-white' : 'text-[#00B074]'}`}>
-                  Nouveau
+                  {bannerContent.badge}
                 </span>
               </motion.div>
 
@@ -47,8 +61,7 @@ export default function HomePageBanner({ variant = 'primary', className = '' }: 
                 transition={{ delay: 0.3 }}
                 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${isPrimary ? 'text-white' : 'text-gray-900'}`}
               >
-                {/* eslint-disable-next-line react/no-unescaped-entities */}
-                Rejoignez l'aventure FamEasy
+                {bannerContent.title}
               </motion.h2>
 
               <motion.p
@@ -57,9 +70,7 @@ export default function HomePageBanner({ variant = 'primary', className = '' }: 
                 transition={{ delay: 0.4 }}
                 className={`text-lg mb-6 ${isPrimary ? 'text-white/90' : 'text-gray-600'}`}
               >
-                Nous recherchons des associations pour tester notre solution{' '}
-                <br className="hidden sm:block" />
-                et nous aider à la rendre parfaite pour vous.
+                {bannerContent.description}
               </motion.p>
 
               <motion.div
@@ -68,26 +79,24 @@ export default function HomePageBanner({ variant = 'primary', className = '' }: 
                 transition={{ delay: 0.5 }}
               >
                 <Link
-                  href="/tarif"
+                  href={bannerContent.buttonLink}
                   className={`inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${isPrimary
                     ? 'bg-white text-[#00B074] hover:bg-white/90'
                     : 'bg-[#00B074] text-white hover:bg-[#00965e]'
                     }`}
                 >
-                  Devenir testeur
+                  {bannerContent.buttonText}
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </motion.div>
             </div>
 
-            {/* Illustration */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.6 }}
               className="hidden md:block relative"
             >
-              {/* Bulle principale */}
               <motion.div
                 className={`w-40 h-40 rounded-2xl ${isPrimary ? 'bg-white/10' : 'bg-[#00B074]/10'} backdrop-blur-sm flex items-center justify-center`}
                 animate={{
@@ -115,7 +124,6 @@ export default function HomePageBanner({ variant = 'primary', className = '' }: 
                 </motion.div>
               </motion.div>
 
-              {/* Bulle supérieure droite */}
               <motion.div
                 className={`absolute -top-4 -right-4 w-20 h-20 rounded-full ${isPrimary ? 'bg-white/10' : 'bg-[#00B074]/10'} backdrop-blur-sm`}
                 animate={{
@@ -131,7 +139,6 @@ export default function HomePageBanner({ variant = 'primary', className = '' }: 
                 }}
               />
 
-              {/* Bulle inférieure gauche */}
               <motion.div
                 className={`absolute -bottom-4 -left-4 w-16 h-16 rounded-full ${isPrimary ? 'bg-white/10' : 'bg-[#00B074]/10'} backdrop-blur-sm`}
                 animate={{
@@ -147,7 +154,6 @@ export default function HomePageBanner({ variant = 'primary', className = '' }: 
                 }}
               />
 
-              {/* Nouvelles bulles décoratives */}
               <motion.div
                 className={`absolute top-1/2 -right-8 w-12 h-12 rounded-full ${isPrimary ? 'bg-white/10' : 'bg-[#00B074]/10'} backdrop-blur-sm`}
                 animate={{

@@ -10,6 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'supersecret'
 export async function POST(req: NextRequest) {
   const body = await req.json()
   const { email, motDePasse } = body
+  console.log(process.env.NODE_ENV)
 
   if (!email || !motDePasse) {
     return NextResponse.json({ message: 'Email et mot de passe requis' }, { status: 400 })

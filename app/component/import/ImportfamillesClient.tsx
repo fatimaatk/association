@@ -1,43 +1,88 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
-import { CheckCircle, AlertCircle, UploadCloud, Info } from "lucide-react";
+import { CheckCircle, AlertCircle, UploadCloud, Info, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 
 export default function ImportFamillesClient() {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const dropZoneRef = useRef<HTMLDivElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
+  const [importErrorDetails, setImportErrorDetails] = useState<string[]>([]);
   const [showHelp, setShowHelp] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [importSuccess, setImportSuccess] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const router = useRouter();
   const [step, setStep] = useState<0 | 1 | 2 | 3>(0); // 0: rien, 1: lecture, 2: envoi, 3: succès
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (file: File) => {
     setImportError(null);
+    setImportErrorDetails([]);
     setImportSuccess(null);
-    const file = e.target.files?.[0];
     if (!file) return;
     if (!file.name.endsWith(".xlsx")) {
-      setImportError("Le fichier doit être au format .xlsx");
+      setImportError("Format de fichier incorrect");
+      setImportErrorDetails([
+        "Le fichier doit être au format .xlsx",
+        "Veuillez utiliser le modèle Excel fourni"
+      ]);
       setFileName(null);
+      setSelectedFile(null);
       return;
     }
     setFileName(file.name);
+    setSelectedFile(file);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      handleFileChange(file);
+    }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileChange(file);
+    }
   };
 
   const handleImport = async () => {
+    if (!selectedFile) {
+      setImportError("Aucun fichier sélectionné");
+      setImportErrorDetails([
+        "Veuillez sélectionner un fichier Excel à importer",
+        "Utilisez le bouton ci-dessus ou glissez-déposez votre fichier"
+      ]);
+      return;
+    }
+
     setImportError(null);
+    setImportErrorDetails([]);
     setImportSuccess(null);
-    setStep(1); // Lecture du fichier
-    if (!fileInputRef.current?.files?.[0]) return;
+    setStep(1);
     setIsImporting(true);
+
     try {
-      const file = fileInputRef.current.files[0];
-      setStep(2); // Envoi au serveur
+      setStep(2);
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", selectedFile);
 
       const res = await fetch("/api/import", {
         method: "POST",
@@ -47,20 +92,64 @@ export default function ImportFamillesClient() {
       const result = await res.json();
 
       if (!res.ok) {
-        setImportError(result.error || "Erreur lors de l'import.");
+        let errorMessage = "Erreur lors de l'import";
+        let errorDetails: string[] = [];
+
+        if (result.error) {
+          if (result.error.includes("Date invalide")) {
+            errorMessage = "Format de date incorrect";
+            errorDetails = [
+              "Les dates doivent être au format JJ/MM/AAAA",
+              "Vérifiez les colonnes : chefFamille_dateNaissance, dateNaissance, datePaiement",
+              "Exemple de date valide : 01/01/2024"
+            ];
+          } else if (result.error.includes("colonnes requises")) {
+            errorMessage = "Format de fichier incorrect";
+            errorDetails = [
+              "Certaines colonnes obligatoires sont manquantes",
+              "Vérifiez que vous utilisez bien le modèle Excel fourni",
+              "Les colonnes doivent avoir exactement les mêmes noms que dans le modèle"
+            ];
+          } else if (result.error.includes("typeFamille")) {
+            errorMessage = "Type de famille incorrect";
+            errorDetails = [
+              "Le type de famille spécifié n'existe pas",
+              "Vérifiez la colonne typeFamille_nom",
+              "Les types de famille doivent correspondre à ceux de votre association"
+            ];
+          } else {
+            errorDetails = [
+              "Vérifiez que votre fichier respecte le format attendu",
+              "Utilisez le modèle Excel fourni comme référence",
+              "Assurez-vous que toutes les données sont correctement formatées"
+            ];
+          }
+        }
+
+        setImportError(errorMessage);
+        setImportErrorDetails(errorDetails);
         setStep(0);
       } else {
         setImportSuccess("Import réussi ! Vos familles et membres ont été ajoutés.");
         setFileName(null);
-        fileInputRef.current.value = "";
-        setStep(3); // Succès
+        setSelectedFile(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+        setStep(3);
       }
     } catch (err) {
-      console.error(err);
-      setImportError("Erreur lors de l'envoi du fichier.");
+      console.error("Erreur lors de l'import:", err);
+      setImportError("Erreur lors de l'envoi du fichier");
+      setImportErrorDetails([
+        "Une erreur est survenue lors de la communication avec le serveur",
+        "Vérifiez votre connexion internet",
+        "Si le problème persiste, contactez le support"
+      ]);
       setStep(0);
+    } finally {
+      setIsImporting(false);
     }
-    setIsImporting(false);
   };
 
   // Redirection automatique après succès
@@ -106,13 +195,13 @@ export default function ImportFamillesClient() {
       <AnimatePresence>
         {importSuccess && (
           <motion.div
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#00B074] text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-2 z-50"
+            className="fixed bottom-4 sm:bottom-6 left-4 sm:left-1/2 sm:-translate-x-1/2 right-4 sm:right-auto bg-[#00B074] text-white px-4 sm:px-6 py-3 rounded-xl shadow-lg flex items-center gap-2 z-50 max-w-[calc(100vw-2rem)] sm:max-w-none"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 40 }}
           >
-            <CheckCircle className="w-5 h-5" />
-            {importSuccess}
+            <CheckCircle className="w-5 h-5 flex-shrink-0" />
+            <span className="text-sm sm:text-base truncate">{importSuccess}</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -128,8 +217,16 @@ export default function ImportFamillesClient() {
         </h2>
         {/* Zone de drop */}
         <motion.div
-          className="flex flex-col items-center justify-center border-2 border-dashed border-[#00B074] rounded-2xl p-10 bg-[#f9f9f9] hover:bg-[#e6f9f2] transition cursor-pointer shadow-sm"
+          ref={dropZoneRef}
+          className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-10 transition-all duration-200 cursor-pointer
+            ${isDragging
+              ? 'border-[#00B074] bg-[#e6f9f2] scale-105'
+              : 'border-[#00B074] bg-[#f9f9f9] hover:bg-[#e6f9f2]'
+            }`}
           onClick={() => fileInputRef.current?.click()}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
           tabIndex={0}
           role="button"
           aria-label="Sélectionner un fichier à importer"
@@ -137,28 +234,46 @@ export default function ImportFamillesClient() {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
-          <UploadCloud className="w-12 h-12 text-[#00B074] mb-2" />
-          <span className="text-[#00B074] font-semibold text-lg text-center">Glissez-déposez votre fichier ici</span>
-          <span className="text-gray-500 text-sm text-center">ou cliquez pour sélectionner un fichier</span>
+          <UploadCloud className={`w-12 h-12 mb-2 transition-colors duration-200 ${isDragging ? 'text-[#00B074] scale-110' : 'text-[#00B074]'}`} />
+          <span className="text-[#00B074] font-semibold text-lg text-center">
+            {isDragging ? 'Déposez votre fichier ici' : 'Glissez-déposez votre fichier ici'}
+          </span>
+          <span className="text-gray-500 text-sm text-center mt-1">
+            ou cliquez pour sélectionner un fichier
+          </span>
           <input
             ref={fileInputRef}
             type="file"
             accept=".xlsx"
             className="hidden"
-            onChange={handleFileChange}
+            onChange={handleFileInputChange}
           />
         </motion.div>
         {/* Feedback fichier sélectionné */}
         <AnimatePresence>
           {fileName && !importError && (
             <motion.div
-              className="mt-4 flex items-center justify-center gap-2 text-[#00B074] text-center"
+              className="mt-4 flex items-center justify-between gap-2 text-[#00B074] bg-[#e6f9f2] p-3 rounded-lg"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
             >
-              <CheckCircle className="w-5 h-5" />
-              <span className="font-semibold">Fichier sélectionné :</span> {fileName}
+              <div className="flex items-center gap-2 min-w-0">
+                <CheckCircle className="w-5 h-5 flex-shrink-0" />
+                <span className="font-semibold flex-shrink-0">Fichier sélectionné :</span>
+                <span className="truncate">{fileName}</span>
+              </div>
+              <button
+                onClick={() => {
+                  setFileName(null);
+                  setSelectedFile(null);
+                  if (fileInputRef.current) fileInputRef.current.value = "";
+                }}
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+                aria-label="Supprimer le fichier"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </motion.div>
           )}
         </AnimatePresence>
@@ -168,20 +283,29 @@ export default function ImportFamillesClient() {
         <AnimatePresence>
           {importError && (
             <motion.div
-              className="mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded text-sm text-center flex items-center justify-center gap-2"
+              className="mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
             >
-              <AlertCircle className="w-5 h-5" />
-              {importError}
+              <div className="flex items-center gap-2 mb-2">
+                <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                <span className="font-semibold">{importError}</span>
+              </div>
+              {importErrorDetails.length > 0 && (
+                <ul className="list-disc list-inside text-sm space-y-1 ml-7">
+                  {importErrorDetails.map((detail, index) => (
+                    <li key={index}>{detail}</li>
+                  ))}
+                </ul>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
         {/* Bouton d'import */}
         <motion.button
           className="w-full mt-8 bg-gradient-to-r from-[#00B074] to-[#009a66] text-white py-3 rounded-lg font-bold text-lg shadow-md hover:from-[#009a66] hover:to-[#00B074] transition disabled:opacity-50"
-          disabled={!fileName || isImporting}
+          disabled={!selectedFile || isImporting}
           whileTap={{ scale: 0.98 }}
           onClick={handleImport}
         >
@@ -255,7 +379,7 @@ function AideImport() {
               <li>chefFamille_dateNaissance</li>
               <li>adresse </li>
               <li>adresseEmail </li>
-              <li>téléphone</li>
+              <li>telephone</li>
               <li>montant_cotisation</li>
               <li>typePaiement</li>
               <li>statutPaiement</li>

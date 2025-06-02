@@ -5,6 +5,7 @@ import { IFamille } from "@/models/interfaceFamilles";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AlertCircle, SlidersHorizontal, X, Check, RotateCcw } from "lucide-react";
 import toast from "react-hot-toast";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface IProps {
   familles: IFamille[] | null;
@@ -98,58 +99,89 @@ export default function DetailFamillesBoard({ familles }: IProps) {
         </button>
       </div>
 
-      {showFilterPopup && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold">Filtres</h2>
-              <button onClick={() => setShowFilterPopup(false)}>
-                <X size={20} />
-              </button>
-            </div>
-            <div className="space-y-4">
-              <input
-                type="text"
-                value={searchTermDraft}
-                onChange={(e) => setSearchTermDraft(e.target.value)}
-                placeholder="Rechercher par nom ou prénom"
-                className="w-full border rounded px-3 py-2"
-              />
-              <select
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
-                className="w-full border rounded px-3 py-2"
-              >
-                <option value="asc">Nom A-Z</option>
-                <option value="desc">Nom Z-A</option>
-              </select>
-              <select
-                value={itemsPerPage}
-                onChange={(e) => setItemsPerPage(Number(e.target.value))}
-                className="w-full border rounded px-3 py-2"
-              >
-                <option value={10}>10 familles</option>
-                <option value={20}>20 familles</option>
-                <option value={50}>50 familles</option>
-              </select>
-              <div className="flex flex-col gap-2 mt-4">
+      {/* Filtres mobiles */}
+      <AnimatePresence>
+        {showFilterPopup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white p-6 rounded-lg w-full max-w-md shadow-xl"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold">Filtres</h2>
                 <button
-                  onClick={applyFilters}
-                  className="w-full flex items-center justify-center gap-2 bg-[#00B074] text-white px-4 py-2 rounded hover:bg-[#01965e] transition"
+                  onClick={() => setShowFilterPopup(false)}
+                  className="p-1 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  <Check size={18} /> Appliquer les filtres
-                </button>
-                <button
-                  onClick={resetFilters}
-                  className="w-full flex items-center justify-center gap-2 text-[#00B074] border border-[#00B074] px-4 py-2 rounded hover:bg-[#f0fef8] transition"
-                >
-                  <RotateCcw size={18} /> Réinitialiser
+                  <X size={20} />
                 </button>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Rechercher
+                  </label>
+                  <input
+                    type="text"
+                    value={searchTermDraft}
+                    onChange={(e) => setSearchTermDraft(e.target.value)}
+                    placeholder="Nom ou prénom"
+                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#00B074] focus:border-[#00B074] outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Trier par
+                  </label>
+                  <select
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
+                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#00B074] focus:border-[#00B074] outline-none"
+                  >
+                    <option value="asc">Nom A-Z</option>
+                    <option value="desc">Nom Z-A</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Entrées par page
+                  </label>
+                  <select
+                    value={itemsPerPage}
+                    onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#00B074] focus:border-[#00B074] outline-none"
+                  >
+                    <option value={10}>10 familles</option>
+                    <option value={20}>20 familles</option>
+                    <option value={50}>50 familles</option>
+                  </select>
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <button
+                    onClick={applyFilters}
+                    className="flex-1 flex items-center justify-center gap-2 bg-[#00B074] text-white px-4 py-2 rounded-lg hover:bg-[#01965e] transition"
+                  >
+                    <Check size={18} /> Appliquer
+                  </button>
+                  <button
+                    onClick={resetFilters}
+                    className="flex-1 flex items-center justify-center gap-2 text-[#00B074] border border-[#00B074] px-4 py-2 rounded-lg hover:bg-[#f0fef8] transition"
+                  >
+                    <RotateCcw size={18} /> Réinitialiser
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="hidden sm:flex items-center justify-between mb-4 gap-4">
         <input
@@ -225,26 +257,33 @@ export default function DetailFamillesBoard({ familles }: IProps) {
               </tbody>
             </table>
           </div>
+
+          {/* Pagination */}
+          <div className="mt-6 flex flex-col  items-center justify-between gap-4 border-t pt-4">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
+                className="px-3 sm:px-4 py-2 border rounded bg-white disabled:opacity-50 text-sm sm:text-base hover:bg-gray-50 transition-colors"
+                disabled={currentPage === 1}
+              >
+                Précédent
+              </button>
+              <div className="flex items-center gap-1 bg-gray-50 px-3 py-2 rounded-lg border">
+                <span className="text-sm sm:text-base font-medium text-[#00B074]">{currentPage}</span>
+                <span className="text-sm sm:text-base text-gray-500">/</span>
+                <span className="text-sm sm:text-base text-gray-500">{totalPages}</span>
+              </div>
+              <button
+                onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
+                className="px-3 sm:px-4 py-2 border rounded bg-white disabled:opacity-50 text-sm sm:text-base hover:bg-gray-50 transition-colors"
+                disabled={currentPage === totalPages}
+              >
+                Suivant
+              </button>
+            </div>
+          </div>
         </div>
       )}
-
-      <div className="flex  justify-between items-center mt-6 gap-4">
-        <button
-          onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
-          className="px-4 py-2 border rounded bg-white disabled:opacity-50"
-          disabled={currentPage === 1}
-        >
-          Précédent
-        </button>
-        <span>Page {currentPage} sur {totalPages}</span>
-        <button
-          onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
-          className="px-4 py-2 border rounded bg-white disabled:opacity-50"
-          disabled={currentPage === totalPages}
-        >
-          Suivant
-        </button>
-      </div>
     </div>
   );
 }

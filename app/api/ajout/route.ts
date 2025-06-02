@@ -41,6 +41,19 @@ export async function POST(req: Request) {
     const chefId = `${chefFamille.nom}_${chefFamille.prenom}_${new Date(chefFamille.dateNaissance).getFullYear()}`.toLowerCase().replace(/\s+/g, '');
 
     const nouvelleFamille = await prisma.$transaction(async (tx) => {
+      // Créer ou récupérer le type de famille
+      await tx.typeFamille.upsert({
+        where: {
+          id: typeFamilleId
+        },
+        update: {},
+        create: {
+          id: typeFamilleId,
+          nom: typeFamilleId === 'individuel' ? 'Individuel' : 'Famille',
+          associationId: user.associationId
+        }
+      });
+
       const chefDeFamille = await tx.membre.upsert({
         where: { id: chefId },
         update: {},
@@ -50,6 +63,7 @@ export async function POST(req: Request) {
           prenom: chefFamille.prenom,
           dateNaissance: chefFamille.dateNaissance,
           associationId: user.associationId,
+          updatedAt: new Date()
         }
       });
 

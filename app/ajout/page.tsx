@@ -1,16 +1,14 @@
 'use server';
 
 import Wrapper from '../component/layout/ProtectedWrapper';
-import { getTypesFamilles } from '@/lib/type';
 import FormAjoutFamille from '../component/ajout/FormAjoutFamille';
 import ProtectedWrapper from '../component/layout/ProtectedWrapper';
 
 export default async function NouvelleFamillePage() {
   try {
-    const types = await getTypesFamilles();
     return (
       <ProtectedWrapper>
-        <FormAjoutFamille types={types} />
+        <FormAjoutFamille />
       </ProtectedWrapper>
     );
   } catch (error) {
