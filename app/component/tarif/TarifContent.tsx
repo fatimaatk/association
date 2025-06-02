@@ -263,7 +263,7 @@ export default function TarifContent() {
             },
             {
               question: "Comment fonctionne le support ?",
-              answer: "Notre équipe est disponible du lundi au vendredi de 9h à 18h. Vous pouvez nous contacter par email ou via le chat intégré à l'application."
+              answer: "Notre équipe est disponible du lundi au vendredi de 9h à 18h. Vous pouvez nous contacter par email ou via le le formulaire de contact."
             },
             {
               question: "Comment FamEasy aide-t-il les bénévoles ?",

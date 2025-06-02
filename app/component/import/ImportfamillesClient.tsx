@@ -251,8 +251,8 @@ function AideImport() {
             <ul className="list-disc list-inside text-gray-700 text-xs ml-3 mt-1">
               <li>typeFamille_nom</li>
               <li>chefFamille_nom</li>
-              <li>prenom</li>
-              <li>dateNaissance</li>
+              <li>chefFamille_prenom</li>
+              <li>chefFamille_dateNaissance</li>
               <li>adresse </li>
               <li>adresseEmail </li>
               <li>téléphone</li>
@@ -260,6 +260,7 @@ function AideImport() {
               <li>typePaiement</li>
               <li>statutPaiement</li>
               <li>datePaiement</li>
+              <li>statutMembre</li>
             </ul>
           </div>
         </div>
@@ -271,7 +272,6 @@ function AideImport() {
               <li>familleChefNom</li>
               <li>familleChefPrenom</li>
               <li>chefFamille_dateNaissance</li>
-              <li>familleId</li>
               <li>nom</li>
               <li> prenom</li>
               <li>dateNaissance</li>
