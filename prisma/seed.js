@@ -15,16 +15,8 @@ async function main() {
 
   console.log('🧹 Données précédentes supprimées');
 
-  const hashPassword = async (password: string): Promise<string> =>
+  const hashPassword = async (password) =>
     await bcrypt.hash(password, 10);
-
-  type AssociationSeedInput = {
-    nom: string;
-    email: string;
-    adminEmail: string;
-    adminPassword: string;
-    membresSupp?: { nom: string; prenom: string; dateNaissance: string }[];
-  };
 
   const createAssociationWithData = async ({
     nom,
@@ -32,7 +24,7 @@ async function main() {
     adminEmail,
     adminPassword,
     membresSupp = [],
-  }: AssociationSeedInput): Promise<void> => {
+  }) => {
     const association = await prisma.association.create({
       data: {
         nom,
@@ -54,7 +46,6 @@ async function main() {
       },
     });
 
-    // ✅ Créer les types "Individuel" et "Famille" pour cette association
     const typeIndividuel = await prisma.typeFamille.create({
       data: {
         nom: 'Individuel',
@@ -155,10 +146,10 @@ async function main() {
 }
 
 main()
-  .catch((e: any) => {
-    console.error('❌ Erreur dans le seed :', e);
+  .catch((error) => {
+    console.error('❌ Erreur dans le seed :', error);
     process.exit(1);
   })
   .finally(async () => {
     await prisma.$disconnect();
-  });
+  }); 
